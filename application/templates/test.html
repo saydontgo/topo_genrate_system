@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Styled Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fa;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+
+        /* 顶部栏样式 */
+        .top-bar {
+            background-color: #006064;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 100;
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        #time {
+            font-size: 16px;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background-color: #e0f7fa;
+            color: #006064;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+            border-right: 1px solid #b2ebf2;
+            margin-top: 54px;
+        }
+
+        .sidebar.hidden {
+            left: -250px;
+        }
+
+        .sidebar h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #006064;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 12px 20px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+
+        .sidebar ul li:hover {
+            background-color: #b2ebf2;
+            transform: translateX(5px);
+        }
+
+        .sidebar ul li a {
+            color: #006064;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .sidebar ul li a i {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 子菜单样式 */
+        .sub-menu {
+            display: none;
+            list-style-type: none;
+            padding-left: 30px;
+            margin-top: 5px;
+        }
+
+        .sub-menu li {
+            padding: 8px 0;
+        }
+
+        .sub-menu li a {
+            font-size: 14px;
+        }
+
+        /* 主内容区域样式 */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+            margin-top: 54px;
+        }
+
+        .main-content.hidden {
+            margin-left: 0;
+        }
+
+        /* 头部样式 */
+        .header {
+            padding: 15px 0;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #006064;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        /* 部分内容样式 */
+        .section {
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .section h2 {
+            color: #006064;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        /* 图表容器样式 */
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        /* 图表样式 */
+        .chart {
+            width: 49%;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .chart:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart h3 {
+            color: #006064;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -250px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* 汉堡菜单样式 */
+        .hamburger {
+            position: fixed;
+            top: 65px;
+            left: 15px;
+            font-size: 24px;
+            color: #006064;
+            cursor: pointer;
+            z-index: 1000;
+            background-color: #ffffff;
+            padding: 8px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .hamburger:hover {
+            background-color: #e0f7fa;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 顶部栏 -->
+    <div class="top-bar">
+        <h1>Custom Dashboard</h1>
+        <div id="time"></div>
+    </div>
+
+    <!-- 汉堡菜单 -->
+    <i class="hamburger fas fa-bars"></i>
+
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <h3>Menu</h3>
+        <ul>
+            <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+            <li>
+                <a href="#" class="topology-link"><i class="fas fa-network-wired"></i> Topology</a>
+                <ul class="sub-menu">
+                    <li><a href="#" class="fatTree4">FatTree4</a></li>
+                    <li><a href="#" class="fatTree6">FatTree6</a></li>
+                    <!-- 可以添加更多选项 -->
+                </ul>
+            </li>
+            <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Dashboard</h1>
+        </div>
+        <div class="section">
+            <h2>Statistics</h2>
+            <p>Data and charts will go here.</p>
+        </div>
+        <div class="chart-container">
+            <div class="chart">
+                <h3>Chart 1</h3>
+                <canvas id="chart1"></canvas>
+            </div>
+            <div class="chart">
+                <h3>Chart 2</h3>
+                <canvas id="chart2"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const dateString = now.toLocaleDateString();
+            const timeElement = document.getElementById('time');
+            timeElement.textContent = `${dateString} ${timeString}`;
+        }
+
+        // 初始调用更新时间
+        updateTime();
+
+        // 每秒更新一次时间
+        setInterval(updateTime, 1000);
+
+        const hamburger = document.querySelector('.hamburger');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        hamburger.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('hidden');
+        });
+
+        const topologyLink = document.querySelector('.topology-link');
+        const subMenu = document.querySelector('.sub-menu');
+
+        topologyLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            subMenu.style.display = subMenu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // 获取FatTree4和FatTree6点击事件
+        const fatTree4 = document.querySelector('.fatTree4');
+        const fatTree6 = document.querySelector('.fatTree6');
+
+        fatTree4.addEventListener('click', () => {
+            sendTopologyToBackend(4);
+        });
+
+        fatTree6.addEventListener('click', () => {
+            sendTopologyToBackend(6);
+        });
+
+        function sendTopologyToBackend(topology) {
+            // 发送数据到后端
+            fetch('/your-backend-endpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ topology })
+            })
+            .then(response => response.json())
+            .then(data => console.log('Response from backend:', data))
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+
+</html>
