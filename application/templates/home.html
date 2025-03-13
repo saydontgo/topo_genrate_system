@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P4Prime</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+<body>
+    <!-- 顶部栏 -->
+    <div class="top-bar">
+        <h1>P4Prime</h1>
+        <div id="time"></div>
+    </div>
+
+    <!-- 汉堡菜单 -->
+    <i class="hamburger fas fa-bars"></i>
+
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <h3>菜单</h3>
+        <ul>
+            <li><a href="#"><i class="fas fa-home"></i> 主页</a></li>
+            <li>
+                <a href="topology"><i class="fas fa-network-wired"></i> 拓扑</a>
+                <ul class="sub-menu">
+                    <li><a href="#" class="fatTree4">FatTree4</a></li>
+                    <li><a href="#" class="fatTree6">FatTree6</a></li>
+                </ul>
+            </li>
+            <li><a href="settings"><i class="fas fa-cog"></i> 设置</a></li>
+        </ul>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="main-content">
+        <div class="header">
+            <h1>P4Prime: 路径一致性检测与故障交换机定位</h1>
+        </div>
+        <div class="section">
+            <p>本系统基于P4Prime, 对网络拓扑中主机之间转发的数据包进行路径一致性检测</p>
+        </div>
+
+        <!-- 中央按钮 -->
+        <!-- <div id="centralButtonContainer" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
+            <button id="sendButton" style="padding: 15px 30px; font-size: 18px;">Send</button>
+        </div> -->
+    </div>
+
+    <!-- 外部 JS -->
+    <script src="../static/main.js"></script>s
+</body>
+
+</html>
