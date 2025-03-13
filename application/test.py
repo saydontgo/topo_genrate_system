@@ -1,52 +1,118 @@
 from flask import Flask, render_template, jsonify, request
+import threading
+import json
 import topo.FatTree6.FatTree6 as ft6
+
 app = Flask(__name__)
 
-# 定义路由，渲染 HTML 文件
+current_topology = None
+
+# 首页（主页）
 @app.route('/')
 def home():
-    return render_template('test.html')
+    return render_template('home.html')  # 改为 index.html 页面
 
-@app.route('/trigger-action', methods=['GET'])
-def trigger_action():
-    # 获取查询参数
-    message_type = request.args.get('message')
+# 拓扑页面
+@app.route('/topology')
+def topology_page():
+    return render_template('topology.html')
 
-    # 根据参数返回不同的消息
-    if message_type == '4' or message_type == '6':
-        ft6.genrate_topo()
-        return jsonify(message="Hello World")
-    elif message_type == 'goodbye':
-        return jsonify(message="Goodbye World")
-    else:
-        return jsonify(message="Unknown action")
+# FatTree6 拓扑页面
+@app.route('/topology/fattree6')
+def fattree6_page():
+    return render_template('fattree6.html')
 
-@app.route('/process-input', methods=['POST'])
-def process_input():
-    # 获取前端传过来的 JSON 数据
-    data = request.get_json()
+# 设置页面
+@app.route('/settings')
+def settings_page():
+    return render_template('settings.html')
 
-    # 获取输入框的内容
-    user_input = data.get('input')
+@app.route('/get_topology_data')
+def get_topology_data():
+    # 假设你保存的是 txt 文件，可以在构建拓扑时自动写入或读取已有文件
+    edges = []
+    try:
+        with open('topo/FatTree6/topo.txt', 'r') as f:
+            for line in f:
+                # 格式：(s1, h1)
+                line = line.strip().replace('(', '').replace(')', '').replace(',', '')
+                parts = line.split()
+                if len(parts) == 2:
+                    edges.append({'from': parts[0], 'to': parts[1]})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-    # 可以根据输入内容做任何操作，这里只是返回一个简单的响应
-    if user_input:
-        response_message = f"You entered: {user_input}"
-        ft6.genrate_topo()
-    else:
-        response_message = "No input received."
+    return jsonify(edges)
 
-    # 返回一个 JSON 响应
-    return jsonify(message=response_message)
+# 启动拓扑线程
+def run_mininet_topology(topology):
+    global current_topology
+    print(f"开始构建拓扑: {topology}")
+    current_topology = ft6.FatTree6()
+    print(f"{topology} 拓扑构建完成")
+    try:
+        current_topology.startNetwork()
+    except Exception:
+        current_topology.stopNetwork()
 
-@app.route('/your-backend-endpoint', methods=['POST'])
-def handle_topology():
-    data = request.get_json()
+# 接收选择拓扑的请求
+@app.route('/select_topology', methods=['POST'])
+def handle_select_topology():
+    data = request.json
     topology = data.get('topology')
-    print(f'Received topology: {topology}')
-    ft6.genrate_topo()
-    return jsonify({'message': f'Topology {topology} received successfully'})
+    print(f"收到拓扑选择请求: {topology}")
+
+    if topology not in [4, 6]:
+        return jsonify({'error': 'Invalid topology'}), 400
+
+    # 启动新线程运行 Mininet 拓扑
+    thread = threading.Thread(target=run_mininet_topology, args=(topology,), daemon=True)
+    thread.start()
+
+    return jsonify({'status': 'Topology selection received', 'topology': topology})
+
+@app.route('/get_topology_nodes')
+def get_topology_nodes():
+    with open('topology.json', 'r') as f:
+        topology = json.load(f)
+    return jsonify({'nodes': topology.get('nodes', [])})
 
 
+@app.route('/send_command', methods=['POST'])
+def handle_send_command():
+    global current_topology
+
+    if current_topology is None:
+        return jsonify({'error': 'No topology built yet'}), 400
+
+    data = request.get_json()
+    src_host = data.get('src')
+    dst_host = data.get('dst')
+
+    if not src_host or not dst_host:
+        return jsonify({'error': '请提供源主机和目标主机'}), 400
+
+    try:
+        with open('topology.json', 'r', encoding='utf-8') as f:
+            topo = json.load(f)
+            node_map = {node['id']: node for node in topo.get('nodes', [])}
+            if src_host not in node_map or dst_host not in node_map:
+                return jsonify({'error': '主机 ID 不存在'}), 400
+            src_ip = node_map[src_host].get('ip', '')
+            dst_ip = node_map[dst_host].get('ip', '')
+    except Exception as e:
+        return jsonify({'error': f'IP地址查找失败: {str(e)}'}), 500
+
+    print(f"Receive: {src_host}({src_ip}) → {dst_host}({dst_ip})")
+
+    try:
+        current_topology.send(src_host, dst_host, src_ip, dst_ip)
+    except Exception as e:
+        return jsonify({'error': f'发送执行失败: {str(e)}'}), 500
+
+    return jsonify({'result': f'命令已发送：{src_host} → {dst_host}'})
+
+
+# 启动服务
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P4Prime - 拓扑</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+<body>
+    <!-- 顶部栏 -->
+    <div class="top-bar">
+        <h1>P4Prime - 拓扑</h1>
+        <div id="time"></div>
+    </div>
+
+    <!-- 汉堡菜单 -->
+    <i class="hamburger fas fa-bars"></i>
+
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <h3>菜单</h3>
+        <ul>
+            <li><a href="/"><i class="fas fa-home"></i> 主页</a></li>
+            <li class="has-submenu">
+                <a href="#"><i class="fas fa-network-wired"></i> 拓扑</a>
+                <ul class="sub-menu">
+                    <li><a href="#fatTree4">FatTree4</a></li>
+                    <li><a href="/topology/fattree6">FatTree6</a></li>
+                    <li><a href="#newTopology">新增拓扑</a></li>
+                    <li><a href="custom_topology.html">自定义拓扑</a></li> <!-- 新增跳转项 -->
+                </ul>
+            </li>
+            <li><a href="settings"><i class="fas fa-cog"></i> 设置</a></li>
+        </ul>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="main-content">
+        <div class="header">
+            <h1>拓扑结构</h1>
+        </div>
+
+        <div class="section" id="fatTree4">
+            <h2>FatTree4 拓扑</h2>
+            <p>此处将展示 FatTree4 网络拓扑图。</p>
+        </div>
+
+        <div class="section" id="fatTree6">
+            <h2>FatTree6 拓扑</h2>
+            <p>此处将展示 FatTree6 网络拓扑图。</p>
+        </div>
+
+        <div class="section" id="newTopology">
+            <h2>新增拓扑</h2>
+            <p>你可以在这里添加新的拓扑结构，或上传自定义拓扑文件。</p>
+            <button style="padding:10px 20px; font-size:16px; background-color:#006064; color:#fff; border:none; border-radius:5px; cursor:pointer;">上传拓扑文件</button>
+        </div>
+    </div>
+
+    <!-- 外部 JS -->
+    <script src="../static/main.js"></script>
+</body>
+
+</html>
