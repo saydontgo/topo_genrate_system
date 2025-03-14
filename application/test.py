@@ -106,7 +106,7 @@ def handle_send_command():
     print(f"Receive: {src_host}({src_ip}) → {dst_host}({dst_ip})")
 
     try:
-        current_topology.send(src_host, dst_host, src_ip, dst_ip)
+        current_topology.send(src_host, dst_host)
     except Exception as e:
         return jsonify({'error': f'发送执行失败: {str(e)}'}), 500
 
