@@ -1,10 +1,34 @@
 from p4utils.mininetlib.network_API import NetworkAPI
+from p4utils.mininetlib.log import setLogLevel, debug, info, output, warning, error
+import time
+import json
+import re
+import os
+
+def d2h(d):
+    if d > 15:
+        return f'{hex(d)[2:]}'
+    return f'0{hex(d)[2:]}'
+
+def hex_IP(ip):
+    res = ""
+    tmp = ""
+    for s in ip:
+        if s == '.':
+            res += d2h(int(tmp))
+            tmp = ""
+        else:
+            tmp += s
+    if tmp != "":
+        res += d2h(int(tmp))
+    return res
 
 class FatTree6(NetworkAPI):
     def __init__(self):
         super().__init__()
         self.setLogLevel('info')
-        self.enableCli()
+        self.disableCli()
+        self.isNetworkStart = False
         # Switch
         for i in range(1, 46):
             self.addP4Switch(f's{i}', cli_input=f'topo/FatTree6/rules/s{i}-commands.txt')
@@ -198,24 +222,128 @@ class FatTree6(NetworkAPI):
 
 
         # Asignment strategy
-        
-    
         self.mixed()
         # Nodes general options
-        #self.enableCpuPortAll()
-        #self.enablePcapDumpAll()
-        #self.enableLogAll()
+        # self.enableCpuPortAll()
+        # self.enablePcapDumpAll()
+        # self.enableLogAll()
 
         # Start the self.network
 
-    def send(self, src_host, dst_host, src_ip, dst_ip):
-        dst_ip = dst_ip.split('/')[0]
-        print(f"Sending：{src_host}({src_ip}) → {dst_host}({dst_ip})")
-        output1 = self.net.get(dst_host).cmd('./topo/FatTree6/receive.py &')
-        output2 = self.net.get(src_host).cmd('./topo/FatTree6/send.py --ip 10.0.6.16 --m tag')
-        print(output1,output2)
+    def startNetwork(self):
+        super().startNetwork()
+        self.isNetworkStart = True
+
+    def get_path(self, src_host, dst_host):
+        dst_ip = self.net.get(dst_host).IP()
+        src_ip = self.net.get(src_host).IP()
+        with open("topo/FatTree6/rules.json", "r")as f:
+            paths = json.load(f)
+            for path in paths:
+                if path['src_ip'] == src_ip and path['dst_ip'] == dst_ip:
+                    return path['path']
+        return None        
+
+    def send(self, src_host, dst_host):
+        """
+        返回值为bool 表示send操作是否成功，如果失败将不会产生任何文件，成功将会在application文件夹下生成res.json。
+        调用此方法前网络必须启动。
+        """
+        assert self.isNetworkStart
+        dst_shell = self.net.get(dst_host)
+        src_shell = self.net.get(src_host)
+        output = ""
+        try:
+            output = dst_shell.cmd('./topo/FatTree6/receive.py &')
+        except Exception as e:
+            error(f"fail to launch receive.py on {dst_host}. Detailed info is as follow:{e}")
+            return False
+        
+        if output != "":
+            print("successful execution:")
+            print(output)
+        time.sleep(3)
+
+        try:
+            output = src_shell.cmd(f'./topo/FatTree6/send.py --ip {dst_shell.IP()} --m tag')
+        except Exception as e:
+            error(f"fail to launch send.py on {src_host}. Detailed info is as follow:{e}")
+            return False
+        if output != "":
+            print("successful execution:")
+            print(output)
+        time.sleep(1)
+
+        res=None
+
+        if not os.path.isfile('res.json'):
+            return False
+
+        with open("res.json", "r")as f:
+            res = json.load(f)
+
+        res["stop_receiving"] = False
+
+        try:
+            dst_shell.cmd("pkill -f 'python3 ./topo/FatTree6/receive.py'")
+            res["stop_receiving"] = True
+        except Exception as e:
+            error(f'fail to kill receive.py. Detailed info is as follow:{e}')
+
+        with open("res.json", "w")as f:
+            json.dump(res, f, indent=4)
+
+
+    
+    def modify_switch(self, swid, dst_host, dst_swid):
+        """
+        swid:被修改的交换机
+        dst_host:被修改流表表项对应的主机
+        dst_swid:流表表项修改的目标交换机
+        """
+        #TODO 要将结果以什么样的形式传回去？
+
+        assert self.isNetworkStart
+        cur_sw = self.net.get(swid)
+        dst_sw = self.net.get(dst_swid)
+        dst_port = None
+
+        # 获取交换机连接的端口信息
+        for intf in cur_sw.intfList():
+            if intf.name != 'lo':
+                peer = intf.link.intf2 if intf.link.intf1 == intf else intf.link.intf1
+                if peer.node == dst_sw:
+                    dst_port = re.findall("eth(.*)", intf.name)[0]
+        if dst_port == None: 
+            info(f'These two switches are not neighbours! You can\'t modify switch {swid}.')
+            return
+        
+        # 将每一条有关该目的地主机的流表进行修改
+        h = self.net.get(dst_host)
+        thriftPort = 9089+int(swid[1:])
+        try:
+            output = self.net.get(swid).cmd(f'echo "table_dump MyIngress.ipv4_lpm" | simple_switch_CLI --thrift-port {thriftPort}')
+        except Exception as e:
+            error(f"Execution of your command failed. Detailed info is as follow:{e} ")
+            return
+        handle = None
+        hexIP = hex_IP(h.IP())
+        for line in output.strip().split('\n'):
+            if "Dumping entry" in line:
+                handle = int(line[16:], 16)
+            if hexIP in line:
+                if handle == None:
+                    continue
+                cmd = f'echo "table_modify ipv4_lpm ipv4_forward {handle} {h.MAC()} {dst_port}" | simple_switch_CLI --thrift-port {thriftPort}'
+                res = self.net.get(swid).cmd(cmd)
+                handle = None
+                info('modify results:\n' + res)
+
+    def stopNetwork(self):
+        super().stopNetwork()
+        self.isNetworkStart = False
 
 
 if __name__ == '__main__':
     ft6=FatTree6()
-    ft6.start_network()
+    ft6.startNetwork()
