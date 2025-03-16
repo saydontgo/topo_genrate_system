@@ -101,11 +101,11 @@ def verification(pkt: Packet):
                         tmp_prod /= tmp_prime
                         flag = True
                         break
-
-                if end_switch != None:
+                   
+                if end_switch != None: 
+                    path.append(int(end_switch[1:]))
                     while tmp_prod > 1:
                         flag = False
-                        path.append(int(end_switch[1:]))
                         for node in topo.get_neighbors(end_switch):
                             if pre_switch == None or node != pre_switch:
                                 prime = topo.get_prime(node)
@@ -115,6 +115,7 @@ def verification(pkt: Packet):
                                     pre_switch = end_switch
                                     end_switch = node
                                     tmp_prod /= prime
+                                    path.append(int(end_switch[1:]))
                                     flag = True
                                     break
                             
