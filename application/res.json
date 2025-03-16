@@ -1,0 +1,19 @@
+{
+    "src_ip": "10.0.1.1",
+    "dst_ip": "10.0.6.16",
+    "expected_path": [
+        1,
+        19,
+        37,
+        22,
+        6
+    ],
+    "consistence": false,
+    "recover_path": [
+        20,
+        40,
+        23,
+        6
+    ],
+    "stop_receiving": true
+}

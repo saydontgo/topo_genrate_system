@@ -154,7 +154,7 @@ Entry has been added with handle 27
 RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
 match key:           LPM-0a:00:06:10/32	EXACT-00:01
 action:              MyIngress.ipv4_forward
-runtime data:        00:00:0a:00:06:10	00:04
+runtime data:        00:00:0a:00:06:10	00:05
 Entry has been added with handle 28
 RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
 match key:           LPM-0a:00:06:11/32	EXACT-00:01

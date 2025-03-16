@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 import threading
 import json
+import os
 import topo.FatTree6.FatTree6 as ft6
 
 app = Flask(__name__)
@@ -111,6 +112,18 @@ def handle_send_command():
         return jsonify({'error': f'发送执行失败: {str(e)}'}), 500
 
     return jsonify({'result': f'命令已发送：{src_host} → {dst_host}'})
+
+@app.route('/get_res_json', methods=['GET'])
+def get_res_json():
+    # 假设 res.json 位于项目根目录
+    res_file_path = os.path.join(os.path.dirname(__file__), 'res.json')
+    
+    if os.path.exists(res_file_path):
+        with open(res_file_path, 'r') as f:
+            data = f.read()
+            return jsonify(data), 200
+    else:
+        return jsonify({"error": "res.json not found"}), 404
 
 
 # 启动服务

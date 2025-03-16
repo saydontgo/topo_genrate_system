@@ -1,6 +1,7 @@
 // 获取FatTree4和FatTree6的点击事件
 // const fatTree4 = document.querySelector('.fatTree4');
 const fatTree6 = document.querySelector('.generateFattree6');
+let network;
 
 // 更新显示选中的拓扑
 // fatTree4.addEventListener('click', () => {
@@ -75,7 +76,7 @@ function drawNetwork(edgeList) {
             font: { size: 25 }
         }
     };
-    const network = new vis.Network(container, data, options);
+    network = new vis.Network(container, data, options);
 
     // 绑定点击事件
     network.on("click", function (params) {
@@ -147,9 +148,93 @@ document.getElementById('sendButton').addEventListener('click', function () {
             resultBox.style.color = 'red';
             resultBox.textContent = '发送失败：' + data.error;
         }
+
+        // 等待文件生成完成（读取 res.json）
+        setTimeout(() => {
+            fetch('/get_res_json')
+                .then(response => response.json())
+                .then(pathData => {
+                    if (pathData) {
+                        // 如果返回了路径信息，则处理路径高亮
+                        jsonData = JSON.parse(pathData);
+                        highlightPath(jsonData);
+                        let pathText = `预期路径：${pathData.expected_path.map(id => 's' + id).join(' → ')}`;
+                        if (!pathData.consistence && pathData.recover_path) {
+                            pathText += `\n实际错误路径：${pathData.recover_path.map(id => 's' + id).join(' → ')}`;
+                        }
+                        resultBox.innerText += '\n' + pathText;
+                    }
+                })
+                .catch(error => {
+                    resultBox.style.color = 'red';
+                    resultBox.textContent = '读取路径数据失败：' + error.message;
+                });
+        }, 5000);  // 等待5秒后读取 res.json
     })
     .catch(error => {
         resultBox.style.color = 'red';
         resultBox.textContent = '发送请求出错：' + error.message;
     });
 });
+
+function highlightPath(data) {
+    // 确保 paths 是数组，若不存在或无效则设为空数组
+    const expectedPath = Array.isArray(data.expected_path) ? data.expected_path : [];
+    const recoverPath = Array.isArray(data.recover_path) ? data.recover_path : [];
+    const consistence = data.consistence;
+    const edgeUpdates = [];
+
+    // 构造 expected_path 的边（绿色）
+    if (expectedPath.length > 0) {
+        for (let i = 0; i < expectedPath.length - 1; i++) {
+            edgeUpdates.push({
+                from: `s${expectedPath[i]}`,
+                to: `s${expectedPath[i + 1]}`,
+                color: { color: 'green' },
+                width: 4
+            });
+        }
+    }
+
+    // 如果路径不一致，构造 recover_path 的边（红色）
+    if (!consistence && recoverPath.length > 1) {
+        for (let i = 0; i < recoverPath.length - 1; i++) {
+            edgeUpdates.push({
+                from: `s${recoverPath[i]}`,
+                to: `s${recoverPath[i + 1]}`,
+                color: { color: 'red' },
+                width: 4
+            });
+        }
+    }
+
+    // 在 network 完全加载后访问 edges
+    if (network && network.body && network.body.data && network.body.data.edges) {
+        const allEdges = network.body.data.edges.get();
+
+        allEdges.forEach(edge => {
+            // 还原所有边为默认颜色
+            network.body.data.edges.update({ id: edge.id, color: { color: '#848484' }, width: 1 });
+        });
+
+        edgeUpdates.forEach(update => {
+            // 找到符合的边并更新颜色
+            const matchedEdge = allEdges.find(e => 
+                (e.from === update.from && e.to === update.to) || 
+                (e.from === update.to && e.to === update.from)
+            );
+            if (matchedEdge) {
+                network.body.data.edges.update({
+                    id: matchedEdge.id,
+                    color: update.color,
+                    width: update.width
+                });
+            }
+        });
+    } else {
+        console.error("Network body data edges are not available");
+    }
+}
+
+
+
