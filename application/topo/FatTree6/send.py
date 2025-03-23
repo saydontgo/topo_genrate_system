@@ -7,7 +7,7 @@ import logging
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
 from scapy.all import sendp, get_if_hwaddr
-from scapy.all import Ether, IP, UDP
+from scapy.all import Ether, IP, UDP, TCP
 from tools import get_if, SwitchTrace, IPOption_TAG, IPOption_MRI
 
 
@@ -18,7 +18,7 @@ def get_args():
     parser.add_argument('--ip', help='dst ip', type=str, action="store", required=True)
     parser.add_argument('--m', help="mode", type=str, action='store', required=False, default="prime")     
     parser.add_argument('--t', help="interval", type=float, action='store', required=False, default=0.0)     
-                        
+    parser.add_argument('--p', help="transport layer protocol", type=str, action='store', required=False, default="UDP")         
     return parser.parse_args()
 
 def main():
@@ -37,7 +37,11 @@ def main():
         pkt2 = pkt2/ IP(dst = args.ip, options = IPOption_MRI(count=0, swtraces=[]))
     else:
         pkt2 = pkt2/ IP(dst = args.ip)
-    pkt2 = pkt2/ UDP (sport=7777, dport=8888)
+    
+    if args.p == 'TCP':
+        pkt2 = pkt2/ UDP (sport=7777, dport=8888)
+    else:
+        pkt2 = pkt2/ UDP (sport=7777, dport=8888)   
 
     pkt2.show2()
     
