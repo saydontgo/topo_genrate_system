@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -70,7 +71,17 @@
             <button id="sendButton">发送</button>
             <div id="sendResult" style="margin-top:10px; color: green;"></div>
         </div>
-        
+        <div class="modify-area" style="margin-top: 30px;">
+            <h3>修改流表</h3>
+            <label for="modSwid">被修改交换机 ID：</label>
+            <input type="text" id="modSwid" placeholder="如 s1">
+            <label for="modDstSwid">目标交换机 ID：</label>
+            <input type="text" id="modDstSwid" placeholder="如 s2">
+            <label for="modDstHost">目标主机 ID：</label>
+            <input type="text" id="modDstHost" placeholder="如 h3">
+            <button id="modifyButton">修改</button>
+            <div id="modifyResult" style="margin-top:10px; color: blue;"></div>
+        </div>
     </div>
 
     <!-- 外部 JS -->
