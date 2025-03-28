@@ -256,7 +256,11 @@ class FatTree6(NetworkAPI):
         """装载流表"""  
         try:    
             info('Programming switches...\n')
-            super().program_switches()
+            # super().program_switches()
+            for i in range(1,46):
+                cur_sw = self.net.get(f's{i}')
+                thriftPort = 9089+i
+                cur_sw.cmd(f"simple_switch_CLI --thrift-port {thriftPort} < topo/FatTree6/rules/s{i}-commands.txt")
             output('Switches programmed correctly!\n')
         except Exception as e:
             error(f"There is something wrong while programming switches. Detailed info is as followed:{e}\n")
@@ -402,7 +406,7 @@ class FatTree6(NetworkAPI):
             output = self.net.get(swid).cmd(f'echo "table_dump MyIngress.ipv4_lpm" | simple_switch_CLI --thrift-port {thriftPort}')
         except Exception as e:
             error(f"Execution of your command failed. Detailed info is as follow:{e}\n")
-            return
+            return False
         handle = None
         hexIP = hex_IP(h.IP())
         for line in output.strip().split('\n'):
@@ -415,6 +419,8 @@ class FatTree6(NetworkAPI):
                 res = self.net.get(swid).cmd(cmd)
                 handle = None
                 info('modify results:\n' + res + '\n')
+        
+        return True
 
     def stopNetwork(self):
         super().stopNetwork()
