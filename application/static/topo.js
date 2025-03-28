@@ -2,7 +2,15 @@
 // const fatTree4 = document.querySelector('.fatTree4');
 const fatTree6 = document.querySelector('.generateFattree6');
 let network;
-
+let currentEdges = [];
+let topoSettings = {
+    hostShape: 'ellipse',
+    hostColor: '#FFD700',
+    hostSize: 25,
+    switchShape: 'box',
+    switchColor: '#87CEEB',
+    switchSize: 25
+};
 // 更新显示选中的拓扑
 // fatTree4.addEventListener('click', () => {
 //     sendTopology(4);
@@ -35,7 +43,10 @@ function sendTopology(topology) {
                         nodeDetails.nodes.forEach(node => {
                             nodeDetailMap[node.id] = node;
                         });
-                        drawNetwork(edgesData);
+
+                        // 获取设置并绘图（修改点）
+                        fetchSettingsAndDraw(edgesData);
+
                     })
                     .catch(err => console.error('获取节点详细信息失败:', err));
             })
@@ -45,27 +56,67 @@ function sendTopology(topology) {
 }
 
 
+// 获取拓扑设置
+function fetchSettingsAndDraw(edgeList) {
+    fetch('/get_topo_settings')
+        .then(res => res.json())
+        .then(settings => {
+            topoSettings = settings || topoSettings;
+            drawNetwork(edgeList); // 在设置加载后绘图
+        })
+        .catch(err => {
+            console.warn("读取拓扑设置失败，使用默认设置");
+            drawNetwork(edgeList);
+        });
+}
+
 function drawNetwork(edgeList) {
+    currentEdges = edgeList;
     const nodesSet = new Set();
     edgeList.forEach(edge => {
         nodesSet.add(edge.from);
         nodesSet.add(edge.to);
     });
 
+    const hostList = [];
+    const switchList = [];
+
+    // 构建节点对象数组，读取设置
     const nodes = Array.from(nodesSet).map((id) => {
+        let nodeType = id.startsWith('s') ? 'switch' : 'host';
+        let shape = nodeType === 'switch' ? topoSettings.switchShape : topoSettings.hostShape;
+        let color = nodeType === 'switch' ? topoSettings.switchColor : topoSettings.hostColor;
+        let size = nodeType === 'switch' ? topoSettings.switchSize : topoSettings.hostSize;
+
+        if (nodeType === 'host') hostList.push(id);
+        else switchList.push(id);
+
         return {
             id: id,
             label: id,
-            shape: id.startsWith('s') ? 'box' : 'ellipse',
-            color: id.startsWith('s') ? '#87CEEB' : '#FFD700'
+            shape: shape,
+            color: color,
+            size: size
         };
     });
 
+    // 排序主机和交换机 ID
+    hostList.sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
+    switchList.sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
+
+    // 显示提示范围
+    const hostRange = hostList.length ? `${hostList[0]} - ${hostList[hostList.length - 1]}` : '无';
+    const switchRange = switchList.length ? `${switchList[0]} - ${switchList[switchList.length - 1]}` : '无';
+    document.getElementById("hostHint").innerText = `可填写主机范围：${hostRange}`;
+    document.getElementById("switchHint").innerText = `可填写交换机范围：${switchRange}`;
+
+    // 初始化网络图
     const container = document.getElementById('network');
     const data = {
         nodes: new vis.DataSet(nodes),
         edges: new vis.DataSet(edgeList)
     };
+
     const options = {
         interaction: { hover: true },
         physics: {
@@ -76,9 +127,14 @@ function drawNetwork(edgeList) {
             font: { size: 25 }
         }
     };
+
     network = new vis.Network(container, data, options);
 
-    // 绑定点击事件
+    // 保存主机和交换机ID全局
+    window.hostList = hostList;
+    window.switchList = switchList;
+
+    // 绑定点击事件显示节点信息
     network.on("click", function (params) {
         if (params.nodes.length > 0) {
             const nodeId = params.nodes[0];
@@ -121,6 +177,48 @@ function clearNodeInfo() {
     document.getElementById('nodeInfoContent').innerHTML = '点击任意节点查看详情';
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const loadP4Button = document.querySelector(".loadP4Code");
+    const injectFlowTableButton = document.querySelector(".injectFlowTable");
+
+    if (loadP4Button) {
+        loadP4Button.addEventListener("click", loadP4Code);
+    }
+    if (injectFlowTableButton) {
+        injectFlowTableButton.addEventListener("click", injectFlowTable);
+    }
+});
+
+function loadP4Code() {
+    fetch("/load_p4_code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+    })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("loadResult").innerText = data.message;
+        })
+        .catch(error => {
+            console.error("Error loading P4 code:", error);
+            document.getElementById("loadResult").innerText = "装载 P4 代码失败！";
+        });
+}
+
+function injectFlowTable() {
+    fetch("/inject_flow_table", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+    })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("injectResult").innerText = data.message;
+        })
+        .catch(error => {
+            console.error("Error injecting flow table:", error);
+            document.getElementById("injectResult").innerText = "注入流表失败！";
+        });
+}
+
 document.getElementById('sendButton').addEventListener('click', function () {
     const srcHost = document.getElementById('srcHost').value.trim();
     const dstHost = document.getElementById('dstHost').value.trim();
@@ -158,9 +256,9 @@ document.getElementById('sendButton').addEventListener('click', function () {
                         // 如果返回了路径信息，则处理路径高亮
                         jsonData = JSON.parse(pathData);
                         highlightPath(jsonData);
-                        let pathText = `预期路径：${pathData.expected_path.map(id => 's' + id).join(' → ')}`;
-                        if (!pathData.consistence && pathData.recover_path) {
-                            pathText += `\n实际错误路径：${pathData.recover_path.map(id => 's' + id).join(' → ')}`;
+                        let pathText = `预期路径：${jsonData.expected_path.map(id => 's' + id).join(' → ')}`;
+                        if (!jsonData.consistence && jsonData.recover_path) {
+                            pathText += `\n实际错误路径：${jsonData.recover_path.map(id => 's' + id).join(' → ')}`;
                         }
                         resultBox.innerText += '\n' + pathText;
                     }
@@ -238,3 +336,79 @@ function highlightPath(data) {
 
 
 
+document.getElementById("modifyButton").addEventListener("click", function () {
+    const swid = document.getElementById("modSwid").value.trim();
+    const dstHost = document.getElementById("modDstHost").value.trim();
+    const dstSwid = document.getElementById("modDstSwid").value.trim();
+
+    if (!swid || !dstHost || !dstSwid) {
+        alert("请填写所有输入项！");
+        return;
+    }
+
+    fetch("/modify_flow_table", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            swid: swid,
+            dst_host: dstHost,
+            dst_swid: dstSwid
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultBox = document.getElementById("modifyResult");
+        if (data.status === 'success') {
+            resultBox.style.color = 'green';
+            resultBox.innerText = data.msg;
+        } else {
+            resultBox.style.color = 'red';
+            resultBox.innerText = `修改失败：${data.msg}`;
+        }
+    })
+    .catch(err => {
+        console.error("请求失败:", err);
+        document.getElementById("modifyResult").innerText = "请求失败，请检查服务器连接。";
+    });
+});
+
+// 监听输入框失去焦点或内容变化时更新目标交换机下拉框
+document.getElementById("modSwid").addEventListener("blur", updateDstSwitchOptions);
+// 或者也可以使用 input 实时更新
+// document.getElementById("modSwid").addEventListener("input", updateDstSwitchOptions);
+
+function updateDstSwitchOptions() {
+    const modSwid = document.getElementById("modSwid").value.trim();
+    const dstSelect = document.getElementById("modDstSwid");
+
+    // 清空旧选项
+    dstSelect.innerHTML = "";
+
+    if (!modSwid || !modSwid.startsWith('s')) {
+        dstSelect.innerHTML = '<option value="">请输入有效交换机ID</option>';
+        return;
+    }
+
+    const neighborSet = new Set();
+    currentEdges.forEach(edge => {
+        if (edge.from === modSwid && edge.to.startsWith('s')) {
+            neighborSet.add(edge.to);
+        }
+        if (edge.to === modSwid && edge.from.startsWith('s')) {
+            neighborSet.add(edge.from);
+        }
+    });
+
+    if (neighborSet.size === 0) {
+        dstSelect.innerHTML = '<option value="">无相邻交换机</option>';
+        return;
+    }
+
+    dstSelect.innerHTML = '<option value="">请选择相邻交换机</option>';
+    neighborSet.forEach(sw => {
+        const option = document.createElement("option");
+        option.value = sw;
+        option.textContent = sw;
+        dstSelect.appendChild(option);
+    });
+}

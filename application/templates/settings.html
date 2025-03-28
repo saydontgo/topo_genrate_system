@@ -37,15 +37,63 @@
         <div class="section">
             <h2>网络配置</h2>
             <p>在此处调整 P4Prime 的网络参数。</p>
-        </div>
-        <div class="section">
-            <h2>用户权限</h2>
-            <p>管理用户访问权限和安全策略。</p>
+            <div class="sub-section" style="margin-top: 20px;">
+                <h3 style="color: #006064;">主机节点配置</h3>
+            
+                <!-- 主机形状 -->
+                <label for="hostShape">主机形状：</label>
+                <select id="hostShape">
+                    <option value="dot">圆形 (dot)</option>
+                    <option value="box">方形 (box)</option>
+                    <option value="ellipse" selected>椭圆形 (ellipse)</option>
+                    <option value="triangle">三角形 (triangle)</option>
+                    <option value="star">星形 (star)</option>
+                    <option value="hexagon">六边形 (hexagon)</option>
+                </select>
+            
+                <!-- 主机颜色 -->
+                <label for="hostColor" style="margin-top:10px;">主机颜色：</label>
+                <input type="color" id="hostColor" value="#FFD700">
+            
+                <!-- 主机大小 -->
+                <label for="hostSize" style="margin-top:10px;">主机大小：</label>
+                <input type="range" id="hostSize" min="10" max="80" value="25">
+                <span id="hostSizeValue">25</span>
+            </div>
+            
+            <div class="sub-section" style="margin-top: 20px;">
+                <h3 style="color: #006064;">交换机节点配置</h3>
+            
+                <!-- 交换机形状 -->
+                <label for="switchShape">交换机形状：</label>
+                <select id="switchShape">
+                    <option value="dot">圆形 (dot)</option>
+                    <option value="box" selected>方形 (box)</option>
+                    <option value="ellipse">椭圆形 (ellipse)</option>
+                    <option value="triangle">三角形 (triangle)</option>
+                    <option value="star">星形 (star)</option>
+                    <option value="hexagon">六边形 (hexagon)</option>
+                </select>
+            
+                <!-- 交换机颜色 -->
+                <label for="switchColor" style="margin-top:10px;">交换机颜色：</label>
+                <input type="color" id="switchColor" value="#87CEEB">
+            
+                <!-- 交换机大小 -->
+                <label for="switchSize" style="margin-top:10px;">交换机大小：</label>
+                <input type="range" id="switchSize" min="10" max="80" value="25">
+                <span id="switchSizeValue">25</span>
+            </div>
+            
+            <button id="saveSettingsBtn" style="margin-top: 15px;">保存设置</button>
+            <div id="saveStatus" style="margin-top: 8px; color: green;"></div>
+            
         </div>
     </div>
 
     <!-- 外部 JS -->
     <script src="../static/main.js"></script>
+    <script src="../static/settings.js"></script>
 </body>
 
 </html>

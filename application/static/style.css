@@ -1,49 +1,49 @@
- /* 全局样式 */
- body {
+/* ========== 全局样式优化 ========== */
+body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f7fa;
+  background-color: #f0f4f8; /* 更柔和的背景色 */
   color: #333;
   transition: background-color 0.3s ease;
 }
 
-/* 顶部栏样式 */
+/* ========== 顶部栏优化 ========== */
 .top-bar {
-  background-color: #006064;
-  color: white;
+  background-color: #004d66; /* 更深的蓝绿色 */
+  color: #ffffff;
   padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   position: relative;
   z-index: 100;
 }
 
 .top-bar h1 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 26px;
+  font-weight: 700;
 }
 
 #time {
   font-size: 16px;
+  font-weight: 500;
 }
 
-/* 侧边栏样式 */
+/* ========== 侧边栏优化 ========== */
 .sidebar {
   width: 250px;
   height: 100vh;
   position: fixed;
   left: 0;
   top: 0;
-  background-color: #e0f7fa;
-  color: #006064;
+  background-color: #e0f2f1;
+  color: #004d66;
   padding-top: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
   transition: left 0.3s ease;
-  border-right: 1px solid #b2ebf2;
+  border-right: 1px solid #b2dfdb;
   margin-top: 54px;
 }
 
@@ -53,53 +53,31 @@
 
 .sidebar h3 {
   text-align: center;
-  margin-bottom: 20px;
-  color: #006064;
+  color: #004d66;
   font-size: 20px;
-  font-weight: 600;
-}
-
-.sidebar ul {
-  list-style-type: none;
-  padding: 0;
+  font-weight: 700;
 }
 
 .sidebar ul li {
   padding: 12px 20px;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-bottom: 5px;
   border-radius: 5px;
 }
 
 .sidebar ul li:hover {
-  background-color: #b2ebf2;
-  transform: translateX(5px);
+  background-color: #b2dfdb;
+  transform: translateX(10px);
 }
 
 .sidebar ul li a {
-  color: #006064;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
+  color: #004d66;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-.sidebar ul li a i {
-  margin-right: 15px;
-  font-size: 18px;
-  width: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* 子菜单样式 */
 .sub-menu {
   display: none;
-  list-style-type: none;
   padding-left: 30px;
-  margin-top: 5px;
 }
 
 .sub-menu li {
@@ -110,7 +88,7 @@
   font-size: 14px;
 }
 
-/* 主内容区域样式 */
+/* ========== 主内容区域优化 ========== */
 .main-content {
   margin-left: 250px;
   padding: 20px;
@@ -122,62 +100,47 @@
   margin-left: 0;
 }
 
-/* 头部样式 */
 .header {
-  padding: 15px 0;
+  padding: 15px;
   background-color: #ffffff;
   border-bottom: 1px solid #e0e0e0;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .header h1 {
-  margin: 0;
-  color: #006064;
   font-size: 28px;
-  font-weight: 600;
+  color: #004d66;
+  font-weight: 700;
 }
 
-/* 部分内容样式 */
+/* ========== 元素样式优化 ========== */
 .section {
   background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   padding: 20px;
   border-radius: 8px;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
 .section:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
 }
 
 .section h2 {
-  color: #006064;
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 10px;
+  color: #004d66;
+  font-size: 24px;
+  border-bottom: 2px solid #00acc1;
+  padding-bottom: 5px;
 }
 
-/* 图表容器样式 */
-.chart-container {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-top: 20px;
-}
-
-/* 图表样式 */
 .chart {
   width: 49%;
   background-color: #ffffff;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  margin-bottom: 20px;
-  transition: box-shadow 0.3s ease;
 }
 
 .chart:hover {
@@ -185,62 +148,64 @@
 }
 
 .chart h3 {
-  color: #006064;
   font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 10px;
+  color: #004d66;
+  font-weight: 700;
 }
 
-/* 响应式设计 */
+/* ========== 响应式优化 ========== */
 @media (max-width: 768px) {
   .sidebar {
-      left: -250px;
+    left: -250px;
   }
 
   .main-content {
-      margin-left: 0;
+    margin-left: 0;
   }
 }
 
-/* 汉堡菜单样式 */
 .hamburger {
   position: fixed;
   top: 65px;
   left: 15px;
   font-size: 24px;
-  color: #006064;
-  cursor: pointer;
-  z-index: 1000;
+  color: #004d66;
   background-color: #ffffff;
-  padding: 8px;
+  padding: 10px;
   border-radius: 50%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 .hamburger:hover {
-  background-color: #e0f7fa;
+  background-color: #e0f2f1;
 }
 
-#topology {
-  width: 100%;
-  height: 600px;
-  border: 1px solid lightgray;
-}
-
-.generateFattree6 {
+/* ========== 按钮优化 ========== */
+button,
+.generateFattree6,
+.loadP4Code,
+.injectFlowTable,
+#sendButton,
+#modifyButton,
+#saveSettingsBtn {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #006064;
-  color: #fff;
+  background-color: #004d66;
+  color: #ffffff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin: 20px 0;
+  transition: background-color 0.3s ease;
 }
 
-.generateFattree6:hover {
-  background-color: #004d4d;
+button:hover,
+.generateFattree6:hover,
+.loadP4Code:hover,
+.injectFlowTable:hover,
+#sendButton:hover,
+#modifyButton:hover,
+#saveSettingsBtn:hover {
+  background-color: #003d4d;
 }
 
 .network-container {
@@ -260,24 +225,18 @@
 
 #nodeInfoContainer {
   width: 25%;
-  height: 97%;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  background-color: #f0f4f8;
   padding: 15px;
-  background-color: #f5f5f5;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-  font-size: 30px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-#nodeInfoContainer h3 {
-  margin-top: 0;
-  color: #333;
-  font-size: 18px;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 8px;
+/* ========== 高亮效果优化 ========== */
+.highlightR {
+  font-weight: bold;
+  color: #d32f2f;
 }
 
-#nodeInfoContent {
-  margin-top: 10px;
-  color: #444;
+.highlightG {
+  font-weight: bold;
+  color: #388e3c;
 }

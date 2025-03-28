@@ -6,7 +6,7 @@ import topo.FatTree6.FatTree6 as ft6
 
 app = Flask(__name__)
 
-current_topology = None
+current_topology = ft6.FatTree6() 
 
 # 首页（主页）
 @app.route('/')
@@ -49,7 +49,6 @@ def get_topology_data():
 def run_mininet_topology(topology):
     global current_topology
     print(f"开始构建拓扑: {topology}")
-    current_topology = ft6.FatTree6()
     print(f"{topology} 拓扑构建完成")
     try:
         current_topology.startNetwork()
@@ -124,6 +123,67 @@ def get_res_json():
             return jsonify(data), 200
     else:
         return jsonify({"error": "res.json not found"}), 404
+
+@app.route('/modify_flow_table', methods=['POST'])
+def modify_flow_table():
+    data = request.json
+    swid = data.get('swid')          # 被修改的交换机 ID
+    dst_host = data.get('dst_host')  # 流表涉及的主机 ID
+    dst_swid = data.get('dst_swid')  # 目标交换机 ID
+
+    if not (swid and dst_host and dst_swid):
+        return jsonify({'status': 'error', 'msg': '参数不完整'})
+
+    try:
+        result = current_topology.modify_switch(swid, dst_host, dst_swid)
+        return jsonify({'status': 'success', 'msg': '修改完成'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'msg': str(e)})
+   
+@app.route('/save_topo_settings', methods=['POST'])
+def save_settings():
+    data = request.json
+    try:
+        with open('topo/style_settings.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        return jsonify({'status': 'success', 'msg': '设置已保存'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'msg': str(e)})
+
+@app.route('/get_topo_settings', methods=['GET'])
+def get_settings():
+    try:
+        if not os.path.exists('topo/style_settings.json'):
+            # 返回默认设置
+            default = {
+                "host": {"shape": "ellipse", "color": "#FFD700", "size": 25},
+                "switch": {"shape": "box", "color": "#87CEEB", "size": 25}
+            }
+            return jsonify(default)
+        with open('topo/style_settings.json', 'r', encoding='utf-8') as f:
+            settings = json.load(f)
+            return jsonify(settings)
+    except Exception as e:
+        return jsonify({'status': 'error', 'msg': str(e)})
+    
+@app.route("/load_p4_code", methods=["POST"])
+def load_p4_code():
+    print("开始构建拓扑")
+    print("拓扑构建完成")
+    success = current_topology.clean_and_compile()
+    if success:
+        return jsonify({"message": "P4 代码装载成功！"})
+    return jsonify({"message": "P4 代码装载失败，请检查错误！"}), 500
+
+@app.route("/inject_flow_table", methods=["POST"])
+def inject_flow_table():
+    print("开始注入流表")
+    print("流表注入完成")
+    success = current_topology.program_switches()
+    if success:
+        return jsonify({"message": "流表注入成功！"})
+    return jsonify({"message": "流表注入失败，请检查错误！"}), 500
+
 
 
 # 启动服务

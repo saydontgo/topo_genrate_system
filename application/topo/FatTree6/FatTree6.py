@@ -29,6 +29,7 @@ class FatTree6(NetworkAPI):
         self.setLogLevel('info')
         self.disableCli()
         self.isNetworkStart = False
+        self.isCompiled = False
         # Switch
         for i in range(1, 46):
             self.addP4Switch(f's{i}', cli_input=f'topo/FatTree6/rules/s{i}-commands.txt')
@@ -230,8 +231,86 @@ class FatTree6(NetworkAPI):
 
         # Start the self.network
 
+    def clean_and_compile(self):
+        """清理旧网络信息并加载p4代码进入交换机"""
+        debug('Cleanup old files and processes...\n')
+        self.cleanup()
+
+        debug('Auto configuration of not configured interfaces...\n')
+        self.auto_assignment()
+
+        try:
+            info('Compiling P4 files...\n')
+            self.compile()
+            output('P4 Files compiled!\n')
+        except Exception as e:
+            error('There is something wrong while compiling p4 source\n')
+            return False
+        self.printPortMapping()
+
+        self.isCompiled = True
+
+        return True
+
+    def program_switches(self):  
+        """装载流表"""  
+        try:    
+            info('Programming switches...\n')
+            # super().program_switches()
+            for i in range(1,46):
+                cur_sw = self.net.get(f's{i}')
+                thriftPort = 9089+i
+                cur_sw.cmd(f"simple_switch_CLI --thrift-port {thriftPort} < topo/FatTree6/rules/s{i}-commands.txt")
+            output('Switches programmed correctly!\n')
+        except Exception as e:
+            error(f"There is something wrong while programming switches. Detailed info is as followed:{e}\n")
+            return False
+        return True
+ 
     def startNetwork(self):
-        super().startNetwork()
+        """Starts and configures the network."""
+        
+        assert self.isCompiled
+
+        info('Creating network...\n')
+        self.net = self.module('net', topo=self, controller=None)
+        output('Network created!\n')
+
+        info('Starting network...\n')
+        self.net.start()
+        output('Network started!\n')
+
+        info('Starting schedulers...\n')
+        self.start_schedulers()
+        output('Schedulers started correctly!\n')
+
+        info('Saving topology to disk...\n')
+        self.save_topology()
+        output('Topology saved to disk!\n')
+
+        # 装载流表的部分，需单独写出
+        # info('Programming switches...\n')
+        # self.program_switches()
+        # output('Switches programmed correctly!\n')
+
+        info('Programming hosts...\n')
+        self.program_hosts()
+        output('Hosts programmed correctly!\n')
+
+        info('Executing scripts...\n')
+        self.exec_scripts()
+        output('All scripts executed correctly!\n')
+
+        info('Distributing tasks...\n')
+        self.distribute_tasks()
+        output('All tasks distributed correctly!\n')
+
+        if self.cli_enabled:
+            self.start_net_cli()
+            # Stop right after the CLI is exited
+            self.stopNetwork()
+
+
         self.isNetworkStart = True
 
     def get_path(self, src_host, dst_host):
@@ -249,14 +328,15 @@ class FatTree6(NetworkAPI):
         返回值为bool 表示send操作是否成功，如果失败将不会产生任何文件，成功将会在application文件夹下生成res.json。
         调用此方法前网络必须启动。
         """
-        assert self.isNetworkStart
+        assert self.isNetworkStart and self.isCompiled
         dst_shell = self.net.get(dst_host)
         src_shell = self.net.get(src_host)
         output = ""
         try:
+            info('executing receive.py...\n')
             output = dst_shell.cmd('./topo/FatTree6/receive.py &')
         except Exception as e:
-            error(f"fail to launch receive.py on {dst_host}. Detailed info is as follow:{e}")
+            error(f"fail to launch receive.py on {dst_host}. Detailed info is as follow:{e}\n")
             return False
         
         if output != "":
@@ -267,7 +347,7 @@ class FatTree6(NetworkAPI):
         try:
             output = src_shell.cmd(f'./topo/FatTree6/send.py --ip {dst_shell.IP()} --m tag')
         except Exception as e:
-            error(f"fail to launch send.py on {src_host}. Detailed info is as follow:{e}")
+            error(f"fail to launch send.py on {src_host}. Detailed info is as follow:{e}\n")
             return False
         if output != "":
             print("successful execution:")
@@ -286,9 +366,10 @@ class FatTree6(NetworkAPI):
 
         try:
             dst_shell.cmd("pkill -f 'python3 ./topo/FatTree6/receive.py'")
+            info('receive.py killed.\n')
             res["stop_receiving"] = True
         except Exception as e:
-            error(f'fail to kill receive.py. Detailed info is as follow:{e}')
+            error(f'fail to kill receive.py. Detailed info is as follow:{e}\n')
 
         with open("res.json", "w")as f:
             json.dump(res, f, indent=4)
@@ -303,7 +384,7 @@ class FatTree6(NetworkAPI):
         """
         #TODO 要将结果以什么样的形式传回去？
 
-        assert self.isNetworkStart
+        assert self.isNetworkStart and self.isCompiled
         cur_sw = self.net.get(swid)
         dst_sw = self.net.get(dst_swid)
         dst_port = None
@@ -315,8 +396,8 @@ class FatTree6(NetworkAPI):
                 if peer.node == dst_sw:
                     dst_port = re.findall("eth(.*)", intf.name)[0]
         if dst_port == None: 
-            info(f'These two switches are not neighbours! You can\'t modify switch {swid}.')
-            return
+            info(f'These two switches are not neighbours! You can\'t modify switch {swid}.\n')
+            return False
         
         # 将每一条有关该目的地主机的流表进行修改
         h = self.net.get(dst_host)
@@ -324,8 +405,8 @@ class FatTree6(NetworkAPI):
         try:
             output = self.net.get(swid).cmd(f'echo "table_dump MyIngress.ipv4_lpm" | simple_switch_CLI --thrift-port {thriftPort}')
         except Exception as e:
-            error(f"Execution of your command failed. Detailed info is as follow:{e} ")
-            return
+            error(f"Execution of your command failed. Detailed info is as follow:{e}\n")
+            return False
         handle = None
         hexIP = hex_IP(h.IP())
         for line in output.strip().split('\n'):
@@ -337,7 +418,9 @@ class FatTree6(NetworkAPI):
                 cmd = f'echo "table_modify ipv4_lpm ipv4_forward {handle} {h.MAC()} {dst_port}" | simple_switch_CLI --thrift-port {thriftPort}'
                 res = self.net.get(swid).cmd(cmd)
                 handle = None
-                info('modify results:\n' + res)
+                info('modify results:\n' + res + '\n')
+        
+        return True
 
     def stopNetwork(self):
         super().stopNetwork()
