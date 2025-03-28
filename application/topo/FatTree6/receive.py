@@ -54,7 +54,7 @@ def verification(pkt: Packet):
     # print("rules: %s" %(rules))
     key = src_ip + '-' + dst_ip
 
-    with open("res.json", "w")as f:
+    with open("res.json", "w")as f: # 如果发送的是一个普通的包，res.json里面的下面三条信息将无效
         res = {
             "src_ip":src_ip,
             "dst_ip":dst_ip,
@@ -151,9 +151,9 @@ def verification(pkt: Packet):
                     
             if found:
                 print('Inconsistent = source-destination pair: (%s, %s), path: %s, expected_path: %s, time: %s' % (src_ip, dst_ip, path, expected_path, time.time()))
-                bug_num = bug_num + 1
-                if bug_num == 7:
-                    sys.exit()
+                # bug_num = bug_num + 1
+                # if bug_num == 7:
+                #     sys.exit()
     
         json.dump(res, f, indent=4)
         
