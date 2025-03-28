@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P4Prime</title>
+    <title>P4Prime - 网络路径检测</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../static/style.css">
 </head>
@@ -12,7 +12,7 @@
 <body>
     <!-- 顶部栏 -->
     <div class="top-bar">
-        <h1>P4Prime</h1>
+        <h1>P4Prime - 网络路径检测与故障定位</h1>
         <div id="time"></div>
     </div>
 
@@ -38,20 +38,70 @@
     <!-- 主内容 -->
     <div class="main-content">
         <div class="header">
-            <h1>P4Prime: 路径一致性检测与故障交换机定位</h1>
-        </div>
-        <div class="section">
-            <p>本系统基于P4Prime, 对网络拓扑中主机之间转发的数据包进行路径一致性检测</p>
+            <h1>✨ 欢迎使用 P4Prime</h1>
         </div>
 
-        <!-- 中央按钮 -->
-        <!-- <div id="centralButtonContainer" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000;">
-            <button id="sendButton" style="padding: 15px 30px; font-size: 18px;">Send</button>
-        </div> -->
+        <!-- 系统介绍 -->
+        <div class="section">
+            <h2>📜 系统简介</h2>
+            <p>P4Prime 是一个基于 <span class="highlight">P4 网络编程语言</span> 的网络路径一致性检测与故障交换机定位系统，帮助用户快速定位网络故障。</p>
+            <ul>
+                <li>💻 支持 FatTree 网络拓扑（FatTree4、FatTree6）的可视化展示与管理</li>
+                <li>📊 实现网络流量路径一致性检测与流量注入</li>
+                <li>🔧 支持动态修改交换机流表，实现灵活的流量控制</li>
+                <li>🚦 快速定位网络故障并高亮展示异常路径</li>
+            </ul>
+        </div>
+
+        <!-- 功能介绍 -->
+        <div class="section">
+            <h2>🟢 功能使用指南</h2>
+
+            <h3>1️⃣ 构建拓扑</h3>
+            <p>在侧边栏点击 <strong>拓扑</strong> → <strong>FatTree6</strong>，进入拓扑管理页面：</p>
+            <ol>
+                <li>点击 <strong>“装载 P4 代码”</strong>：编译并初始化网络拓扑。</li>
+                <li>点击 <strong>“生成拓扑”</strong>：生成并展示网络拓扑图。</li>
+                <li>点击 <strong>“注入流表”</strong>：向交换机注入初始流表。</li>
+            </ol>
+
+            <h3>2️⃣ 流量注入</h3>
+            <p>在 <strong>FatTree6</strong> 页面中的 <strong>流量注入</strong> 模块：</p>
+            <ol>
+                <li>输入源主机 ID（如 <code>h1</code>）和目标主机 ID（如 <code>h2</code>）。</li>
+                <li>点击 <strong>“发送”</strong>：系统会展示流量路径。</li>
+                <li>路径一致显示为 <span class="highlightG">绿色</span>，不一致显示为 <span class="highlightR">红色</span>。</li>
+            </ol>
+
+            <h3>3️⃣ 流表修改</h3>
+            <p>在 <strong>FatTree6</strong> 页面中的 <strong>流表修改</strong> 模块：</p>
+            <ol>
+                <li>选择被修改交换机 ID、目标交换机 ID、目标主机 ID。</li>
+                <li>点击 <strong>“修改”</strong>：调整流表配置。</li>
+                <li>修改成功后展示新的路径。</li>
+            </ol>
+
+            <h3>4️⃣ 设置</h3>
+            <p>在 <strong>设置</strong> 页面：</p>
+            <ul>
+                <li>配置拓扑样式，定制主机和交换机外观</li>
+                <li>保存配置，实现个性化展示</li>
+            </ul>
+        </div>
+
+        <!-- 系统提示 -->
+        <div class="section">
+            <h2>⚙️ 注意事项</h2>
+            <ul>
+                <li>确保先生成拓扑和注入流表，再进行流量注入。</li>
+                <li>输入的主机和交换机 ID 必须有效。</li>
+                <li>配置修改需点击 <strong>“保存”</strong> 才能生效。</li>
+            </ul>
+        </div>
     </div>
 
     <!-- 外部 JS -->
-    <script src="../static/main.js"></script>s
+    <script src="../static/main.js"></script>
 </body>
 
 </html>

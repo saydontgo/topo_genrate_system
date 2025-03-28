@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <link rel="stylesheet" href="../static/style.css">
 </head>
+
 <body>
 
     <!-- 顶部栏 -->
@@ -32,7 +33,6 @@
                     <li><a href="#">FatTree4</a></li>
                     <li><a href="/topology/fattree6">FatTree6</a></li>
                     <li><a href="#">新增拓扑</a></li>
-                    <li><a href="custom_topology.html">自定义拓扑</a></li>
                 </ul>
             </li>
             <li><a href="/settings"><i class="fas fa-cog"></i> 设置</a></li>
@@ -47,10 +47,31 @@
 
         <div class="section" id="fatTree6">
             <h2>FatTree6 拓扑</h2>
-            <p>点击下方按钮生成并查看 FatTree6 网络拓扑。</p>
+            <!-- 装载 P4 代码（原来“生成拓扑”按钮的位置） -->
+            <div class="section" style="margin-top: 10px; padding-top: 0;">
+                <h3 style="color: #006064;">装载 P4 代码</h3>
+                <p style="margin-bottom: 10px;">点击下方按钮装载 FatTree6 网络的 P4 代码。</p>
+                <button class="loadP4Code">装载</button>
+                <div id="loadResult" style="margin-top: 10px; color: darkblue;"></div>
+            </div>
 
-            <!-- 拓扑按钮 -->
-            <button class="generateFattree6">生成 FatTree6 拓扑</button>
+            <!-- 生成拓扑 和 注入流表 并排 -->
+            <div style="display: flex; gap: 20px; margin-top: 20px;">
+                <!-- 生成拓扑 -->
+                <div class="section" style="flex: 1;">
+                    <h3 style="color: #006064;">生成拓扑</h3>
+                    <p style="margin-bottom: 10px;">点击下方按钮生成并查看 FatTree6 网络拓扑。</p>
+                    <button class="generateFattree6">生成 FatTree6 拓扑</button>
+                </div>
+
+                <!-- 注入流表 -->
+                <div class="section" style="flex: 1;">
+                    <h3 style="color: #006064;">注入流表</h3>
+                    <p style="margin-bottom: 10px;">点击下方按钮模拟注入 FatTree6 网络中的初始流表。</p>
+                    <button class="injectFlowTable">注入流表</button>
+                    <div id="injectResult" style="margin-top: 10px; color: darkgreen;"></div>
+                </div>
+            </div>
 
             <!-- 网络拓扑展示 + 节点信息 -->
             <div class="network-container">
@@ -62,30 +83,37 @@
                 </div>
             </div>
         </div>
+        <!-- 发送请求 -->
         <div class="send-area" style="margin-top: 20px;">
             <h3>发送请求</h3>
             <label for="srcHost">源主机 ID：</label>
             <input type="text" id="srcHost" placeholder="如 h1">
             <label for="dstHost">目标主机 ID：</label>
             <input type="text" id="dstHost" placeholder="如 h2">
+            <div id="hostHint" style="font-size: 14px; color: #888; margin-bottom: 10px;"></div> <!-- 主机范围提示 -->
             <button id="sendButton">发送</button>
             <div id="sendResult" style="margin-top:10px; color: green;"></div>
         </div>
+
+        <!-- 修改流表 -->
         <div class="modify-area" style="margin-top: 30px;">
             <h3>修改流表</h3>
             <label for="modSwid">被修改交换机 ID：</label>
             <input type="text" id="modSwid" placeholder="如 s1">
             <label for="modDstSwid">目标交换机 ID：</label>
-            <input type="text" id="modDstSwid" placeholder="如 s2">
+            <select id="modDstSwid"></select>
             <label for="modDstHost">目标主机 ID：</label>
             <input type="text" id="modDstHost" placeholder="如 h3">
+            <div id="switchHint" style="font-size: 14px; color: #888; margin-bottom: 10px;"></div> <!-- 交换机范围提示 -->
             <button id="modifyButton">修改</button>
             <div id="modifyResult" style="margin-top:10px; color: blue;"></div>
         </div>
+
     </div>
 
     <!-- 外部 JS -->
     <script src="../static/main.js"></script>
     <script src="../static/topo.js"></script>
 </body>
+
 </html>
