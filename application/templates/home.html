@@ -10,29 +10,26 @@
 </head>
 
 <body>
-    <!-- 顶部栏 -->
     <div class="top-bar">
-        <h1>P4Prime - 网络路径检测与故障定位</h1>
+        <h1>P4Prime - 主页</h1>
+
+        <!-- 导航菜单 -->
+        <div class="nav-menu">
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> 主页</a></li>
+                <li class="has-submenu">
+                    <a href="#"><i class="fas fa-network-wired"></i> 拓扑</a>
+                    <ul class="sub-menu">
+                        <li><a href="#">FatTree4</a></li>
+                        <li><a href="/topology/fattree6">FatTree6</a></li>
+                        <li><a href="#">新增拓扑</a></li>
+                    </ul>
+                </li>
+                <li><a href="/settings"><i class="fas fa-cog"></i> 设置</a></li>
+            </ul>
+        </div>
+
         <div id="time"></div>
-    </div>
-
-    <!-- 汉堡菜单 -->
-    <i class="hamburger fas fa-bars"></i>
-
-    <!-- 侧边栏 -->
-    <div class="sidebar">
-        <h3>菜单</h3>
-        <ul>
-            <li><a href="#"><i class="fas fa-home"></i> 主页</a></li>
-            <li>
-                <a href="topology"><i class="fas fa-network-wired"></i> 拓扑</a>
-                <ul class="sub-menu">
-                    <li><a href="#" class="fatTree4">FatTree4</a></li>
-                    <li><a href="#" class="fatTree6">FatTree6</a></li>
-                </ul>
-            </li>
-            <li><a href="settings"><i class="fas fa-cog"></i> 设置</a></li>
-        </ul>
     </div>
 
     <!-- 主内容 -->
@@ -69,6 +66,7 @@
             <p>在 <strong>FatTree6</strong> 页面中的 <strong>流量注入</strong> 模块：</p>
             <ol>
                 <li>输入源主机 ID（如 <code>h1</code>）和目标主机 ID（如 <code>h2</code>）。</li>
+                <li>能输入的主机范围会在构建拓扑后给出。</li>
                 <li>点击 <strong>“发送”</strong>：系统会展示流量路径。</li>
                 <li>路径一致显示为 <span class="highlightG">绿色</span>，不一致显示为 <span class="highlightR">红色</span>。</li>
             </ol>
@@ -77,6 +75,7 @@
             <p>在 <strong>FatTree6</strong> 页面中的 <strong>流表修改</strong> 模块：</p>
             <ol>
                 <li>选择被修改交换机 ID、目标交换机 ID、目标主机 ID。</li>
+                <li>被修改交换机修改后的下一跳即为目标交换机。</li>
                 <li>点击 <strong>“修改”</strong>：调整流表配置。</li>
                 <li>修改成功后展示新的路径。</li>
             </ol>

@@ -1,8 +1,8 @@
 {
-  "hostShape": "hexagon",
-  "hostColor": "#6f0dbf",
+  "hostShape": "dot",
+  "hostColor": "#13fbd5",
   "hostSize": 25,
-  "switchShape": "triangle",
-  "switchColor": "#04f500",
+  "switchShape": "box",
+  "switchColor": "#ff0505",
   "switchSize": 25
 }
