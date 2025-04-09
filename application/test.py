@@ -168,18 +168,18 @@ def get_settings():
     
 @app.route("/load_p4_code", methods=["POST"])
 def load_p4_code():
-    print("开始构建拓扑")
-    print("拓扑构建完成")
+    print("开始构建拓扑...")
     success = current_topology.clean_and_compile()
+    print("拓扑构建完成")
     if success:
         return jsonify({"message": "P4 代码装载成功！"})
     return jsonify({"message": "P4 代码装载失败，请检查错误！"}), 500
 
 @app.route("/inject_flow_table", methods=["POST"])
 def inject_flow_table():
-    print("开始注入流表")
-    print("流表注入完成")
+    print("开始注入流表...")
     success = current_topology.program_switches()
+    print("流表注入完成")
     if success:
         return jsonify({"message": "流表注入成功！"})
     return jsonify({"message": "流表注入失败，请检查错误！"}), 500
