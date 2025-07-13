@@ -293,3 +293,172 @@ button:hover,
   margin: 0 auto;
   padding: 20px;
 }
+
+/* ========== AI 助手功能新增样式 ========== */
+
+/* --- AI助手开关样式 --- */
+.ai-assistant-switch {
+    /* 固定在右上角，不随页面滚动 */
+    position: fixed;
+    top: 15px;
+    right: 25px;
+    
+    /* 设定一个高层级，确保在最上层显示 */
+    z-index: 1001; 
+
+    /* 外观样式 */
+    background-image: linear-gradient(120deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    
+    /* Flexbox用于对齐图标和文字 */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 图标和文字的间距 */
+    
+    /* 添加阴影和过渡动画 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.ai-assistant-switch:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* --- AI助手侧边栏样式 --- */
+.ai-assistant-sidebar {
+    position: fixed;
+    top: 0;
+    right: -400px; /* 默认隐藏在屏幕右侧外 */
+    width: 400px;
+    max-width: 90vw; /* 在小屏幕上不超过视窗宽度的90% */
+    height: 100%;
+    
+    background-color: #f4f7f9; 
+    box-shadow: -3px 0 15px rgba(0,0,0,0.15);
+    z-index: 1000;
+    
+    display: flex;
+    flex-direction: column;
+    
+    /* 核心动画：控制 right 属性实现平滑滑出 */
+    transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* 当侧边栏拥有 .open 类时，滑入视图 */
+.ai-assistant-sidebar.open {
+    right: 0; 
+}
+
+/* 侧边栏头部 */
+.sidebar-header {
+    padding: 15px 20px;
+    background-color: #006064; /* 与页面其他元素颜色协调 */
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0; /* 防止头部在flex布局中被压缩 */
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+
+/* 聊天窗口 */
+.chat-window {
+    flex-grow: 1; /* 占据所有可用垂直空间 */
+    padding: 20px;
+    overflow-y: auto; /* 内容溢出时显示滚动条 */
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.chat-message {
+    padding: 12px 18px;
+    border-radius: 20px;
+    max-width: 85%;
+    line-height: 1.5;
+    word-wrap: break-word; /* 确保长单词或链接能正常换行 */
+}
+
+/* 机器人消息气泡 */
+.chat-message.bot {
+    background-color: #eef1f5;
+    color: #333;
+    align-self: flex-start; /* 左对齐 */
+    border-top-left-radius: 5px; 
+}
+
+/* 用户消息气泡 */
+.chat-message.user {
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end; /* 右对齐 */
+    border-top-right-radius: 5px;
+}
+
+
+/* 聊天输入区域 */
+.chat-input {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-top: 1px solid #dde3ea;
+    background-color: #f4f7f9;
+    flex-shrink: 0;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    padding: 12px 18px;
+    border: 1px solid #ccc;
+    border-radius: 22px;
+    margin-right: 10px;
+    outline: none;
+    font-size: 16px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.chat-input input:focus {
+    border-color: #007bff;
+}
+
+/* 发送按钮 */
+.chat-input button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%; /* 圆形 */
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.3s ease;
+}
+
+.chat-input button:hover {
+    background-color: #0056b3;
+}

@@ -15,6 +15,11 @@
 
     <div class="top-bar">
         <h1>P4Prime - FatTree6 拓扑</h1>
+        <!-- *** START: 新增的AI助手开关 *** -->
+        <div class="ai-assistant-switch" id="ai-assistant-switch">
+            <i class="fas fa-robot"></i> AI 助手
+        </div>
+        <!-- *** END: 新增的AI助手开关 *** -->
 
         <!-- 导航菜单 -->
         <div class="nav-menu">
@@ -97,6 +102,27 @@
 
     <script src="../static/main.js"></script>
     <script src="../static/topo.js"></script>
+        <script src="../static/main.js"></script>
+    <script src="../static/topo.js"></script>
+
+    <!-- *** START: 新增的AI助手侧边栏 *** -->
+    <div class="ai-assistant-sidebar" id="ai-assistant-sidebar">
+        <div class="sidebar-header">
+            <h3>AI 助手</h3>
+            <button class="close-btn" id="close-ai-sidebar">×</button>
+        </div>
+        <div class="chat-window" id="chat-window">
+            <!-- 聊天消息会动态添加到这里 -->
+            <div class="chat-message bot">你好！有什么可以帮助你分析这个FatTree6拓扑吗？</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="在此输入你的问题...">
+            <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <!-- *** END: 新增的AI助手侧边栏 *** -->
+
+</body>
 </body>
 
 </html>

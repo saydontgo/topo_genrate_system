@@ -412,3 +412,81 @@ function updateDstSwitchOptions() {
         dstSelect.appendChild(option);
     });
 }
+
+// ========== AI 助手交互功能 ==========
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有需要的DOM元素
+    const aiSwitch = document.getElementById('ai-assistant-switch');
+    const aiSidebar = document.getElementById('ai-assistant-sidebar');
+    const closeBtn = document.getElementById('close-ai-sidebar');
+    const sendBtn = document.getElementById('send-btn');
+    const userInput = document.getElementById('user-input');
+    const chatWindow = document.getElementById('chat-window');
+
+    // 检查元素是否存在，避免在没有这些元素的页面上报错
+    if (!aiSwitch || !aiSidebar || !closeBtn || !sendBtn || !userInput || !chatWindow) {
+        console.log("AI assistant elements not found on this page.");
+        return;
+    }
+
+    // --- 事件监听 ---
+
+    // 点击开关，打开侧边栏
+    aiSwitch.addEventListener('click', (event) => {
+        event.stopPropagation(); // 防止事件冒泡到document
+        aiSidebar.classList.add('open');
+    });
+
+    // 点击关闭按钮，关闭侧边栏
+    closeBtn.addEventListener('click', () => {
+        aiSidebar.classList.remove('open');
+    });
+
+    // 点击页面其他地方，关闭侧边栏
+    document.addEventListener('click', (event) => {
+        if (aiSidebar.classList.contains('open') && !aiSidebar.contains(event.target)) {
+            aiSidebar.classList.remove('open');
+        }
+    });
+
+    // --- 核心功能函数 ---
+
+    // 发送消息的函数
+    const sendMessage = () => {
+        const messageText = userInput.value.trim();
+        if (messageText === '') return; // 不发送空消息
+
+        // 1. 在聊天窗口中创建并显示用户的消息
+        appendMessage(messageText, 'user');
+
+        // 2. 清空输入框并重新聚焦
+        userInput.value = '';
+        userInput.focus();
+
+        // 3. 模拟机器人思考并回复 (实际项目中应替换为API调用)
+        setTimeout(() => {
+            const botResponse = "这是AI的模拟回复。我收到了您的消息：'" + messageText + "'";
+            appendMessage(botResponse, 'bot');
+        }, 600);
+    };
+    
+    // 将消息添加到聊天窗口的辅助函数
+    const appendMessage = (text, type) => {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('chat-message', type); // type 是 'user' 或 'bot'
+        messageElement.textContent = text;
+        chatWindow.appendChild(messageElement);
+
+        // 自动滚动到最新消息
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    };
+
+    // 绑定发送事件
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (event) => {
+        // 按下回车键(Enter)也发送消息
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
+});
