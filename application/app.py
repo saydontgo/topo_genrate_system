@@ -3,7 +3,7 @@ import threading
 import json
 import os
 import topo.FatTree6.FatTree6 as ft6
-
+from LLM import secure_session_id, call_llm_1
 app = Flask(__name__)
 
 current_topology = ft6.FatTree6() 
@@ -184,8 +184,24 @@ def inject_flow_table():
         return jsonify({"message": "流表注入成功！"})
     return jsonify({"message": "流表注入失败，请检查错误！"}), 500
 
+# ai大模型的调用逻辑
+@app.route("/call_llm", methods=["POST"])
+def call_llm():
+    data = request.get_json()
+    session_id = data.get("session_id") 
+    user_message = data.get("message")
+
+    if not user_message:
+        return jsonify({"error": "Missing message"}), 400
+    
+    if not session_id: # 生成一个session_id,维护对话
+        session_id = secure_session_id()
+
+    # 大模型的回答存储在response里面
+    response = call_llm_1()
+    
 
 
 # 启动服务
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)
