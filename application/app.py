@@ -199,6 +199,8 @@ def call_llm():
 
     # 大模型的回答存储在response里面
     response = call_llm_1()
+
+    return jsonify({"response": response, "session_id": session_id})
     
 
 
