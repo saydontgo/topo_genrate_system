@@ -198,7 +198,7 @@ def call_llm():
         session_id = secure_session_id()
 
     # 大模型的回答存储在response里面
-    response = call_llm_1()
+    response = call_llm_1(session_id, user_message)
 
     return jsonify({"response": response, "session_id": session_id})
     
@@ -206,4 +206,4 @@ def call_llm():
 
 # 启动服务
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

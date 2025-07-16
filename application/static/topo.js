@@ -413,7 +413,7 @@ function updateDstSwitchOptions() {
     });
 }
 
-// ========== AI 助手交互功能 ==========
+// ========== AI 助手交互功能 (对接 /call_llm 路由) ==========
 document.addEventListener('DOMContentLoaded', function() {
     // 获取所有需要的DOM元素
     const aiSwitch = document.getElementById('ai-assistant-switch');
@@ -423,68 +423,100 @@ document.addEventListener('DOMContentLoaded', function() {
     const userInput = document.getElementById('user-input');
     const chatWindow = document.getElementById('chat-window');
 
-    // 检查元素是否存在，避免在没有这些元素的页面上报错
-    if (!aiSwitch || !aiSidebar || !closeBtn || !sendBtn || !userInput || !chatWindow) {
-        console.log("AI assistant elements not found on this page.");
+    if (!aiSwitch || !aiSidebar) {
         return;
     }
 
-    // --- 事件监听 ---
+    // 在前端维护当前对话的 session_id。初始为 null。
+    let currentSessionId = null;
 
-    // 点击开关，打开侧边栏
+    // --- 事件监听 (这部分保持不变) ---
     aiSwitch.addEventListener('click', (event) => {
-        event.stopPropagation(); // 防止事件冒泡到document
+        event.stopPropagation();
         aiSidebar.classList.add('open');
     });
 
-    // 点击关闭按钮，关闭侧边栏
     closeBtn.addEventListener('click', () => {
         aiSidebar.classList.remove('open');
     });
 
-    // 点击页面其他地方，关闭侧边栏
     document.addEventListener('click', (event) => {
         if (aiSidebar.classList.contains('open') && !aiSidebar.contains(event.target)) {
             aiSidebar.classList.remove('open');
         }
     });
 
-    // --- 核心功能函数 ---
 
-    // 发送消息的函数
-    const sendMessage = () => {
-        const messageText = userInput.value.trim();
-        if (messageText === '') return; // 不发送空消息
+    // sendMessage 函数
+const sendMessage = async () => {
+    const messageText = userInput.value.trim();
+    if (messageText === '') return;
 
-        // 1. 在聊天窗口中创建并显示用户的消息
-        appendMessage(messageText, 'user');
+    appendMessage(messageText, 'user');
+    userInput.value = '';
+    userInput.focus();
 
-        // 2. 清空输入框并重新聚焦
-        userInput.value = '';
-        userInput.focus();
+    const thinkingMessage = appendMessage('正在思考中...', 'bot', true);
 
-        // 3. 模拟机器人思考并回复 (实际项目中应替换为API调用)
-        setTimeout(() => {
-            const botResponse = "这是AI的模拟回复。我收到了您的消息：'" + messageText + "'";
-            appendMessage(botResponse, 'bot');
-        }, 600);
-    };
+    try {
+        const response = await fetch('/call_llm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: messageText,
+                session_id: currentSessionId
+            })
+        });
+
+        // 在解析前，先检查 Content-Type 头
+        const contentType = response.headers.get("content-type");
+        if (!response.ok || !contentType || !contentType.includes("application/json")) {
+            // 如果状态码不是 2xx，或者返回的不是JSON，就读取文本内容并抛出错误
+            const errorText = await response.text(); // 读取返回的HTML或文本
+            throw new Error(`服务器返回了无效的响应 (状态: ${response.status})。内容: ${errorText.substring(0, 100)}...`);
+        }
+
+        // 只有当检查通过时，才安全地解析JSON
+        const data = await response.json();
+
+        currentSessionId = data.session_id;
+        const botResponse = data.response;
+        
+        chatWindow.removeChild(thinkingMessage);
+        appendMessage(botResponse, 'bot');
+
+    } catch (error) {
+        console.error('Error calling LLM API:', error);
+        if (thinkingMessage && chatWindow.contains(thinkingMessage)) {
+            chatWindow.removeChild(thinkingMessage);
+        }
+        // 显示更详细的错误信息
+        appendMessage(`请求失败: ${error.message}`, 'bot');
+    }
+};
     
-    // 将消息添加到聊天窗口的辅助函数
-    const appendMessage = (text, type) => {
+    // 将消息添加到聊天窗口的辅助函数 ("思考中"状态)
+    const appendMessage = (text, type, isThinking = false) => {
         const messageElement = document.createElement('div');
-        messageElement.classList.add('chat-message', type); // type 是 'user' 或 'bot'
+        messageElement.classList.add('chat-message', type);
+        if (isThinking) {
+            messageElement.classList.add('thinking'); 
+        }
         messageElement.textContent = text;
         chatWindow.appendChild(messageElement);
 
         // 自动滚动到最新消息
         chatWindow.scrollTop = chatWindow.scrollHeight;
+        
+        // 返回创建的元素，方便后续移除它
+        return messageElement;
     };
 
-    // 绑定发送事件
+    // 绑定发送事件 (保持不变)
     sendBtn.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', (event) => {
-        // 按下回车键(Enter)也发送消息
         if (event.key === 'Enter') {
             sendMessage();
         }
