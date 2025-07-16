@@ -3,8 +3,8 @@ import json
 import uuid, hashlib
 from openai import OpenAI
 
-# redis默认使用6379接口,这里使用6380是因为端口被占用了
-r = redis.Redis(host='localhost', port=6399, decode_responses=True)
+# redis默认使用6379接口
+r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
 # 维护一个动态session列表
 active_sessions = []

@@ -1,9 +1,10 @@
 from flask import Flask, render_template, jsonify, request
 import threading
+import atexit
 import json
 import os
 import topo.FatTree6.FatTree6 as ft6
-from LLM import secure_session_id, call_llm_1
+from LLM import secure_session_id, call_llm_1, r
 app = Flask(__name__)
 
 current_topology = ft6.FatTree6() 
@@ -201,8 +202,14 @@ def call_llm():
     response = call_llm_1(session_id, user_message)
 
     return jsonify({"response": response, "session_id": session_id})
-    
 
+# 清除redis内存  
+@atexit.register
+def cleanup_redis():
+    print("quiting Flask, cleanning all the history")
+    keys = r.keys("chat_history:*")
+    if keys:
+        r.delete(*keys)
 
 # 启动服务
 if __name__ == '__main__':
