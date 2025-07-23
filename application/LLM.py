@@ -24,24 +24,39 @@ def get_history(session_id):
     data = r.get(f"chat_history:{session_id}")
     return json.loads(data) if data else []
 
-def append_message(session_id, role, content):
+def append_message(session_id, role, user_message, topo=None):
     key = f"chat_history:{session_id}"
     history = get_history(session_id)
-    history.append({"role": role, "content": content})
+    content = [{
+                    "type": "text",
+                    "text": user_message
+            }]
+    
+    if topo:
+        content.append({
+                    "type": "text",
+                    "text": topo
+            })
+        
+    history.append(
+        {
+            "role": role, 
+            "content": content
+        })
     r.set(key, json.dumps(history))
 
 
 
-def call_llm_1(session_id, user_message):
+def call_llm_1(session_id, user_message, topo=None):
     client = OpenAI(
         api_key='sk-79784ea536174319bd82937f20da9c52',  # 替换为您的API密钥
         base_url="https://chat.ecnu.edu.cn/open/api/v1",
     )
 
-    append_message(session_id, 'user', user_message)
+    append_message(session_id, 'user', user_message, topo)
     history = get_history(session_id)
     completion = client.chat.completions.create(
-        model="ecnu-max", # 模型列表：https://developer.ecnu.edu.cn/vitepress/llm/api/models.html
+        model="ecnu-vl", # 模型列表：https://developer.ecnu.edu.cn/vitepress/llm/api/models.html
         messages=history
         )
 
@@ -55,10 +70,16 @@ def call_llm_1(session_id, user_message):
 
 if __name__ == '__main__':
     session_id = secure_session_id()
+    with open('test.json', 'r') as f:
+        topo = f.read()
+        print(topo)
     # ctrl + c 退出
     try:
         while True:
             message = input('请输入: ')
-            call_llm_1(session_id, message)
+            response = call_llm_1(session_id, message, topo)
+            print('--------------以下是ai的回复----------------')
+            print(response)
+            print('--------------以上是ai的回复----------------')
     except KeyboardInterrupt:
         exit(0)
