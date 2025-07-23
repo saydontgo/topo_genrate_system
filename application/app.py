@@ -188,20 +188,31 @@ def inject_flow_table():
 # ai大模型的调用逻辑
 @app.route("/call_llm", methods=["POST"])
 def call_llm():
-    data = request.get_json()
-    session_id = data.get("session_id") 
-    user_message = data.get("message")
+    # 前端使用formData?
+    topo = request.files.get('file')
+    data = request.form.get('json')
+    try:
+        session_id = data.get("session_id") 
+        user_message = data.get("message")
+    except Exception:
+        # session_id, message获取失败
+        return {'error': 'Invalid JSON'}, 400
 
     if not user_message:
-        return jsonify({"error": "Missing message"}), 400
+        return {"error": "Missing message"}, 400
     
+    try:
+        topo_info = topo.read().decode('utf-8')
+    except Exception:
+        return {"error": "can't read your topology file"}, 400
+
     if not session_id: # 生成一个session_id,维护对话
         session_id = secure_session_id()
 
     # 大模型的回答存储在response里面
-    response = call_llm_1(session_id, user_message)
+    response = call_llm_1(session_id, user_message, topo_info)
 
-    return jsonify({"response": response, "session_id": session_id})
+    return {"response": response, "session_id": session_id}
 
 # 清除redis内存  
 @atexit.register
