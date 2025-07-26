@@ -462,3 +462,109 @@ button:hover,
 .chat-input button:hover {
     background-color: #0056b3;
 }
+/* --- AI助手 V2 新增/修改样式 --- */
+
+/* 错误提示 */
+.error-message {
+    color: #D32F2F; /* 沿用高亮红色 */
+    font-size: 14px;
+    margin-top: 10px;
+    padding: 8px;
+    background-color: #ffcdd2;
+    border-radius: 4px;
+    display: none; /* 默认隐藏 */
+}
+
+/* 格式提示 */
+.format-hint {
+    font-size: 13px;
+    color: #555;
+    margin-top: 20px;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+}
+.format-hint a {
+    color: #007bff;
+    text-decoration: none;
+}
+.format-hint pre {
+    margin-top: 8px;
+    background-color: #eee;
+    padding: 10px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* 上传按钮 */
+.chat-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #004d66;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.chat-button:hover {
+    background-color: #003d4d;
+}
+
+/* 聊天输入区总容器 */
+.chat-input-area {
+    padding: 10px 15px;
+    border-top: 1px solid #ddd;
+    background-color: #f4f4f4;
+}
+
+/* 猜你想问 */
+.suggested-questions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.suggested-question-btn {
+    background-color: #e0f2f1;
+    color: #004d66;
+    border: 1px solid #b2dfdb;
+    border-radius: 15px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.suggested-question-btn:hover {
+    background-color: #b2dfdb;
+    transform: translateY(-1px);
+}
+
+/* AI回复中的Markdown和下载样式 */
+.message-content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    margin-top: 10px;
+}
+
+.download-section {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+}
+.download-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #388e3c; /* 沿用高亮绿色 */
+    color: white;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.download-button:hover {
+    background-color: #2a6f2d;
+}

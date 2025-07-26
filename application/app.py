@@ -1,4 +1,9 @@
 from flask import Flask, render_template, jsonify, request
+from flask import session
+import io
+import zipfile
+import tempfile
+import shutil
 import threading
 import atexit
 import json
@@ -6,8 +11,9 @@ import os
 import topo.FatTree6.FatTree6 as ft6
 from LLM import secure_session_id, call_llm_1, r
 app = Flask(__name__)
-
-current_topology = ft6.FatTree6() 
+app.secret_key = 'your-very-secret-and-complex-key-here'
+current_topology = ft6.FatTree6()
+ 
 
 # 首页（主页）
 @app.route('/')
@@ -186,33 +192,107 @@ def inject_flow_table():
     return jsonify({"message": "流表注入失败，请检查错误！"}), 500
 
 # ai大模型的调用逻辑
-@app.route("/call_llm", methods=["POST"])
-def call_llm():
-    # 前端使用formData?
-    topo = request.files.get('file')
-    data = request.form.get('json')
-    try:
-        session_id = data.get("session_id") 
-        user_message = data.get("message")
-    except Exception:
-        # session_id, message获取失败
-        return {'error': 'Invalid JSON'}, 400
+# [新增] 拓扑文件上传与验证路由
+@app.route("/upload_topology", methods=["POST"])
+def upload_topology():
+    if 'file' not in request.files:
+        return jsonify({"error": "请求中没有找到文件部分"}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "没有选择任何文件"}), 400
 
-    if not user_message:
-        return {"error": "Missing message"}, 400
+    if not file or not file.filename.endswith('.json'):
+        return jsonify({"error": "文件无效或不是.json格式"}), 400
+        
+    try:
+        content = file.read().decode('utf-8')
+        topo_data = json.loads(content)
+    except Exception as e:
+        return jsonify({"error": f"JSON文件解析失败，请检查语法: {str(e)}"}), 400
+
+    # --- START: 【核心修改】基于新格式的严格验证逻辑 ---
+    try:
+        # 1. 验证顶层必需的键是否存在
+        required_keys = {"switch", "host", "link"}
+        if not required_keys.issubset(topo_data.keys()):
+            return jsonify({
+                "error": "JSON格式错误：文件必须包含 'switch', 'host', 和 'link' 三个顶级键。",
+                "template": "{ \"switch\": [...], \"host\": [...], \"link\": [...] }"
+            }), 400
+        
+        # 2. 验证非 'switch', 'host', 'link' 的其他键是否存在
+        allowed_keys = {"switch", "host", "link"}
+        extra_keys = set(topo_data.keys()) - allowed_keys
+        if extra_keys:
+             return jsonify({"error": f"JSON格式错误：发现了不允许的顶级键: {', '.join(extra_keys)}"}), 400
+
+        # 3. 创建所有已定义节点的集合，用于快速查找
+        all_nodes = set(topo_data.get("switch", [])) | set(topo_data.get("host", []))
+        if not all_nodes:
+            return jsonify({"error": "JSON格式错误：'switch' 和 'host' 列表不能为空。"}), 400
+
+        # 4. 遍历并验证 'link' 数组中的每一个链接对象
+        for link_obj in topo_data.get("link", []):
+            if not isinstance(link_obj, dict):
+                 return jsonify({"error": f"JSON格式错误：link数组中的元素必须是对象 (字典)。出错的元素: {link_obj}"}), 400
+
+            # a. 验证每个对象是否正好包含两个键 (代表一个连接的两个端点)
+            endpoints = list(link_obj.keys())
+            if len(endpoints) != 2:
+                return jsonify({"error": f"JSON格式错误：link对象必须正好包含两对键值对。出错的对象: {link_obj}"}), 400
+            
+            # b. 验证这个链接是否是双向的 (key1:value1, key2:value2 -> key1==value2, key2==value1)
+            ep1, ep2 = endpoints[0], endpoints[1]
+            if not (link_obj.get(ep1) == ep2 and link_obj.get(ep2) == ep1):
+                return jsonify({"error": f"JSON格式错误：link对象必须是双向的 (例如 {{'h1':'s1', 's1':'h1'}})。出错的对象: {link_obj}"}), 400
+
+            # c. 验证链接的两个端点是否都在已定义的节点集合中
+            if not {ep1, ep2}.issubset(all_nodes):
+                undefined_node = ep1 if ep1 not in all_nodes else ep2
+                return jsonify({"error": f"JSON格式错误：link中包含未在'switch'或'host'中定义的节点ID '{undefined_node}'。"}), 400
+
+    except TypeError as e:
+        return jsonify({"error": f"JSON数据类型错误，请检查所有值是否为正确的类型 (列表、字符串、对象等)。错误详情: {e}"}), 400
+    # --- END: 验证逻辑结束 ---
+
+    # 验证通过，将拓扑数据存入session，并初始化对话
+    session['topology_data'] = topo_data
+    session_id = secure_session_id()
+    session['session_id'] = session_id
+    
+    initial_prompt = "请对以下网络拓扑进行初步分析，并以Markdown格式返回。拓扑结构如下："
     
     try:
-        topo_info = topo.read().decode('utf-8')
-    except Exception:
-        return {"error": "can't read your topology file"}, 400
+        # 这里的 call_llm_1 来自你的 LLM.py
+        response_data = call_llm_1(session_id, initial_prompt, json.dumps(topo_data, indent=2))
+        return jsonify({
+            "message": "文件上传成功并通过验证！",
+            "session_id": session_id,
+            "initial_response": response_data
+        })
+    except Exception as e:
+        print(f"Error calling LLM after upload: {e}") # 在服务器端打印错误日志
+        return jsonify({"error": f"AI服务调用失败: {str(e)}"}), 502
 
-    if not session_id: # 生成一个session_id,维护对话
-        session_id = secure_session_id()
+# [新增] 对话路由
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json()
+    user_message = data.get("message")
+    session_id = session.get("session_id") # 从session中安全地获取session_id
 
-    # 大模型的回答存储在response里面
-    response = call_llm_1(session_id, user_message, topo_info)
+    if not session_id:
+        return jsonify({"error": "对话未初始化，请先上传拓扑文件。"}), 403
+    
+    if not user_message:
+        return jsonify({"error": "消息内容不能为空。"}), 400
 
-    return {"response": response, "session_id": session_id}
+    # 这里不再需要传递拓扑信息，因为它已经包含在Redis的历史记录中了
+    response_data = call_llm_1(session_id, user_message)
+    
+    # 假设 response_data 是一个包含分析、代码、问题等内容的复杂JSON字符串
+    return jsonify(response_data)
 
 # 清除redis内存  
 @atexit.register

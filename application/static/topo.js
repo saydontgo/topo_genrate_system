@@ -413,112 +413,232 @@ function updateDstSwitchOptions() {
     });
 }
 
-// ========== AI 助手交互功能 (对接 /call_llm 路由) ==========
+// ========== AI 助手交互功能 (V2 - 文件上传 & Markdown) ==========
 document.addEventListener('DOMContentLoaded', function() {
-    // 获取所有需要的DOM元素
-    const aiSwitch = document.getElementById('ai-assistant-switch');
+    // --- 获取DOM元素 ---
     const aiSidebar = document.getElementById('ai-assistant-sidebar');
-    const closeBtn = document.getElementById('close-ai-sidebar');
-    const sendBtn = document.getElementById('send-btn');
-    const userInput = document.getElementById('user-input');
+    if (!aiSidebar) return; // 如果页面没有助手，直接退出
+
     const chatWindow = document.getElementById('chat-window');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const uploadInitialScreen = document.getElementById('upload-initial-screen');
+    const uploadBtn = document.getElementById('upload-btn');
+    const fileInput = document.getElementById('topology-file-input');
+    const uploadError = document.getElementById('upload-error');
+    const chatInputArea = document.getElementById('chat-input-area');
+    const suggestedQuestionsContainer = document.getElementById('suggested-questions');
+    
+    // 格式详情提示
+    const showFormatDetailsLink = document.getElementById('show-format-details');
+    const formatDetails = document.getElementById('format-details');
 
-    if (!aiSwitch || !aiSidebar) {
-        return;
-    }
-
-    // 在前端维护当前对话的 session_id。初始为 null。
+    // --- 状态变量 ---
     let currentSessionId = null;
+    let isWaitingForResponse = false;
+    // 1. 获取控制滑动的相关元素
+    const aiSwitch = document.getElementById('ai-assistant-switch');
+    const closeBtn = document.getElementById('close-ai-sidebar');
 
-    // --- 事件监听 (这部分保持不变) ---
-    aiSwitch.addEventListener('click', (event) => {
-        event.stopPropagation();
-        aiSidebar.classList.add('open');
-    });
-
-    closeBtn.addEventListener('click', () => {
-        aiSidebar.classList.remove('open');
-    });
-
-    document.addEventListener('click', (event) => {
-        if (aiSidebar.classList.contains('open') && !aiSidebar.contains(event.target)) {
-            aiSidebar.classList.remove('open');
-        }
-    });
-
-
-    // sendMessage 函数
-const sendMessage = async () => {
-    const messageText = userInput.value.trim();
-    if (messageText === '') return;
-
-    appendMessage(messageText, 'user');
-    userInput.value = '';
-    userInput.focus();
-
-    const thinkingMessage = appendMessage('正在思考中...', 'bot', true);
-
-    try {
-        const response = await fetch('/call_llm', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                message: messageText,
-                session_id: currentSessionId
-            })
+    // 2. 确保这些控制元素存在，再绑定事件
+    if (aiSwitch && closeBtn && aiSidebar) {
+        
+        // 点击页面右上角的开关按钮
+        aiSwitch.addEventListener('click', (event) => {
+            // 阻止事件冒泡到document，以防立即触发下面的外部点击关闭逻辑
+            event.stopPropagation(); 
+            // 为侧边栏添加 .open 类，CSS会根据这个类来执行滑入动画
+            aiSidebar.classList.add('open');
         });
 
-        // 在解析前，先检查 Content-Type 头
-        const contentType = response.headers.get("content-type");
-        if (!response.ok || !contentType || !contentType.includes("application/json")) {
-            // 如果状态码不是 2xx，或者返回的不是JSON，就读取文本内容并抛出错误
-            const errorText = await response.text(); // 读取返回的HTML或文本
-            throw new Error(`服务器返回了无效的响应 (状态: ${response.status})。内容: ${errorText.substring(0, 100)}...`);
-        }
+        // 点击侧边栏内部的关闭按钮 (X)
+        closeBtn.addEventListener('click', () => {
+            // 移除 .open 类，CSS会执行滑出动画
+            aiSidebar.classList.remove('open');
+        });
 
-        // 只有当检查通过时，才安全地解析JSON
-        const data = await response.json();
-
-        currentSessionId = data.session_id;
-        const botResponse = data.response;
-        
-        chatWindow.removeChild(thinkingMessage);
-        appendMessage(botResponse, 'bot');
-
-    } catch (error) {
-        console.error('Error calling LLM API:', error);
-        if (thinkingMessage && chatWindow.contains(thinkingMessage)) {
-            chatWindow.removeChild(thinkingMessage);
-        }
-        // 显示更详细的错误信息
-        appendMessage(`请求失败: ${error.message}`, 'bot');
+        // 点击侧边栏外部的任何地方 (实现点击空白处关闭)
+        document.addEventListener('click', (event) => {
+            // 检查侧边栏是否是打开状态，并且确认点击的不是开关按钮本身
+            if (aiSidebar.classList.contains('open') && !aiSwitch.contains(event.target)) {
+                 // 确认点击的目标不是侧边栏或其内部的任何元素
+                if (!aiSidebar.contains(event.target)) {
+                    aiSidebar.classList.remove('open');
+                }
+            }
+        });
     }
-};
-    
-    // 将消息添加到聊天窗口的辅助函数 ("思考中"状态)
-    const appendMessage = (text, type, isThinking = false) => {
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('chat-message', type);
-        if (isThinking) {
-            messageElement.classList.add('thinking'); 
-        }
-        messageElement.textContent = text;
-        chatWindow.appendChild(messageElement);
 
-        // 自动滚动到最新消息
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-        
-        // 返回创建的元素，方便后续移除它
-        return messageElement;
+    // --- 工具函数 ---
+    const toggleLoadingState = (isLoading) => {
+        isWaitingForResponse = isLoading;
+        userInput.disabled = isLoading;
+        sendBtn.disabled = isLoading;
+        if (isLoading) {
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        } else {
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        }
+    };
+    
+    const displayError = (message) => {
+        uploadError.textContent = message;
+        uploadError.style.display = 'block';
     };
 
-    // 绑定发送事件 (保持不变)
-    sendBtn.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            sendMessage();
+    // --- 核心功能 ---
+
+    // 1. 文件上传逻辑
+    uploadBtn.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        uploadError.style.display = 'none';
+        uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上传并验证中...';
+        uploadBtn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('/upload_topology', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // 显示后端返回的详细错误信息
+                let errorMsg = data.error || `服务器错误: ${response.status}`;
+                if (data.template) {
+                    errorMsg += `\n期望的格式类似: ${data.template}`;
+                }
+                throw new Error(errorMsg);
+            }
+            
+            // 上传成功！
+            currentSessionId = data.session_id;
+            uploadInitialScreen.style.display = 'none'; // 隐藏上传界面
+            chatInputArea.style.display = 'block';     // 显示输入框
+
+            // 显示AI的首次分析
+            appendBotMessage(data.initial_response);
+            toggleLoadingState(false);
+
+        } catch (error) {
+            displayError(error.message);
+        } finally {
+            uploadBtn.innerHTML = '<i class="fas fa-upload"></i> 点击上传文件';
+            uploadBtn.disabled = false;
+            fileInput.value = ''; // 清空文件选择，以便下次上传
         }
     });
+
+    // 2. 发送消息逻辑
+    const sendMessage = async () => {
+        const messageText = userInput.value.trim();
+        if (messageText === '' || isWaitingForResponse) return;
+
+        toggleLoadingState(true);
+        appendUserMessage(messageText);
+        userInput.value = '';
+        suggestedQuestionsContainer.innerHTML = ''; // 清空旧的推荐问题
+
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: messageText })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || '请求失败');
+
+            appendBotMessage(data);
+
+        } catch (error) {
+            const errorData = { analysis: `抱歉，请求出错：${error.message}`, files: [], questions: [] };
+            appendBotMessage(errorData);
+        } finally {
+            toggleLoadingState(false);
+        }
+    };
+
+    // 3. 渲染消息到UI
+    const appendUserMessage = (text) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message user';
+        messageDiv.textContent = text;
+        chatWindow.appendChild(messageDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    };
+    
+    const appendBotMessage = (data) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message bot';
+        
+        let htmlContent = '';
+        
+        // 渲染Markdown分析
+        if (data.analysis) {
+            htmlContent += `<div class="message-content">${marked.parse(data.analysis)}</div>`;
+        }
+
+        // 创建可下载的文件链接
+        if (data.files && data.files.length > 0) {
+            htmlContent += '<div class="download-section">';
+            data.files.forEach(file => {
+                if (file.content) {
+                    const blob = new Blob([file.content], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    htmlContent += `<a href="${url}" download="${file.filename}" class="download-button"><i class="fas fa-download"></i> 下载 ${file.filename}</a> `;
+                }
+            });
+            htmlContent += '</div>';
+        }
+        
+        messageDiv.innerHTML = htmlContent;
+        chatWindow.appendChild(messageDiv);
+
+        // 渲染"猜你想问"
+        suggestedQuestionsContainer.innerHTML = '';
+        if (data.questions && data.questions.length > 0) {
+            data.questions.forEach(q => {
+                if (!q) return;
+                const btn = document.createElement('button');
+                btn.className = 'suggested-question-btn';
+                btn.textContent = q;
+                
+                // 【核心修正】为按钮的点击事件添加 event.stopPropagation()
+                btn.onclick = (event) => {
+                    // 阻止这个点击事件继续冒泡到 document
+                    event.stopPropagation(); 
+                    
+                    // 执行原有的功能
+                    userInput.value = q;
+                    sendMessage();
+                };
+                
+                suggestedQuestionsContainer.appendChild(btn);
+            });
+        }
+        
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    };
+    
+    // --- 绑定事件 ---
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    showFormatDetailsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        formatDetails.style.display = formatDetails.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // (这里可以保留打开/关闭侧边栏的逻辑)
+    // ...
 });
