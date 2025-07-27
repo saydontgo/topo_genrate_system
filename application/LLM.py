@@ -74,7 +74,7 @@ def call_llm_1(session_id, user_message, topo_str=None):
             messages=history,
             response_format={"type": "json_object"}
         )
-        response_content = completion.choices[0].message.content.strip('```')
+        response_content = completion.choices[0].message.content.strip('```').lstrip('json\n')
     except Exception as e:
         # 如果API调用失败，返回一个错误结构
         print(f"OpenAI API call failed: {e}")

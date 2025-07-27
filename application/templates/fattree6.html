@@ -16,11 +16,6 @@
 
     <div class="top-bar">
         <h1>P4Prime - FatTree6 拓扑</h1>
-        <!-- *** START: 新增的AI助手开关 *** -->
-        <div class="ai-assistant-switch" id="ai-assistant-switch">
-            <i class="fas fa-robot"></i> AI 助手
-        </div>
-        <!-- *** END: 新增的AI助手开关 *** -->
 
         <!-- 导航菜单 -->
         <div class="nav-menu">
@@ -103,62 +98,7 @@
 
     <script src="../static/main.js"></script>
     <script src="../static/topo.js"></script>
-        <script src="../static/main.js"></script>
-    <script src="../static/topo.js"></script>
-
-    <!-- *** START: 新增的AI助手侧边栏 (V2) *** -->
-<div class="ai-assistant-sidebar" id="ai-assistant-sidebar">
-    <div class="sidebar-header">
-        <h3>AI 网络分析助手</h3>
-        <button class="close-btn" id="close-ai-sidebar">×</button>
-    </div>
-
-    <!-- 聊天窗口 -->
-    <div class="chat-window" id="chat-window">
-        <!-- 初始上传界面 -->
-        <div id="upload-initial-screen">
-            <h4>开始分析</h4>
-            <p>请上传您的网络拓扑描述文件 (.json) 来开始对话。</p>
-            <button id="upload-btn" class="chat-button">
-                <i class="fas fa-upload"></i> 点击上传文件
-            </button>
-            <input type="file" id="topology-file-input" accept=".json" style="display: none;">
-            <div id="upload-error" class="error-message"></div>
-            <div class="format-hint">
-                <p><strong>提示:</strong> JSON文件需要包含 "switch", "host", "link" 三个键。 <a href="#" id="show-format-details">查看格式详情</a></p>
-                <pre id="format-details" style="display:none;"><code>{
-                "switch": ["s1", "s2", "s3", "s4"],
-                "host": ["h1", "h2"],
-                "link": [
-                    {
-                    "h1": "s1",
-                    "s1": "h1"
-                    },
-                    {
-                    "s1": "s2",
-                    "s2": "s1"
-                    }
-                ]
-                }</code></pre>
-            </div>
-        </div>
-
-        <!-- 消息会动态添加到这里 -->
-    </div>
     
-    <!-- 输入区域 (默认禁用) -->
-    <div class="chat-input-area" id="chat-input-area" style="display: none;">
-        <div class="suggested-questions" id="suggested-questions">
-            <!-- "猜你想问"会在这里显示 -->
-        </div>
-        <div class="chat-input">
-            <input type="text" id="user-input" placeholder="输入你的问题..." disabled>
-            <button id="send-btn" disabled><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
-</div>
-<!-- *** END: 新增的AI助手侧边栏 (V2) *** -->
-
 </body>
 </body>
 
