@@ -27,9 +27,9 @@ original_prompt = [{
     }
   ],
   "questions": [
-    "猜你想问的问题1？",
-    "猜你想问的问题2？",
-    "猜你想问的问题3？"
+    "第一个问题？(此处以用户的身份猜测用户想提出的问题)",
+    "第二个问题？(此处以用户的身份猜测用户想提出的问题)",
+    "第三个问题？(此处以用户的身份猜测用户想提出的问题)"
   ]
 }
 如果某个部分没有内容（例如用户只是打招呼，不需要生成文件），请将对应的值设为空字符串或空列表，但不要省略任何键。"""
@@ -74,7 +74,7 @@ def call_llm_1(session_id, user_message, topo_str=None):
             messages=history,
             response_format={"type": "json_object"}
         )
-        response_content = completion.choices[0].message.content
+        response_content = completion.choices[0].message.content.strip('```')
     except Exception as e:
         # 如果API调用失败，返回一个错误结构
         print(f"OpenAI API call failed: {e}")
@@ -93,7 +93,7 @@ def call_llm_1(session_id, user_message, topo_str=None):
     except json.JSONDecodeError:
         print(f"LLM did not return valid JSON: {response_content}")
         fallback_response = {
-            "analysis": "抱歉，模型返回的格式有误，请您重试。\n\n**原始回复：**\n```\n" + response_content + "\n```",
+            "analysis": f"抱歉，模型返回的格式有误，请您重试。\n\n**原始回复：**\n```\n\" + {response_content} + \"\n```",
             "files": [],
             "questions": ["如何实现基本的L2转发？", "这个拓扑的瓶颈可能在哪里？", "如何为h1到h2生成一条静态路径？"]
         }
