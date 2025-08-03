@@ -9,10 +9,11 @@ import atexit
 import json
 import os
 import topo.FatTree6.FatTree6 as ft6
+import topo.demo.network as demo
 from LLM import secure_session_id, call_llm_1, r
 app = Flask(__name__)
 app.secret_key = 'your-very-secret-and-complex-key-here'
-current_topology = ft6.FatTree6()
+current_topology = None
  
 
 # 首页（主页）
@@ -29,6 +30,13 @@ def topology_page():
 @app.route('/topology/fattree6')
 def fattree6_page():
     return render_template('fattree6.html')
+
+# -------------demo的新增后端代码---------------
+# demo 拓扑页面
+@app.route('/topology/your_topology')
+def fattree6_page():
+    return render_template('your_topology.html')
+# -------------demo的新增后端代码---------------
 
 # 设置页面
 @app.route('/settings')
@@ -56,6 +64,10 @@ def get_topology_data():
 def run_mininet_topology(topology):
     global current_topology
     print(f"开始构建拓扑: {topology}")
+    if topology == 'fat6':
+        current_topology = ft6.FatTree6()
+    elif topology == 'demo':
+        current_topology = demo.demo()
     print(f"{topology} 拓扑构建完成")
     try:
         current_topology.startNetwork()
@@ -69,9 +81,13 @@ def handle_select_topology():
     topology = data.get('topology')
     print(f"收到拓扑选择请求: {topology}")
 
-    if topology not in [4, 6]:
-        return jsonify({'error': 'Invalid topology'}), 400
+    # 旧的拓扑判断
+    # if topology not in [4, 6]:
+    #     return jsonify({'error': 'Invalid topology'}), 400
 
+    # 新的拓扑判断
+    if topology not in ['fat4', 'fat6', 'demo']:
+        return jsonify({'error': 'Invalid topology'}), 400
     # 启动新线程运行 Mininet 拓扑
     thread = threading.Thread(target=run_mininet_topology, args=(topology,), daemon=True)
     thread.start()
@@ -191,7 +207,7 @@ def inject_flow_table():
         return jsonify({"message": "流表注入成功！"})
     return jsonify({"message": "流表注入失败，请检查错误！"}), 500
 
-# ai大模型的调用逻辑
+# -------------ai大模型的调用逻辑--------------
 # [新增] 拓扑文件上传与验证路由
 @app.route("/upload_topology", methods=["POST"])
 def upload_topology():
@@ -301,6 +317,34 @@ def cleanup_redis():
     keys = r.keys("chat_history:*")
     if keys:
         r.delete(*keys)
+# -------------ai大模型的调用逻辑--------------
+
+
+
+
+# -------------demo的新增后端代码---------------
+@app.route('/get_topology_data_demo')
+def get_topology_data():
+    # 假设你保存的是 txt 文件，可以在构建拓扑时自动写入或读取已有文件
+    edges = []
+    try:
+        with open('topo/demo/topo.txt', 'r') as f:
+            for line in f:
+                # 格式：(s1, h1)
+                line = line.strip().replace('(', '').replace(')', '').replace(',', '')
+                parts = line.split()
+                if len(parts) == 2:
+                    edges.append({'from': parts[0], 'to': parts[1]})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    return jsonify(edges)
+
+
+
+# -------------demo的新增后端代码---------------
+
+
 
 # 启动服务
 if __name__ == '__main__':

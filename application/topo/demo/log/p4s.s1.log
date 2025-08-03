@@ -1,0 +1,1521 @@
+Calling target program-options parser
+[10:50:54.131] [bmv2] [D] [thread 5688] Set default default entry for table 'MyIngress.ipv4_lpm': MyIngress.drop - 
+[10:50:54.132] [bmv2] [D] [thread 5688] Set default default entry for table 'MyIngress.tb_set_role': NoAction - 
+[10:50:54.133] [bmv2] [D] [thread 5688] Set default default entry for table 'MyEgress.tbl_prime': NoAction - 
+[10:50:54.133] [bmv2] [D] [thread 5688] Set default default entry for table 'MyEgress.swtrace': NoAction - 
+Adding interface s1-eth1 as port 1
+[10:50:54.137] [bmv2] [D] [thread 5688] Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+[10:50:54.141] [bmv2] [D] [thread 5688] Adding interface s1-eth2 as port 2
+Adding interface s1-eth3 as port 3
+[10:50:54.146] [bmv2] [D] [thread 5688] Adding interface s1-eth3 as port 3
+Server listening on 0.0.0.0:9559
+[10:50:54.152] [bmv2] [I] [thread 5688] Starting Thrift server on port 9090
+[10:50:54.154] [bmv2] [I] [thread 5688] Thrift server was started
+[10:50:54.281] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Processing packet received on port 1
+[10:50:54.281] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Parser 'parser': start
+[10:50:54.282] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.282] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.283] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.283] [bmv2] [T] [thread 5698] [0.0] [cxt 0] Bytes parsed: 14
+[10:50:54.283] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Parser 'parser': end
+[10:50:54.284] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.284] [bmv2] [T] [thread 5698] [0.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.284] [bmv2] [T] [thread 5698] [0.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.285] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[10:50:54.285] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.285] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.285] [bmv2] [T] [thread 5698] [0.0] [cxt 0] Action NoAction
+[10:50:54.285] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.285] [bmv2] [D] [thread 5698] [0.0] [cxt 0] Egress port is 0
+[10:50:54.287] [bmv2] [D] [thread 5699] [0.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.287] [bmv2] [T] [thread 5699] [0.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.287] [bmv2] [T] [thread 5699] [0.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.287] [bmv2] [D] [thread 5699] [0.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.287] [bmv2] [D] [thread 5699] [0.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.287] [bmv2] [T] [thread 5699] [0.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.287] [bmv2] [D] [thread 5699] [0.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.287] [bmv2] [D] [thread 5699] [0.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.288] [bmv2] [D] [thread 5703] [0.0] [cxt 0] Transmitting packet of size 110 out of port 0
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Processing packet received on port 1
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Parser 'parser': start
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.390] [bmv2] [T] [thread 5698] [1.0] [cxt 0] Bytes parsed: 14
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Parser 'parser': end
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.390] [bmv2] [T] [thread 5698] [1.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.390] [bmv2] [T] [thread 5698] [1.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.390] [bmv2] [T] [thread 5698] [1.0] [cxt 0] Action NoAction
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.390] [bmv2] [D] [thread 5698] [1.0] [cxt 0] Egress port is 0
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Processing packet received on port 2
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Parser 'parser': start
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.391] [bmv2] [T] [thread 5698] [2.0] [cxt 0] Bytes parsed: 14
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Parser 'parser': end
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.391] [bmv2] [T] [thread 5698] [2.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.391] [bmv2] [T] [thread 5698] [2.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0002
+
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.391] [bmv2] [T] [thread 5698] [2.0] [cxt 0] Action NoAction
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.391] [bmv2] [D] [thread 5698] [2.0] [cxt 0] Egress port is 0
+[10:50:54.391] [bmv2] [D] [thread 5699] [1.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.391] [bmv2] [T] [thread 5699] [1.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.391] [bmv2] [T] [thread 5699] [1.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.391] [bmv2] [D] [thread 5699] [1.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.391] [bmv2] [D] [thread 5699] [1.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.391] [bmv2] [T] [thread 5699] [1.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.391] [bmv2] [D] [thread 5699] [1.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.391] [bmv2] [D] [thread 5699] [1.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.392] [bmv2] [D] [thread 5699] [2.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.392] [bmv2] [T] [thread 5699] [2.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.392] [bmv2] [T] [thread 5699] [2.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.392] [bmv2] [D] [thread 5699] [2.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.392] [bmv2] [D] [thread 5699] [2.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.392] [bmv2] [T] [thread 5699] [2.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.392] [bmv2] [D] [thread 5699] [2.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.392] [bmv2] [D] [thread 5699] [2.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.394] [bmv2] [D] [thread 5703] [1.0] [cxt 0] Transmitting packet of size 227 out of port 0
+[10:50:54.394] [bmv2] [D] [thread 5703] [2.0] [cxt 0] Transmitting packet of size 227 out of port 0
+[10:50:54.420] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Processing packet received on port 3
+[10:50:54.420] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Parser 'parser': start
+[10:50:54.420] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.420] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.420] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.420] [bmv2] [T] [thread 5698] [3.0] [cxt 0] Bytes parsed: 14
+[10:50:54.420] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Parser 'parser': end
+[10:50:54.420] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.421] [bmv2] [T] [thread 5698] [3.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.421] [bmv2] [T] [thread 5698] [3.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.421] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.421] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.421] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.421] [bmv2] [T] [thread 5698] [3.0] [cxt 0] Action NoAction
+[10:50:54.421] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.421] [bmv2] [D] [thread 5698] [3.0] [cxt 0] Egress port is 0
+[10:50:54.421] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Processing packet received on port 3
+[10:50:54.421] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Parser 'parser': start
+[10:50:54.421] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.421] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.421] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.421] [bmv2] [T] [thread 5698] [4.0] [cxt 0] Bytes parsed: 14
+[10:50:54.421] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Parser 'parser': end
+[10:50:54.421] [bmv2] [D] [thread 5699] [3.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.421] [bmv2] [T] [thread 5699] [3.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.421] [bmv2] [T] [thread 5699] [3.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.421] [bmv2] [D] [thread 5699] [3.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.421] [bmv2] [D] [thread 5699] [3.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.421] [bmv2] [T] [thread 5699] [3.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.421] [bmv2] [D] [thread 5699] [3.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.421] [bmv2] [D] [thread 5699] [3.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.421] [bmv2] [D] [thread 5703] [3.0] [cxt 0] Transmitting packet of size 90 out of port 0
+[10:50:54.421] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.422] [bmv2] [T] [thread 5698] [4.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.422] [bmv2] [T] [thread 5698] [4.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.422] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.422] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.422] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.422] [bmv2] [T] [thread 5698] [4.0] [cxt 0] Action NoAction
+[10:50:54.422] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.422] [bmv2] [D] [thread 5698] [4.0] [cxt 0] Egress port is 0
+[10:50:54.422] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Processing packet received on port 3
+[10:50:54.422] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Parser 'parser': start
+[10:50:54.422] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.422] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.422] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.422] [bmv2] [T] [thread 5698] [5.0] [cxt 0] Bytes parsed: 14
+[10:50:54.422] [bmv2] [D] [thread 5699] [4.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.422] [bmv2] [T] [thread 5699] [4.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.422] [bmv2] [T] [thread 5699] [4.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.422] [bmv2] [D] [thread 5699] [4.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.422] [bmv2] [D] [thread 5699] [4.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.422] [bmv2] [T] [thread 5699] [4.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.422] [bmv2] [D] [thread 5699] [4.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.422] [bmv2] [D] [thread 5699] [4.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.422] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Parser 'parser': end
+[10:50:54.422] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.422] [bmv2] [T] [thread 5698] [5.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.422] [bmv2] [T] [thread 5698] [5.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.422] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.424] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.424] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.424] [bmv2] [T] [thread 5698] [5.0] [cxt 0] Action NoAction
+[10:50:54.424] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.424] [bmv2] [D] [thread 5698] [5.0] [cxt 0] Egress port is 0
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Processing packet received on port 3
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Parser 'parser': start
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.424] [bmv2] [T] [thread 5698] [6.0] [cxt 0] Bytes parsed: 14
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Parser 'parser': end
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.424] [bmv2] [T] [thread 5698] [6.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.424] [bmv2] [T] [thread 5698] [6.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.424] [bmv2] [T] [thread 5698] [6.0] [cxt 0] Action NoAction
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.424] [bmv2] [D] [thread 5698] [6.0] [cxt 0] Egress port is 0
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Processing packet received on port 3
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Parser 'parser': start
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.424] [bmv2] [T] [thread 5698] [7.0] [cxt 0] Bytes parsed: 14
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Parser 'parser': end
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.424] [bmv2] [T] [thread 5698] [7.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.424] [bmv2] [T] [thread 5698] [7.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.424] [bmv2] [T] [thread 5698] [7.0] [cxt 0] Action NoAction
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.424] [bmv2] [D] [thread 5698] [7.0] [cxt 0] Egress port is 0
+[10:50:54.424] [bmv2] [D] [thread 5699] [5.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.424] [bmv2] [T] [thread 5699] [5.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.424] [bmv2] [T] [thread 5699] [5.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.424] [bmv2] [D] [thread 5699] [5.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.424] [bmv2] [D] [thread 5699] [5.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.424] [bmv2] [T] [thread 5699] [5.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.424] [bmv2] [D] [thread 5699] [5.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.424] [bmv2] [D] [thread 5699] [5.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.424] [bmv2] [D] [thread 5699] [6.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.424] [bmv2] [T] [thread 5699] [6.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.424] [bmv2] [T] [thread 5699] [6.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.424] [bmv2] [D] [thread 5699] [6.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.424] [bmv2] [D] [thread 5699] [6.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.424] [bmv2] [T] [thread 5699] [6.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.424] [bmv2] [D] [thread 5699] [6.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.424] [bmv2] [D] [thread 5699] [6.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.424] [bmv2] [D] [thread 5699] [7.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.424] [bmv2] [T] [thread 5699] [7.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.424] [bmv2] [T] [thread 5699] [7.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.424] [bmv2] [D] [thread 5699] [7.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.424] [bmv2] [D] [thread 5699] [7.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.424] [bmv2] [T] [thread 5699] [7.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.424] [bmv2] [D] [thread 5699] [7.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.424] [bmv2] [D] [thread 5699] [7.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.425] [bmv2] [D] [thread 5703] [4.0] [cxt 0] Transmitting packet of size 70 out of port 0
+[10:50:54.425] [bmv2] [D] [thread 5703] [5.0] [cxt 0] Transmitting packet of size 90 out of port 0
+[10:50:54.425] [bmv2] [D] [thread 5703] [6.0] [cxt 0] Transmitting packet of size 70 out of port 0
+[10:50:54.425] [bmv2] [D] [thread 5703] [7.0] [cxt 0] Transmitting packet of size 90 out of port 0
+[10:50:54.424] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Processing packet received on port 3
+[10:50:54.425] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Parser 'parser': start
+[10:50:54.425] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.425] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.425] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.425] [bmv2] [T] [thread 5698] [8.0] [cxt 0] Bytes parsed: 14
+[10:50:54.425] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Parser 'parser': end
+[10:50:54.425] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.425] [bmv2] [T] [thread 5698] [8.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.425] [bmv2] [T] [thread 5698] [8.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.425] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.425] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.425] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.425] [bmv2] [T] [thread 5698] [8.0] [cxt 0] Action NoAction
+[10:50:54.425] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.425] [bmv2] [D] [thread 5698] [8.0] [cxt 0] Egress port is 0
+[10:50:54.425] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Processing packet received on port 2
+[10:50:54.425] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Parser 'parser': start
+[10:50:54.425] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.425] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.426] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.426] [bmv2] [T] [thread 5698] [9.0] [cxt 0] Bytes parsed: 14
+[10:50:54.426] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Parser 'parser': end
+[10:50:54.426] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.426] [bmv2] [T] [thread 5698] [9.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.426] [bmv2] [T] [thread 5698] [9.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.426] [bmv2] [D] [thread 5699] [8.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.426] [bmv2] [T] [thread 5699] [8.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.426] [bmv2] [T] [thread 5699] [8.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.426] [bmv2] [D] [thread 5699] [8.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.426] [bmv2] [D] [thread 5699] [8.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.426] [bmv2] [T] [thread 5699] [8.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.426] [bmv2] [D] [thread 5699] [8.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.426] [bmv2] [D] [thread 5699] [8.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.426] [bmv2] [D] [thread 5703] [8.0] [cxt 0] Transmitting packet of size 90 out of port 0
+[10:50:54.426] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0002
+
+[10:50:54.427] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.427] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.427] [bmv2] [T] [thread 5698] [9.0] [cxt 0] Action NoAction
+[10:50:54.427] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.427] [bmv2] [D] [thread 5698] [9.0] [cxt 0] Egress port is 0
+[10:50:54.428] [bmv2] [D] [thread 5699] [9.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.428] [bmv2] [T] [thread 5699] [9.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.428] [bmv2] [T] [thread 5699] [9.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.428] [bmv2] [D] [thread 5699] [9.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.428] [bmv2] [D] [thread 5699] [9.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.428] [bmv2] [T] [thread 5699] [9.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.428] [bmv2] [D] [thread 5699] [9.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.428] [bmv2] [D] [thread 5699] [9.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Processing packet received on port 3
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Parser 'parser': start
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.428] [bmv2] [T] [thread 5698] [10.0] [cxt 0] Bytes parsed: 14
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Parser 'parser': end
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.428] [bmv2] [T] [thread 5698] [10.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.428] [bmv2] [T] [thread 5698] [10.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.428] [bmv2] [D] [thread 5703] [9.0] [cxt 0] Transmitting packet of size 90 out of port 0
+[10:50:54.428] [bmv2] [T] [thread 5698] [10.0] [cxt 0] Action NoAction
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.428] [bmv2] [D] [thread 5698] [10.0] [cxt 0] Egress port is 0
+[10:50:54.428] [bmv2] [D] [thread 5699] [10.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.428] [bmv2] [T] [thread 5699] [10.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.428] [bmv2] [T] [thread 5699] [10.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.428] [bmv2] [D] [thread 5699] [10.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.428] [bmv2] [D] [thread 5699] [10.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.428] [bmv2] [T] [thread 5699] [10.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.428] [bmv2] [D] [thread 5699] [10.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.428] [bmv2] [D] [thread 5699] [10.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.428] [bmv2] [D] [thread 5703] [10.0] [cxt 0] Transmitting packet of size 90 out of port 0
+[10:50:54.497] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Processing packet received on port 1
+[10:50:54.497] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Parser 'parser': start
+[10:50:54.497] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.497] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.497] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.497] [bmv2] [T] [thread 5698] [11.0] [cxt 0] Bytes parsed: 14
+[10:50:54.498] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Parser 'parser': end
+[10:50:54.498] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.498] [bmv2] [T] [thread 5698] [11.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.498] [bmv2] [T] [thread 5698] [11.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.498] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[10:50:54.498] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.498] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.498] [bmv2] [T] [thread 5698] [11.0] [cxt 0] Action NoAction
+[10:50:54.498] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.498] [bmv2] [D] [thread 5698] [11.0] [cxt 0] Egress port is 0
+[10:50:54.498] [bmv2] [D] [thread 5699] [11.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.498] [bmv2] [T] [thread 5699] [11.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.499] [bmv2] [T] [thread 5699] [11.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.499] [bmv2] [D] [thread 5699] [11.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.499] [bmv2] [D] [thread 5699] [11.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.499] [bmv2] [T] [thread 5699] [11.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.499] [bmv2] [D] [thread 5699] [11.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.499] [bmv2] [D] [thread 5699] [11.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.499] [bmv2] [D] [thread 5703] [11.0] [cxt 0] Transmitting packet of size 90 out of port 0
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Processing packet received on port 3
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Parser 'parser': start
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.520] [bmv2] [T] [thread 5698] [12.0] [cxt 0] Bytes parsed: 14
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Parser 'parser': end
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.520] [bmv2] [T] [thread 5698] [12.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.520] [bmv2] [T] [thread 5698] [12.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.520] [bmv2] [T] [thread 5698] [12.0] [cxt 0] Action NoAction
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.520] [bmv2] [D] [thread 5698] [12.0] [cxt 0] Egress port is 0
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Processing packet received on port 3
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Parser 'parser': start
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.521] [bmv2] [T] [thread 5698] [13.0] [cxt 0] Bytes parsed: 14
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Parser 'parser': end
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.521] [bmv2] [T] [thread 5698] [13.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.521] [bmv2] [T] [thread 5698] [13.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.521] [bmv2] [T] [thread 5698] [13.0] [cxt 0] Action NoAction
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.521] [bmv2] [D] [thread 5698] [13.0] [cxt 0] Egress port is 0
+[10:50:54.521] [bmv2] [D] [thread 5699] [12.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.521] [bmv2] [T] [thread 5699] [12.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.521] [bmv2] [T] [thread 5699] [12.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.521] [bmv2] [D] [thread 5699] [12.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.521] [bmv2] [D] [thread 5699] [12.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.521] [bmv2] [T] [thread 5699] [12.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.521] [bmv2] [D] [thread 5699] [12.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.521] [bmv2] [D] [thread 5699] [12.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.521] [bmv2] [D] [thread 5699] [13.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.521] [bmv2] [T] [thread 5699] [13.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.521] [bmv2] [T] [thread 5699] [13.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.521] [bmv2] [D] [thread 5699] [13.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.521] [bmv2] [D] [thread 5699] [13.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.521] [bmv2] [T] [thread 5699] [13.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.521] [bmv2] [D] [thread 5699] [13.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.521] [bmv2] [D] [thread 5699] [13.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.521] [bmv2] [D] [thread 5703] [12.0] [cxt 0] Transmitting packet of size 107 out of port 0
+[10:50:54.521] [bmv2] [D] [thread 5703] [13.0] [cxt 0] Transmitting packet of size 107 out of port 0
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Processing packet received on port 3
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Parser 'parser': start
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.522] [bmv2] [T] [thread 5698] [14.0] [cxt 0] Bytes parsed: 14
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Parser 'parser': end
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.522] [bmv2] [T] [thread 5698] [14.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.522] [bmv2] [T] [thread 5698] [14.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.522] [bmv2] [T] [thread 5698] [14.0] [cxt 0] Action NoAction
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.522] [bmv2] [D] [thread 5698] [14.0] [cxt 0] Egress port is 0
+[10:50:54.522] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Processing packet received on port 3
+[10:50:54.522] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Parser 'parser': start
+[10:50:54.522] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.522] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.522] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.522] [bmv2] [T] [thread 5698] [15.0] [cxt 0] Bytes parsed: 14
+[10:50:54.522] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Parser 'parser': end
+[10:50:54.522] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.522] [bmv2] [T] [thread 5698] [15.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.522] [bmv2] [T] [thread 5698] [15.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.523] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.523] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.523] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.523] [bmv2] [T] [thread 5698] [15.0] [cxt 0] Action NoAction
+[10:50:54.523] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.523] [bmv2] [D] [thread 5698] [15.0] [cxt 0] Egress port is 0
+[10:50:54.523] [bmv2] [D] [thread 5699] [14.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.523] [bmv2] [T] [thread 5699] [14.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.523] [bmv2] [T] [thread 5699] [14.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.523] [bmv2] [D] [thread 5699] [14.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.523] [bmv2] [D] [thread 5699] [14.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.523] [bmv2] [T] [thread 5699] [14.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.523] [bmv2] [D] [thread 5699] [14.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.523] [bmv2] [D] [thread 5699] [14.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.523] [bmv2] [D] [thread 5699] [15.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.523] [bmv2] [T] [thread 5699] [15.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.523] [bmv2] [T] [thread 5699] [15.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.523] [bmv2] [D] [thread 5699] [15.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.523] [bmv2] [D] [thread 5699] [15.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.523] [bmv2] [T] [thread 5699] [15.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.523] [bmv2] [D] [thread 5699] [15.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.523] [bmv2] [D] [thread 5699] [15.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.523] [bmv2] [D] [thread 5703] [14.0] [cxt 0] Transmitting packet of size 227 out of port 0
+[10:50:54.523] [bmv2] [D] [thread 5703] [15.0] [cxt 0] Transmitting packet of size 227 out of port 0
+[10:50:54.560] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Processing packet received on port 3
+[10:50:54.560] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Parser 'parser': start
+[10:50:54.560] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.560] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.560] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.560] [bmv2] [T] [thread 5698] [16.0] [cxt 0] Bytes parsed: 14
+[10:50:54.560] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Parser 'parser': end
+[10:50:54.560] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.560] [bmv2] [T] [thread 5698] [16.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.560] [bmv2] [T] [thread 5698] [16.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.561] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.561] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.561] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.561] [bmv2] [T] [thread 5698] [16.0] [cxt 0] Action NoAction
+[10:50:54.561] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.561] [bmv2] [D] [thread 5698] [16.0] [cxt 0] Egress port is 0
+[10:50:54.561] [bmv2] [D] [thread 5699] [16.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.561] [bmv2] [T] [thread 5699] [16.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.561] [bmv2] [T] [thread 5699] [16.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.561] [bmv2] [D] [thread 5699] [16.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.561] [bmv2] [D] [thread 5699] [16.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.561] [bmv2] [T] [thread 5699] [16.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.561] [bmv2] [D] [thread 5699] [16.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.561] [bmv2] [D] [thread 5699] [16.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.561] [bmv2] [D] [thread 5703] [16.0] [cxt 0] Transmitting packet of size 110 out of port 0
+[10:50:54.608] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Processing packet received on port 2
+[10:50:54.608] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Parser 'parser': start
+[10:50:54.608] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.608] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.609] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.609] [bmv2] [T] [thread 5698] [17.0] [cxt 0] Bytes parsed: 14
+[10:50:54.609] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Parser 'parser': end
+[10:50:54.609] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.609] [bmv2] [T] [thread 5698] [17.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.609] [bmv2] [T] [thread 5698] [17.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.609] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0002
+
+[10:50:54.609] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.609] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.609] [bmv2] [T] [thread 5698] [17.0] [cxt 0] Action NoAction
+[10:50:54.609] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.609] [bmv2] [D] [thread 5698] [17.0] [cxt 0] Egress port is 0
+[10:50:54.610] [bmv2] [D] [thread 5699] [17.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.610] [bmv2] [T] [thread 5699] [17.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.610] [bmv2] [T] [thread 5699] [17.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.610] [bmv2] [D] [thread 5699] [17.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.610] [bmv2] [D] [thread 5699] [17.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.610] [bmv2] [T] [thread 5699] [17.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.610] [bmv2] [D] [thread 5699] [17.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.610] [bmv2] [D] [thread 5699] [17.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.610] [bmv2] [D] [thread 5703] [17.0] [cxt 0] Transmitting packet of size 110 out of port 0
+[10:50:54.641] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Processing packet received on port 1
+[10:50:54.641] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Parser 'parser': start
+[10:50:54.641] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.641] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.641] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.641] [bmv2] [T] [thread 5698] [18.0] [cxt 0] Bytes parsed: 14
+[10:50:54.641] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Parser 'parser': end
+[10:50:54.641] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.641] [bmv2] [T] [thread 5698] [18.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.641] [bmv2] [T] [thread 5698] [18.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.641] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[10:50:54.641] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.641] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.642] [bmv2] [T] [thread 5698] [18.0] [cxt 0] Action NoAction
+[10:50:54.642] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.642] [bmv2] [D] [thread 5698] [18.0] [cxt 0] Egress port is 0
+[10:50:54.642] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Processing packet received on port 2
+[10:50:54.642] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Parser 'parser': start
+[10:50:54.642] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.642] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.642] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.642] [bmv2] [T] [thread 5698] [19.0] [cxt 0] Bytes parsed: 14
+[10:50:54.642] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Parser 'parser': end
+[10:50:54.642] [bmv2] [D] [thread 5699] [18.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.642] [bmv2] [T] [thread 5699] [18.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.642] [bmv2] [T] [thread 5699] [18.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.642] [bmv2] [D] [thread 5699] [18.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.642] [bmv2] [D] [thread 5699] [18.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.642] [bmv2] [T] [thread 5699] [18.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.642] [bmv2] [D] [thread 5699] [18.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.642] [bmv2] [D] [thread 5699] [18.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.642] [bmv2] [D] [thread 5703] [18.0] [cxt 0] Transmitting packet of size 227 out of port 0
+[10:50:54.642] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.642] [bmv2] [T] [thread 5698] [19.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.642] [bmv2] [T] [thread 5698] [19.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.642] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0002
+
+[10:50:54.642] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.642] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.643] [bmv2] [T] [thread 5698] [19.0] [cxt 0] Action NoAction
+[10:50:54.643] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.643] [bmv2] [D] [thread 5698] [19.0] [cxt 0] Egress port is 0
+[10:50:54.643] [bmv2] [D] [thread 5699] [19.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.643] [bmv2] [T] [thread 5699] [19.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.643] [bmv2] [T] [thread 5699] [19.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.643] [bmv2] [D] [thread 5699] [19.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.643] [bmv2] [D] [thread 5699] [19.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.643] [bmv2] [T] [thread 5699] [19.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.644] [bmv2] [D] [thread 5699] [19.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.644] [bmv2] [D] [thread 5699] [19.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.644] [bmv2] [D] [thread 5703] [19.0] [cxt 0] Transmitting packet of size 227 out of port 0
+[10:50:54.672] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Processing packet received on port 3
+[10:50:54.672] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Parser 'parser': start
+[10:50:54.672] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.672] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.672] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.673] [bmv2] [T] [thread 5698] [20.0] [cxt 0] Bytes parsed: 14
+[10:50:54.673] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Parser 'parser': end
+[10:50:54.673] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.673] [bmv2] [T] [thread 5698] [20.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.673] [bmv2] [T] [thread 5698] [20.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.673] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.673] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.673] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.673] [bmv2] [T] [thread 5698] [20.0] [cxt 0] Action NoAction
+[10:50:54.673] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.673] [bmv2] [D] [thread 5698] [20.0] [cxt 0] Egress port is 0
+[10:50:54.673] [bmv2] [D] [thread 5699] [20.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.673] [bmv2] [T] [thread 5699] [20.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.673] [bmv2] [T] [thread 5699] [20.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.673] [bmv2] [D] [thread 5699] [20.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.673] [bmv2] [D] [thread 5699] [20.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.673] [bmv2] [T] [thread 5699] [20.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.673] [bmv2] [D] [thread 5699] [20.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.673] [bmv2] [D] [thread 5699] [20.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.673] [bmv2] [D] [thread 5703] [20.0] [cxt 0] Transmitting packet of size 110 out of port 0
+[10:50:54.772] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Processing packet received on port 3
+[10:50:54.772] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Parser 'parser': start
+[10:50:54.773] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:54.773] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Extracting header 'ethernet'
+[10:50:54.773] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Parser state 'start': key is 86dd
+[10:50:54.773] [bmv2] [T] [thread 5698] [21.0] [cxt 0] Bytes parsed: 14
+[10:50:54.773] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Parser 'parser': end
+[10:50:54.773] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Pipeline 'ingress': start
+[10:50:54.773] [bmv2] [T] [thread 5698] [21.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is false
+[10:50:54.773] [bmv2] [T] [thread 5698] [21.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:54.773] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:54.773] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:54.773] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Action entry is NoAction - 
+[10:50:54.773] [bmv2] [T] [thread 5698] [21.0] [cxt 0] Action NoAction
+[10:50:54.773] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Pipeline 'ingress': end
+[10:50:54.773] [bmv2] [D] [thread 5698] [21.0] [cxt 0] Egress port is 0
+[10:50:54.773] [bmv2] [D] [thread 5699] [21.0] [cxt 0] Pipeline 'egress': start
+[10:50:54.773] [bmv2] [T] [thread 5699] [21.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:54.773] [bmv2] [T] [thread 5699] [21.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:54.773] [bmv2] [D] [thread 5699] [21.0] [cxt 0] Pipeline 'egress': end
+[10:50:54.773] [bmv2] [D] [thread 5699] [21.0] [cxt 0] Deparser 'deparser': start
+[10:50:54.773] [bmv2] [T] [thread 5699] [21.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:50:54.773] [bmv2] [D] [thread 5699] [21.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:54.773] [bmv2] [D] [thread 5699] [21.0] [cxt 0] Deparser 'deparser': end
+[10:50:54.773] [bmv2] [D] [thread 5703] [21.0] [cxt 0] Transmitting packet of size 227 out of port 0
+[10:50:54.965] [bmv2] [T] [thread 5809] bm_get_config
+[10:50:54.968] [bmv2] [T] [thread 5809] bm_table_add_entry
+[10:50:54.968] [bmv2] [D] [thread 5809] Entry 0 added to table 'MyIngress.ipv4_lpm'
+[10:50:54.968] [bmv2] [D] [thread 5809] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000402/32
+* standard_metadata.ingress_port: EXACT     0001
+Action entry: MyIngress.ipv4_forward - a000402,2,
+
+[10:50:54.969] [bmv2] [T] [thread 5809] bm_table_add_entry
+[10:50:54.969] [bmv2] [D] [thread 5809] Entry 1 added to table 'MyIngress.ipv4_lpm'
+[10:50:54.969] [bmv2] [D] [thread 5809] Dumping entry 1
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000403/32
+* standard_metadata.ingress_port: EXACT     0001
+Action entry: MyIngress.ipv4_forward - a000402,3,
+
+[10:50:54.969] [bmv2] [T] [thread 5809] bm_table_add_entry
+[10:50:54.969] [bmv2] [D] [thread 5809] Entry 2 added to table 'MyIngress.ipv4_lpm'
+[10:50:54.969] [bmv2] [D] [thread 5809] Dumping entry 2
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000101/32
+* standard_metadata.ingress_port: EXACT     0002
+Action entry: MyIngress.ipv4_forward - a000101,1,
+
+[10:50:54.970] [bmv2] [T] [thread 5809] bm_table_add_entry
+[10:50:54.970] [bmv2] [D] [thread 5809] Entry 3 added to table 'MyIngress.ipv4_lpm'
+[10:50:54.970] [bmv2] [D] [thread 5809] Dumping entry 3
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000101/32
+* standard_metadata.ingress_port: EXACT     0003
+Action entry: MyIngress.ipv4_forward - a000101,1,
+
+[10:50:54.970] [bmv2] [T] [thread 5809] bm_table_add_entry
+[10:50:54.970] [bmv2] [D] [thread 5809] Entry 4 added to table 'MyIngress.ipv4_lpm'
+[10:50:54.970] [bmv2] [D] [thread 5809] Dumping entry 4
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000402/32
+* standard_metadata.ingress_port: EXACT     0003
+Action entry: MyIngress.ipv4_forward - a000402,1,
+
+[10:50:54.970] [bmv2] [T] [thread 5809] bm_set_default_action
+[10:50:54.970] [bmv2] [D] [thread 5809] Set default entry for table 'MyEgress.tbl_prime': MyEgress.prime_multiply - 2,
+[10:50:54.971] [bmv2] [T] [thread 5809] bm_set_default_action
+[10:50:54.971] [bmv2] [D] [thread 5809] Set default entry for table 'MyEgress.swtrace': MyEgress.add_swtrace - 1,
+[10:50:57.980] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Processing packet received on port 1
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Parser 'parser': start
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Extracting header 'ethernet'
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Parser state 'start': key is 0800
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] Bytes parsed: 14
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Extracting header 'ipv4'
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] Bytes parsed: 34
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Parser state 'parse_next_protocol': key is 01
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] Bytes parsed: 34
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Parser 'parser': end
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Pipeline 'ingress': start
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000402
+* standard_metadata.ingress_port: 0001
+
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 0
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000402/32
+* standard_metadata.ingress_port: EXACT     0001
+Action entry: MyIngress.ipv4_forward - a000402,2,
+
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000402,2,
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] Action MyIngress.ipv4_forward
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:57.981] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Action entry is NoAction - 
+[10:50:57.981] [bmv2] [T] [thread 5698] [22.0] [cxt 0] Action NoAction
+[10:50:57.982] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Pipeline 'ingress': end
+[10:50:57.982] [bmv2] [D] [thread 5698] [22.0] [cxt 0] Egress port is 2
+[10:50:57.982] [bmv2] [D] [thread 5701] [22.0] [cxt 0] Pipeline 'egress': start
+[10:50:57.982] [bmv2] [T] [thread 5701] [22.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:57.982] [bmv2] [T] [thread 5701] [22.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:57.982] [bmv2] [D] [thread 5701] [22.0] [cxt 0] Pipeline 'egress': end
+[10:50:57.982] [bmv2] [D] [thread 5701] [22.0] [cxt 0] Deparser 'deparser': start
+[10:50:57.982] [bmv2] [D] [thread 5701] [22.0] [cxt 0] Updating checksum 'cksum'
+[10:50:57.982] [bmv2] [D] [thread 5701] [22.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:57.982] [bmv2] [D] [thread 5701] [22.0] [cxt 0] Deparsing header 'ipv4'
+[10:50:57.982] [bmv2] [D] [thread 5701] [22.0] [cxt 0] Deparser 'deparser': end
+[10:50:57.982] [bmv2] [D] [thread 5703] [22.0] [cxt 0] Transmitting packet of size 98 out of port 2
+[10:50:57.990] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Processing packet received on port 3
+[10:50:57.990] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Parser 'parser': start
+[10:50:57.990] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Extracting header 'ethernet'
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Parser state 'start': key is 0800
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] Bytes parsed: 14
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Extracting header 'ipv4'
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] Bytes parsed: 34
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Parser state 'parse_next_protocol': key is 01
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] Bytes parsed: 34
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Parser 'parser': end
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Pipeline 'ingress': start
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000101
+* standard_metadata.ingress_port: 0003
+
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 3
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Dumping entry 3
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000101/32
+* standard_metadata.ingress_port: EXACT     0003
+Action entry: MyIngress.ipv4_forward - a000101,1,
+
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000101,1,
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] Action MyIngress.ipv4_forward
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Action entry is NoAction - 
+[10:50:57.991] [bmv2] [T] [thread 5698] [23.0] [cxt 0] Action NoAction
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Pipeline 'ingress': end
+[10:50:57.991] [bmv2] [D] [thread 5698] [23.0] [cxt 0] Egress port is 1
+[10:50:57.991] [bmv2] [D] [thread 5700] [23.0] [cxt 0] Pipeline 'egress': start
+[10:50:57.991] [bmv2] [T] [thread 5700] [23.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:57.991] [bmv2] [T] [thread 5700] [23.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:57.991] [bmv2] [D] [thread 5700] [23.0] [cxt 0] Pipeline 'egress': end
+[10:50:57.991] [bmv2] [D] [thread 5700] [23.0] [cxt 0] Deparser 'deparser': start
+[10:50:57.991] [bmv2] [D] [thread 5700] [23.0] [cxt 0] Updating checksum 'cksum'
+[10:50:57.991] [bmv2] [D] [thread 5700] [23.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:57.991] [bmv2] [D] [thread 5700] [23.0] [cxt 0] Deparsing header 'ipv4'
+[10:50:57.991] [bmv2] [D] [thread 5700] [23.0] [cxt 0] Deparser 'deparser': end
+[10:50:57.992] [bmv2] [D] [thread 5703] [23.0] [cxt 0] Transmitting packet of size 98 out of port 1
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Processing packet received on port 3
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Parser 'parser': start
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Extracting header 'ethernet'
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Parser state 'start': key is 0800
+[10:50:58.000] [bmv2] [T] [thread 5698] [24.0] [cxt 0] Bytes parsed: 14
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Extracting header 'ipv4'
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[10:50:58.000] [bmv2] [T] [thread 5698] [24.0] [cxt 0] Bytes parsed: 34
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Parser state 'parse_next_protocol': key is 01
+[10:50:58.000] [bmv2] [T] [thread 5698] [24.0] [cxt 0] Bytes parsed: 34
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Parser 'parser': end
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Pipeline 'ingress': start
+[10:50:58.000] [bmv2] [T] [thread 5698] [24.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[10:50:58.000] [bmv2] [T] [thread 5698] [24.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000101
+* standard_metadata.ingress_port: 0003
+
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 3
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Dumping entry 3
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000101/32
+* standard_metadata.ingress_port: EXACT     0003
+Action entry: MyIngress.ipv4_forward - a000101,1,
+
+[10:50:58.000] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000101,1,
+[10:50:58.000] [bmv2] [T] [thread 5698] [24.0] [cxt 0] Action MyIngress.ipv4_forward
+[10:50:58.000] [bmv2] [T] [thread 5698] [24.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[10:50:58.001] [bmv2] [T] [thread 5698] [24.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[10:50:58.001] [bmv2] [T] [thread 5698] [24.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[10:50:58.001] [bmv2] [T] [thread 5698] [24.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[10:50:58.001] [bmv2] [T] [thread 5698] [24.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[10:50:58.001] [bmv2] [T] [thread 5698] [24.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:58.001] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:50:58.001] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:58.001] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Action entry is NoAction - 
+[10:50:58.001] [bmv2] [T] [thread 5698] [24.0] [cxt 0] Action NoAction
+[10:50:58.001] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Pipeline 'ingress': end
+[10:50:58.001] [bmv2] [D] [thread 5698] [24.0] [cxt 0] Egress port is 1
+[10:50:58.001] [bmv2] [D] [thread 5700] [24.0] [cxt 0] Pipeline 'egress': start
+[10:50:58.001] [bmv2] [T] [thread 5700] [24.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:58.001] [bmv2] [T] [thread 5700] [24.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:58.001] [bmv2] [D] [thread 5700] [24.0] [cxt 0] Pipeline 'egress': end
+[10:50:58.001] [bmv2] [D] [thread 5700] [24.0] [cxt 0] Deparser 'deparser': start
+[10:50:58.001] [bmv2] [D] [thread 5700] [24.0] [cxt 0] Updating checksum 'cksum'
+[10:50:58.001] [bmv2] [D] [thread 5700] [24.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:58.001] [bmv2] [D] [thread 5700] [24.0] [cxt 0] Deparsing header 'ipv4'
+[10:50:58.001] [bmv2] [D] [thread 5700] [24.0] [cxt 0] Deparser 'deparser': end
+[10:50:58.001] [bmv2] [D] [thread 5703] [24.0] [cxt 0] Transmitting packet of size 98 out of port 1
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Processing packet received on port 1
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Parser 'parser': start
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Extracting header 'ethernet'
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Parser state 'start': key is 0800
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] Bytes parsed: 14
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Extracting header 'ipv4'
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] Bytes parsed: 34
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Parser state 'parse_next_protocol': key is 01
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] Bytes parsed: 34
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Parser 'parser': end
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Pipeline 'ingress': start
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000402
+* standard_metadata.ingress_port: 0001
+
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 0
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000402/32
+* standard_metadata.ingress_port: EXACT     0001
+Action entry: MyIngress.ipv4_forward - a000402,2,
+
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000402,2,
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] Action MyIngress.ipv4_forward
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:50:58.001] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Action entry is NoAction - 
+[10:50:58.001] [bmv2] [T] [thread 5698] [25.0] [cxt 0] Action NoAction
+[10:50:58.002] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Pipeline 'ingress': end
+[10:50:58.002] [bmv2] [D] [thread 5698] [25.0] [cxt 0] Egress port is 2
+[10:50:58.002] [bmv2] [D] [thread 5701] [25.0] [cxt 0] Pipeline 'egress': start
+[10:50:58.002] [bmv2] [T] [thread 5701] [25.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:50:58.002] [bmv2] [T] [thread 5701] [25.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:50:58.002] [bmv2] [D] [thread 5701] [25.0] [cxt 0] Pipeline 'egress': end
+[10:50:58.002] [bmv2] [D] [thread 5701] [25.0] [cxt 0] Deparser 'deparser': start
+[10:50:58.002] [bmv2] [D] [thread 5701] [25.0] [cxt 0] Updating checksum 'cksum'
+[10:50:58.003] [bmv2] [D] [thread 5701] [25.0] [cxt 0] Deparsing header 'ethernet'
+[10:50:58.003] [bmv2] [D] [thread 5701] [25.0] [cxt 0] Deparsing header 'ipv4'
+[10:50:58.003] [bmv2] [D] [thread 5701] [25.0] [cxt 0] Deparser 'deparser': end
+[10:50:58.003] [bmv2] [D] [thread 5703] [25.0] [cxt 0] Transmitting packet of size 98 out of port 2
+[10:58:09.847] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Processing packet received on port 1
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser 'parser': start
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Extracting header 'ethernet'
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser state 'start': key is 0800
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] Bytes parsed: 14
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Extracting header 'ipv4'
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] Bytes parsed: 34
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser state 'parse_next_protocol': key is 11
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] Bytes parsed: 34
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser 'parser' entering state 'parse_udp'
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Extracting header 'udp'
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser set: setting field 'scalars.metadata.srcPort' from field 'udp.srcPort' (7777)
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser set: setting field 'scalars.metadata.dstPort' from field 'udp.dstPort' (8888)
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser state 'parse_udp' has no switch, going to default next state
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] Bytes parsed: 42
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Parser 'parser': end
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Pipeline 'ingress': start
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000402
+* standard_metadata.ingress_port: 0001
+
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 0
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000402/32
+* standard_metadata.ingress_port: EXACT     0001
+Action entry: MyIngress.ipv4_forward - a000402,2,
+
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000402,2,
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] Action MyIngress.ipv4_forward
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Action entry is NoAction - 
+[10:58:09.848] [bmv2] [T] [thread 5698] [26.0] [cxt 0] Action NoAction
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Pipeline 'ingress': end
+[10:58:09.848] [bmv2] [D] [thread 5698] [26.0] [cxt 0] Egress port is 2
+[10:58:09.848] [bmv2] [D] [thread 5701] [26.0] [cxt 0] Pipeline 'egress': start
+[10:58:09.848] [bmv2] [T] [thread 5701] [26.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:58:09.849] [bmv2] [T] [thread 5701] [26.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:58:09.849] [bmv2] [D] [thread 5701] [26.0] [cxt 0] Pipeline 'egress': end
+[10:58:09.849] [bmv2] [D] [thread 5701] [26.0] [cxt 0] Deparser 'deparser': start
+[10:58:09.849] [bmv2] [D] [thread 5701] [26.0] [cxt 0] Updating checksum 'cksum'
+[10:58:09.849] [bmv2] [D] [thread 5701] [26.0] [cxt 0] Deparsing header 'ethernet'
+[10:58:09.849] [bmv2] [D] [thread 5701] [26.0] [cxt 0] Deparsing header 'ipv4'
+[10:58:09.849] [bmv2] [D] [thread 5701] [26.0] [cxt 0] Deparsing header 'udp'
+[10:58:09.849] [bmv2] [D] [thread 5701] [26.0] [cxt 0] Deparser 'deparser': end
+[10:58:09.849] [bmv2] [D] [thread 5703] [26.0] [cxt 0] Transmitting packet of size 42 out of port 2
+[10:58:09.854] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Processing packet received on port 3
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Parser 'parser': start
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Extracting header 'ethernet'
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Parser state 'start': key is 0800
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] Bytes parsed: 14
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Extracting header 'ipv4'
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] Bytes parsed: 34
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Parser state 'parse_next_protocol': key is 01
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] Bytes parsed: 34
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Parser 'parser': end
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Pipeline 'ingress': start
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000101
+* standard_metadata.ingress_port: 0003
+
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 3
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Dumping entry 3
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000101/32
+* standard_metadata.ingress_port: EXACT     0003
+Action entry: MyIngress.ipv4_forward - a000101,1,
+
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000101,1,
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] Action MyIngress.ipv4_forward
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Action entry is NoAction - 
+[10:58:09.855] [bmv2] [T] [thread 5698] [27.0] [cxt 0] Action NoAction
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Pipeline 'ingress': end
+[10:58:09.855] [bmv2] [D] [thread 5698] [27.0] [cxt 0] Egress port is 1
+[10:58:09.855] [bmv2] [D] [thread 5700] [27.0] [cxt 0] Pipeline 'egress': start
+[10:58:09.855] [bmv2] [T] [thread 5700] [27.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:58:09.855] [bmv2] [T] [thread 5700] [27.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:58:09.855] [bmv2] [D] [thread 5700] [27.0] [cxt 0] Pipeline 'egress': end
+[10:58:09.855] [bmv2] [D] [thread 5700] [27.0] [cxt 0] Deparser 'deparser': start
+[10:58:09.855] [bmv2] [D] [thread 5700] [27.0] [cxt 0] Updating checksum 'cksum'
+[10:58:09.855] [bmv2] [D] [thread 5700] [27.0] [cxt 0] Deparsing header 'ethernet'
+[10:58:09.855] [bmv2] [D] [thread 5700] [27.0] [cxt 0] Deparsing header 'ipv4'
+[10:58:09.855] [bmv2] [D] [thread 5700] [27.0] [cxt 0] Deparser 'deparser': end
+[10:58:09.855] [bmv2] [D] [thread 5703] [27.0] [cxt 0] Transmitting packet of size 70 out of port 1
+[10:59:06.714] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Processing packet received on port 3
+[10:59:06.714] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser 'parser': start
+[10:59:06.714] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:59:06.714] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Extracting header 'ethernet'
+[10:59:06.714] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser state 'start': key is 0800
+[10:59:06.714] [bmv2] [T] [thread 5698] [28.0] [cxt 0] Bytes parsed: 14
+[10:59:06.714] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[10:59:06.714] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Extracting header 'ipv4'
+[10:59:06.714] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] Bytes parsed: 34
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser state 'parse_next_protocol': key is 11
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] Bytes parsed: 34
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser 'parser' entering state 'parse_udp'
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Extracting header 'udp'
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser set: setting field 'scalars.metadata.srcPort' from field 'udp.srcPort' (7777)
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser set: setting field 'scalars.metadata.dstPort' from field 'udp.dstPort' (8888)
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser state 'parse_udp' has no switch, going to default next state
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] Bytes parsed: 42
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Parser 'parser': end
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Pipeline 'ingress': start
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000101
+* standard_metadata.ingress_port: 0003
+
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 3
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Dumping entry 3
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000101/32
+* standard_metadata.ingress_port: EXACT     0003
+Action entry: MyIngress.ipv4_forward - a000101,1,
+
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000101,1,
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] Action MyIngress.ipv4_forward
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Action entry is NoAction - 
+[10:59:06.715] [bmv2] [T] [thread 5698] [28.0] [cxt 0] Action NoAction
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Pipeline 'ingress': end
+[10:59:06.715] [bmv2] [D] [thread 5698] [28.0] [cxt 0] Egress port is 1
+[10:59:06.715] [bmv2] [D] [thread 5700] [28.0] [cxt 0] Pipeline 'egress': start
+[10:59:06.715] [bmv2] [T] [thread 5700] [28.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:59:06.715] [bmv2] [T] [thread 5700] [28.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:59:06.715] [bmv2] [D] [thread 5700] [28.0] [cxt 0] Pipeline 'egress': end
+[10:59:06.715] [bmv2] [D] [thread 5700] [28.0] [cxt 0] Deparser 'deparser': start
+[10:59:06.715] [bmv2] [D] [thread 5700] [28.0] [cxt 0] Updating checksum 'cksum'
+[10:59:06.715] [bmv2] [D] [thread 5700] [28.0] [cxt 0] Deparsing header 'ethernet'
+[10:59:06.715] [bmv2] [D] [thread 5700] [28.0] [cxt 0] Deparsing header 'ipv4'
+[10:59:06.715] [bmv2] [D] [thread 5700] [28.0] [cxt 0] Deparsing header 'udp'
+[10:59:06.715] [bmv2] [D] [thread 5700] [28.0] [cxt 0] Deparser 'deparser': end
+[10:59:06.715] [bmv2] [D] [thread 5703] [28.0] [cxt 0] Transmitting packet of size 42 out of port 1
+[10:59:06.715] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Processing packet received on port 1
+[10:59:06.715] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Parser 'parser': start
+[10:59:06.715] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Extracting header 'ethernet'
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Parser state 'start': key is 0800
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] Bytes parsed: 14
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Extracting header 'ipv4'
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] Bytes parsed: 34
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Parser state 'parse_next_protocol': key is 01
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] Bytes parsed: 34
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Parser 'parser': end
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Pipeline 'ingress': start
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000402
+* standard_metadata.ingress_port: 0001
+
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 0
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000402/32
+* standard_metadata.ingress_port: EXACT     0001
+Action entry: MyIngress.ipv4_forward - a000402,2,
+
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000402,2,
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] Action MyIngress.ipv4_forward
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Action entry is NoAction - 
+[10:59:06.716] [bmv2] [T] [thread 5698] [29.0] [cxt 0] Action NoAction
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Pipeline 'ingress': end
+[10:59:06.716] [bmv2] [D] [thread 5698] [29.0] [cxt 0] Egress port is 2
+[10:59:06.716] [bmv2] [D] [thread 5701] [29.0] [cxt 0] Pipeline 'egress': start
+[10:59:06.716] [bmv2] [T] [thread 5701] [29.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:59:06.716] [bmv2] [T] [thread 5701] [29.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:59:06.716] [bmv2] [D] [thread 5701] [29.0] [cxt 0] Pipeline 'egress': end
+[10:59:06.716] [bmv2] [D] [thread 5701] [29.0] [cxt 0] Deparser 'deparser': start
+[10:59:06.716] [bmv2] [D] [thread 5701] [29.0] [cxt 0] Updating checksum 'cksum'
+[10:59:06.716] [bmv2] [D] [thread 5701] [29.0] [cxt 0] Deparsing header 'ethernet'
+[10:59:06.716] [bmv2] [D] [thread 5701] [29.0] [cxt 0] Deparsing header 'ipv4'
+[10:59:06.716] [bmv2] [D] [thread 5701] [29.0] [cxt 0] Deparser 'deparser': end
+[10:59:06.716] [bmv2] [D] [thread 5703] [29.0] [cxt 0] Transmitting packet of size 70 out of port 2
+[10:59:48.849] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Processing packet received on port 1
+[10:59:48.849] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser 'parser': start
+[10:59:48.849] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:59:48.849] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Extracting header 'ethernet'
+[10:59:48.849] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser state 'start': key is 0800
+[10:59:48.849] [bmv2] [T] [thread 5698] [30.0] [cxt 0] Bytes parsed: 14
+[10:59:48.849] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[10:59:48.849] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Extracting header 'ipv4'
+[10:59:48.849] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[10:59:48.849] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[10:59:48.849] [bmv2] [T] [thread 5698] [30.0] [cxt 0] Bytes parsed: 34
+[10:59:48.849] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[10:59:48.849] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser state 'parse_next_protocol': key is 11
+[10:59:48.849] [bmv2] [T] [thread 5698] [30.0] [cxt 0] Bytes parsed: 34
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser 'parser' entering state 'parse_udp'
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Extracting header 'udp'
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser set: setting field 'scalars.metadata.srcPort' from field 'udp.srcPort' (7777)
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser set: setting field 'scalars.metadata.dstPort' from field 'udp.dstPort' (8888)
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser state 'parse_udp' has no switch, going to default next state
+[10:59:48.850] [bmv2] [T] [thread 5698] [30.0] [cxt 0] Bytes parsed: 42
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Parser 'parser': end
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Pipeline 'ingress': start
+[10:59:48.850] [bmv2] [T] [thread 5698] [30.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[10:59:48.850] [bmv2] [T] [thread 5698] [30.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000403
+* standard_metadata.ingress_port: 0001
+
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 1
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Dumping entry 1
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000403/32
+* standard_metadata.ingress_port: EXACT     0001
+Action entry: MyIngress.ipv4_forward - a000402,3,
+
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000402,3,
+[10:59:48.850] [bmv2] [T] [thread 5698] [30.0] [cxt 0] Action MyIngress.ipv4_forward
+[10:59:48.850] [bmv2] [T] [thread 5698] [30.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[10:59:48.850] [bmv2] [T] [thread 5698] [30.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[10:59:48.850] [bmv2] [T] [thread 5698] [30.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[10:59:48.850] [bmv2] [T] [thread 5698] [30.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[10:59:48.850] [bmv2] [T] [thread 5698] [30.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[10:59:48.850] [bmv2] [T] [thread 5698] [30.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Action entry is NoAction - 
+[10:59:48.850] [bmv2] [T] [thread 5698] [30.0] [cxt 0] Action NoAction
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Pipeline 'ingress': end
+[10:59:48.850] [bmv2] [D] [thread 5698] [30.0] [cxt 0] Egress port is 3
+[10:59:48.850] [bmv2] [D] [thread 5702] [30.0] [cxt 0] Pipeline 'egress': start
+[10:59:48.850] [bmv2] [T] [thread 5702] [30.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[10:59:48.850] [bmv2] [T] [thread 5702] [30.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[10:59:48.850] [bmv2] [D] [thread 5702] [30.0] [cxt 0] Pipeline 'egress': end
+[10:59:48.850] [bmv2] [D] [thread 5702] [30.0] [cxt 0] Deparser 'deparser': start
+[10:59:48.850] [bmv2] [D] [thread 5702] [30.0] [cxt 0] Updating checksum 'cksum'
+[10:59:48.850] [bmv2] [D] [thread 5702] [30.0] [cxt 0] Deparsing header 'ethernet'
+[10:59:48.850] [bmv2] [D] [thread 5702] [30.0] [cxt 0] Deparsing header 'ipv4'
+[10:59:48.850] [bmv2] [D] [thread 5702] [30.0] [cxt 0] Deparsing header 'udp'
+[10:59:48.850] [bmv2] [D] [thread 5702] [30.0] [cxt 0] Deparser 'deparser': end
+[10:59:48.850] [bmv2] [D] [thread 5703] [30.0] [cxt 0] Transmitting packet of size 42 out of port 3
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Processing packet received on port 3
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser 'parser': start
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser 'parser' entering state 'start'
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Extracting header 'ethernet'
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser state 'start': key is 0800
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] Bytes parsed: 14
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Extracting header 'ipv4'
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] Bytes parsed: 34
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser state 'parse_next_protocol': key is 11
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] Bytes parsed: 34
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser 'parser' entering state 'parse_udp'
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Extracting header 'udp'
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser set: setting field 'scalars.metadata.srcPort' from field 'udp.srcPort' (7777)
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser set: setting field 'scalars.metadata.dstPort' from field 'udp.dstPort' (8888)
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser state 'parse_udp' has no switch, going to default next state
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] Bytes parsed: 42
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Parser 'parser': end
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Pipeline 'ingress': start
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000101
+* standard_metadata.ingress_port: 0003
+
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 3
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Dumping entry 3
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000101/32
+* standard_metadata.ingress_port: EXACT     0003
+Action entry: MyIngress.ipv4_forward - a000101,1,
+
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000101,1,
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] Action MyIngress.ipv4_forward
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Action entry is NoAction - 
+[11:05:52.153] [bmv2] [T] [thread 5698] [31.0] [cxt 0] Action NoAction
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Pipeline 'ingress': end
+[11:05:52.153] [bmv2] [D] [thread 5698] [31.0] [cxt 0] Egress port is 1
+[11:05:52.153] [bmv2] [D] [thread 5700] [31.0] [cxt 0] Pipeline 'egress': start
+[11:05:52.154] [bmv2] [T] [thread 5700] [31.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[11:05:52.154] [bmv2] [T] [thread 5700] [31.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[11:05:52.154] [bmv2] [D] [thread 5700] [31.0] [cxt 0] Pipeline 'egress': end
+[11:05:52.154] [bmv2] [D] [thread 5700] [31.0] [cxt 0] Deparser 'deparser': start
+[11:05:52.154] [bmv2] [D] [thread 5700] [31.0] [cxt 0] Updating checksum 'cksum'
+[11:05:52.154] [bmv2] [D] [thread 5700] [31.0] [cxt 0] Deparsing header 'ethernet'
+[11:05:52.154] [bmv2] [D] [thread 5700] [31.0] [cxt 0] Deparsing header 'ipv4'
+[11:05:52.154] [bmv2] [D] [thread 5700] [31.0] [cxt 0] Deparsing header 'udp'
+[11:05:52.154] [bmv2] [D] [thread 5700] [31.0] [cxt 0] Deparser 'deparser': end
+[11:05:52.154] [bmv2] [D] [thread 5703] [31.0] [cxt 0] Transmitting packet of size 42 out of port 1
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Processing packet received on port 1
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Parser 'parser': start
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Parser 'parser' entering state 'start'
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Extracting header 'ethernet'
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Parser state 'start': key is 0800
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] Bytes parsed: 14
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Extracting header 'ipv4'
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] Bytes parsed: 34
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Parser state 'parse_next_protocol': key is 01
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] Bytes parsed: 34
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Parser 'parser': end
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Pipeline 'ingress': start
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000402
+* standard_metadata.ingress_port: 0001
+
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 0
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000402/32
+* standard_metadata.ingress_port: EXACT     0001
+Action entry: MyIngress.ipv4_forward - a000402,2,
+
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000402,2,
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] Action MyIngress.ipv4_forward
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Action entry is NoAction - 
+[11:05:52.155] [bmv2] [T] [thread 5698] [32.0] [cxt 0] Action NoAction
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Pipeline 'ingress': end
+[11:05:52.155] [bmv2] [D] [thread 5698] [32.0] [cxt 0] Egress port is 2
+[11:05:52.155] [bmv2] [D] [thread 5701] [32.0] [cxt 0] Pipeline 'egress': start
+[11:05:52.155] [bmv2] [T] [thread 5701] [32.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[11:05:52.155] [bmv2] [T] [thread 5701] [32.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[11:05:52.155] [bmv2] [D] [thread 5701] [32.0] [cxt 0] Pipeline 'egress': end
+[11:05:52.155] [bmv2] [D] [thread 5701] [32.0] [cxt 0] Deparser 'deparser': start
+[11:05:52.155] [bmv2] [D] [thread 5701] [32.0] [cxt 0] Updating checksum 'cksum'
+[11:05:52.155] [bmv2] [D] [thread 5701] [32.0] [cxt 0] Deparsing header 'ethernet'
+[11:05:52.155] [bmv2] [D] [thread 5701] [32.0] [cxt 0] Deparsing header 'ipv4'
+[11:05:52.155] [bmv2] [D] [thread 5701] [32.0] [cxt 0] Deparser 'deparser': end
+[11:05:52.155] [bmv2] [D] [thread 5703] [32.0] [cxt 0] Transmitting packet of size 70 out of port 2
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Processing packet received on port 3
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser 'parser': start
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser 'parser' entering state 'start'
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Extracting header 'ethernet'
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser state 'start': key is 0800
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] Bytes parsed: 14
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Extracting header 'ipv4'
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] Bytes parsed: 34
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser state 'parse_next_protocol': key is 11
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] Bytes parsed: 34
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser 'parser' entering state 'parse_udp'
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Extracting header 'udp'
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser set: setting field 'scalars.metadata.srcPort' from field 'udp.srcPort' (7777)
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser set: setting field 'scalars.metadata.dstPort' from field 'udp.dstPort' (8888)
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser state 'parse_udp' has no switch, going to default next state
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] Bytes parsed: 42
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Parser 'parser': end
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Pipeline 'ingress': start
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000101
+* standard_metadata.ingress_port: 0003
+
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 3
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Dumping entry 3
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000101/32
+* standard_metadata.ingress_port: EXACT     0003
+Action entry: MyIngress.ipv4_forward - a000101,1,
+
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000101,1,
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] Action MyIngress.ipv4_forward
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Action entry is NoAction - 
+[11:06:20.920] [bmv2] [T] [thread 5698] [33.0] [cxt 0] Action NoAction
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Pipeline 'ingress': end
+[11:06:20.920] [bmv2] [D] [thread 5698] [33.0] [cxt 0] Egress port is 1
+[11:06:20.920] [bmv2] [D] [thread 5700] [33.0] [cxt 0] Pipeline 'egress': start
+[11:06:20.920] [bmv2] [T] [thread 5700] [33.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[11:06:20.920] [bmv2] [T] [thread 5700] [33.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[11:06:20.920] [bmv2] [D] [thread 5700] [33.0] [cxt 0] Pipeline 'egress': end
+[11:06:20.920] [bmv2] [D] [thread 5700] [33.0] [cxt 0] Deparser 'deparser': start
+[11:06:20.920] [bmv2] [D] [thread 5700] [33.0] [cxt 0] Updating checksum 'cksum'
+[11:06:20.920] [bmv2] [D] [thread 5700] [33.0] [cxt 0] Deparsing header 'ethernet'
+[11:06:20.920] [bmv2] [D] [thread 5700] [33.0] [cxt 0] Deparsing header 'ipv4'
+[11:06:20.920] [bmv2] [D] [thread 5700] [33.0] [cxt 0] Deparsing header 'udp'
+[11:06:20.920] [bmv2] [D] [thread 5700] [33.0] [cxt 0] Deparser 'deparser': end
+[11:06:20.920] [bmv2] [D] [thread 5703] [33.0] [cxt 0] Transmitting packet of size 42 out of port 1
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Processing packet received on port 1
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Parser 'parser': start
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Parser 'parser' entering state 'start'
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Extracting header 'ethernet'
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Parser state 'start': key is 0800
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] Bytes parsed: 14
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Extracting header 'ipv4'
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] Bytes parsed: 34
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Parser state 'parse_next_protocol': key is 01
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] Bytes parsed: 34
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Parser 'parser': end
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Pipeline 'ingress': start
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000402
+* standard_metadata.ingress_port: 0001
+
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 0
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000402/32
+* standard_metadata.ingress_port: EXACT     0001
+Action entry: MyIngress.ipv4_forward - a000402,2,
+
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000402,2,
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] Action MyIngress.ipv4_forward
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Action entry is NoAction - 
+[11:06:20.921] [bmv2] [T] [thread 5698] [34.0] [cxt 0] Action NoAction
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Pipeline 'ingress': end
+[11:06:20.921] [bmv2] [D] [thread 5698] [34.0] [cxt 0] Egress port is 2
+[11:06:20.921] [bmv2] [D] [thread 5701] [34.0] [cxt 0] Pipeline 'egress': start
+[11:06:20.921] [bmv2] [T] [thread 5701] [34.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[11:06:20.921] [bmv2] [T] [thread 5701] [34.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[11:06:20.921] [bmv2] [D] [thread 5701] [34.0] [cxt 0] Pipeline 'egress': end
+[11:06:20.921] [bmv2] [D] [thread 5701] [34.0] [cxt 0] Deparser 'deparser': start
+[11:06:20.921] [bmv2] [D] [thread 5701] [34.0] [cxt 0] Updating checksum 'cksum'
+[11:06:20.921] [bmv2] [D] [thread 5701] [34.0] [cxt 0] Deparsing header 'ethernet'
+[11:06:20.921] [bmv2] [D] [thread 5701] [34.0] [cxt 0] Deparsing header 'ipv4'
+[11:06:20.921] [bmv2] [D] [thread 5701] [34.0] [cxt 0] Deparser 'deparser': end
+[11:06:20.921] [bmv2] [D] [thread 5703] [34.0] [cxt 0] Transmitting packet of size 70 out of port 2
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Processing packet received on port 3
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser 'parser': start
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser 'parser' entering state 'start'
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Extracting header 'ethernet'
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser state 'start': key is 0800
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] Bytes parsed: 14
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Extracting header 'ipv4'
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] Bytes parsed: 34
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser state 'parse_next_protocol': key is 11
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] Bytes parsed: 34
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser 'parser' entering state 'parse_udp'
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Extracting header 'udp'
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser set: setting field 'scalars.metadata.srcPort' from field 'udp.srcPort' (7777)
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser set: setting field 'scalars.metadata.dstPort' from field 'udp.dstPort' (8888)
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser state 'parse_udp' has no switch, going to default next state
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] Bytes parsed: 42
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Parser 'parser': end
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Pipeline 'ingress': start
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000101
+* standard_metadata.ingress_port: 0003
+
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 3
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Dumping entry 3
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000101/32
+* standard_metadata.ingress_port: EXACT     0003
+Action entry: MyIngress.ipv4_forward - a000101,1,
+
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000101,1,
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] Action MyIngress.ipv4_forward
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0003
+
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Action entry is NoAction - 
+[11:06:47.235] [bmv2] [T] [thread 5698] [35.0] [cxt 0] Action NoAction
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Pipeline 'ingress': end
+[11:06:47.235] [bmv2] [D] [thread 5698] [35.0] [cxt 0] Egress port is 1
+[11:06:47.235] [bmv2] [D] [thread 5700] [35.0] [cxt 0] Pipeline 'egress': start
+[11:06:47.235] [bmv2] [T] [thread 5700] [35.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[11:06:47.235] [bmv2] [T] [thread 5700] [35.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[11:06:47.235] [bmv2] [D] [thread 5700] [35.0] [cxt 0] Pipeline 'egress': end
+[11:06:47.235] [bmv2] [D] [thread 5700] [35.0] [cxt 0] Deparser 'deparser': start
+[11:06:47.235] [bmv2] [D] [thread 5700] [35.0] [cxt 0] Updating checksum 'cksum'
+[11:06:47.235] [bmv2] [D] [thread 5700] [35.0] [cxt 0] Deparsing header 'ethernet'
+[11:06:47.235] [bmv2] [D] [thread 5700] [35.0] [cxt 0] Deparsing header 'ipv4'
+[11:06:47.235] [bmv2] [D] [thread 5700] [35.0] [cxt 0] Deparsing header 'udp'
+[11:06:47.235] [bmv2] [D] [thread 5700] [35.0] [cxt 0] Deparser 'deparser': end
+[11:06:47.235] [bmv2] [D] [thread 5703] [35.0] [cxt 0] Transmitting packet of size 42 out of port 1
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Processing packet received on port 1
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Parser 'parser': start
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Parser 'parser' entering state 'start'
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Extracting header 'ethernet'
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Parser state 'start': key is 0800
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] Bytes parsed: 14
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Extracting header 'ipv4'
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Parser set: setting field 'scalars.tmp' from expression, new value is 1
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Parser state 'parse_ipv4': key is 05
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] Bytes parsed: 34
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Parser 'parser' entering state 'parse_next_protocol'
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Parser state 'parse_next_protocol': key is 01
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] Bytes parsed: 34
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Parser 'parser': end
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Pipeline 'ingress': start
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(291) Condition "hdr.ipv4.isValid()" (node_2) is true
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr              : 0a000402
+* standard_metadata.ingress_port: 0001
+
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 0
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr              : LPM       0a000402/32
+* standard_metadata.ingress_port: EXACT     0001
+Action entry: MyIngress.ipv4_forward - a000402,2,
+
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Action entry is MyIngress.ipv4_forward - a000402,2,
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] Action MyIngress.ipv4_forward
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(243) Primitive standard_metadata.egress_spec = port
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(244) Primitive standard_metadata.egress_port = port
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(246) Primitive hdr.ethernet.srcAddr = hdr.ethernet.dstAddr
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(247) Primitive hdr.ethernet.dstAddr = dstAddr
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(248) Primitive hdr.ipv4.ttl = hdr.ipv4.ttl - 1
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] Applying table 'MyIngress.tb_set_role'
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Looking up key:
+* standard_metadata.ingress_port: 0001
+
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Table 'MyIngress.tb_set_role': miss
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Action entry is NoAction - 
+[11:06:47.236] [bmv2] [T] [thread 5698] [36.0] [cxt 0] Action NoAction
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Pipeline 'ingress': end
+[11:06:47.236] [bmv2] [D] [thread 5698] [36.0] [cxt 0] Egress port is 2
+[11:06:47.236] [bmv2] [D] [thread 5701] [36.0] [cxt 0] Pipeline 'egress': start
+[11:06:47.236] [bmv2] [T] [thread 5701] [36.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(381) Condition "hdr.tag.isValid()" (node_7) is false
+[11:06:47.236] [bmv2] [T] [thread 5701] [36.0] [cxt 0] /home/forcn/competition/application/topo/demo/p4src/switch.p4(386) Condition "hdr.mri.isValid()" (node_9) is false
+[11:06:47.236] [bmv2] [D] [thread 5701] [36.0] [cxt 0] Pipeline 'egress': end
+[11:06:47.236] [bmv2] [D] [thread 5701] [36.0] [cxt 0] Deparser 'deparser': start
+[11:06:47.236] [bmv2] [D] [thread 5701] [36.0] [cxt 0] Updating checksum 'cksum'
+[11:06:47.236] [bmv2] [D] [thread 5701] [36.0] [cxt 0] Deparsing header 'ethernet'
+[11:06:47.236] [bmv2] [D] [thread 5701] [36.0] [cxt 0] Deparsing header 'ipv4'
+[11:06:47.236] [bmv2] [D] [thread 5701] [36.0] [cxt 0] Deparser 'deparser': end
+[11:06:47.236] [bmv2] [D] [thread 5703] [36.0] [cxt 0] Transmitting packet of size 70 out of port 2
+open: No such file or directory

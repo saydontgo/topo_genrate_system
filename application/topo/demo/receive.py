@@ -42,7 +42,7 @@ check_bytes = 0
 end_time = time.time()
 topo = Topology('topology.json')
 # rules = load_rules('./topo/FatTree/rules.json')
-rules = load_rules('topo/FatTree6/rules.json')
+rules = load_rules('rules/rules.json')
 # bug_num = 0
 
 
