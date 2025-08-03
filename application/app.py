@@ -34,7 +34,7 @@ def fattree6_page():
 # -------------demo的新增后端代码---------------
 # demo 拓扑页面
 @app.route('/topology/your_topology')
-def fattree6_page():
+def demo_page():
     return render_template('your_topology.html')
 # -------------demo的新增后端代码---------------
 
