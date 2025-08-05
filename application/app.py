@@ -1,10 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from flask import send_file
 from flask import session
-import io
-import zipfile
-import tempfile
-import shutil
+from logging import error, info
 import threading
 import atexit
 import json
@@ -14,7 +11,7 @@ import topo.demo.network as demo
 from LLM import secure_session_id, call_llm_1, r
 app = Flask(__name__)
 app.secret_key = 'your-very-secret-and-complex-key-here'
-current_topology = ft6.FatTree6()
+current_topology = None
  
 
 # 首页（主页）
@@ -61,16 +58,39 @@ def get_topology_data():
 
     return jsonify(edges)
 
+# 跳转界面后立即初始化
+@app.route('/initiate_topo', methods=['POST'])
+def initiate_topo():
+    url = request.json.get('url')
+    global current_topology
+    domains = url.rstrip('/').split('/')
+    if len(domains) < 2:
+        return jsonify({'error': 'in the wrong page!'}), 404
+    last_domain = domains[-2]
+    if last_domain != 'topology':
+        return jsonify({'error': 'in the wrong page!'}), 404
+    topology = domains[-1]
+    if topology == 'fattree6':
+        current_topology = ft6.FatTree6()
+    elif topology == 'your_topology':
+        current_topology = demo.demo()
+    else:
+        return jsonify({'error': f'invalid topo: {topology}'}), 404
+    
+    info(f"successfully initiate topo {topology}\n")
+    return jsonify({'status': 'success', 'topology': topology})
+
 # 启动拓扑线程
 def run_mininet_topology(topology):
     global current_topology
     print(f"开始构建拓扑: {topology}")
-    if topology == 'fat6':
-        current_topology = ft6.FatTree6()
-    elif topology == 'demo':
-        current_topology = demo.demo()
+    try:
+        current_topology.startNetwork()
+    except Exception as e:
+        error(f"something wrong while building the network. Detailed info is as followed: {e}")
+        current_topology.stopNetwork()
     print(f"{topology} 拓扑构建完成")
-    current_topology.startNetwork()
+
 
 # 接收选择拓扑的请求
 @app.route('/select_topology', methods=['POST'])
