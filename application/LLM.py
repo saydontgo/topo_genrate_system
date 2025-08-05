@@ -1,3 +1,4 @@
+from p4utils.mininetlib.log import setLogLevel, debug, info, output, warning, error
 import redis
 import json
 import uuid, hashlib
@@ -77,7 +78,7 @@ def call_llm_1(session_id, user_message, topo_str=None):
         response_content = completion.choices[0].message.content.strip('```').lstrip('json\n')
     except Exception as e:
         # 如果API调用失败，返回一个错误结构
-        print(f"OpenAI API call failed: {e}")
+        info(f"OpenAI API call failed: {e}")
         error_response = {
             "analysis": f"抱歉，调用AI模型时出错：\n`{str(e)}`\n请检查API密钥、网络连接或模型名称是否正确。",
             "files": [],
@@ -91,7 +92,7 @@ def call_llm_1(session_id, user_message, topo_str=None):
     try:
         return json.loads(response_content)
     except json.JSONDecodeError:
-        print(f"LLM did not return valid JSON: {response_content}")
+        info(f"LLM did not return valid JSON: {response_content}")
         fallback_response = {
             "analysis": f"抱歉，模型返回的格式有误，请您重试。\n\n**原始回复：**\n```\n\" + {response_content} + \"\n```",
             "files": [],
