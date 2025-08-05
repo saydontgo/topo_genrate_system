@@ -76,6 +76,8 @@ class demo(NetworkAPI):
     def startNetwork(self):
         """Starts and configures the network."""
         
+        assert self.isCompiled
+        
         info('Creating network...\n')
         self.net = self.module('net', topo=self, controller=None)
         output('Network created!\n')
