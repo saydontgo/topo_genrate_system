@@ -253,7 +253,10 @@ class FatTree6(NetworkAPI):
     def startNetwork(self):
         """Starts and configures the network."""
         
-        assert self.isCompiled
+        try:
+            assert self.isCompiled
+        except AssertionError as e:
+            error(f"{e}\nYou haven't compiled your P4 code yet, so you can't start the network now!")
 
         info('Creating network...\n')
         self.net = self.module('net', topo=self, controller=None)
@@ -311,7 +314,11 @@ class FatTree6(NetworkAPI):
         返回值为bool 表示send操作是否成功，如果失败将不会产生任何文件，成功将会在application文件夹下生成res.json。
         调用此方法前网络必须启动。
         """
-        assert self.isNetworkStart and self.isCompiled
+        try:
+            assert self.isNetworkStart and self.isCompiled
+        except AssertionError as e:
+            error(f"{e}\nYou haven't compiled your P4 code or started your network yet, so you can't send any packet now!")
+
         dst_shell = self.net.get(dst_host)
         src_shell = self.net.get(src_host)
         output = ""
@@ -367,7 +374,11 @@ class FatTree6(NetworkAPI):
         """
         #TODO 要将结果以什么样的形式传回去？
 
-        assert self.isNetworkStart and self.isCompiled
+        try:
+            assert self.isNetworkStart and self.isCompiled
+        except AssertionError as e:
+            error(f"{e}\nYou haven't compiled your P4 code or started your network yet, so you can't send any packet now!")
+
         cur_sw = self.net.get(swid)
         dst_sw = self.net.get(dst_swid)
         dst_port = None
