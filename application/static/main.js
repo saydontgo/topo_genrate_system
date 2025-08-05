@@ -141,7 +141,7 @@ submenuItems.forEach(item => {
     }, 100);
 }();
 // ========== AI 助手交互功能 (V2 - 文件上传 & Markdown) ==========
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // --- 获取DOM元素 ---
     const aiSidebar = document.getElementById('ai-assistant-sidebar');
     if (!aiSidebar) {
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const uploadError = document.getElementById('upload-error');
     const chatInputArea = document.getElementById('chat-input-area');
     const suggestedQuestionsContainer = document.getElementById('suggested-questions');
-    
+
     // 格式详情提示
     const showFormatDetailsLink = document.getElementById('show-format-details');
     const formatDetails = document.getElementById('format-details');
@@ -171,11 +171,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 2. 确保这些控制元素存在，再绑定事件
     if (aiSwitch && closeBtn && aiSidebar) {
-        
+
         // 点击页面右上角的开关按钮
         aiSwitch.addEventListener('click', (event) => {
             // 阻止事件冒泡到document，以防立即触发下面的外部点击关闭逻辑
-            event.stopPropagation(); 
+            event.stopPropagation();
             // 为侧边栏添加 .open 类，CSS会根据这个类来执行滑入动画
             aiSidebar.classList.add('open');
         });
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('click', (event) => {
             // 检查侧边栏是否是打开状态，并且确认点击的不是开关按钮本身
             if (aiSidebar.classList.contains('open') && !aiSwitch.contains(event.target)) {
-                 // 确认点击的目标不是侧边栏或其内部的任何元素
+                // 确认点击的目标不是侧边栏或其内部的任何元素
                 if (!aiSidebar.contains(event.target)) {
                     aiSidebar.classList.remove('open');
                 }
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- 工具函数 ---
-    const toggleLoadingState = (isLoading) => {
+    window.toggleLoadingState = (isLoading) => {
         isWaitingForResponse = isLoading;
         userInput.disabled = isLoading;
         sendBtn.disabled = isLoading;
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
             sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
         }
     };
-    
+
     const displayError = (message) => {
         uploadError.textContent = message;
         uploadError.style.display = 'block';
@@ -247,14 +247,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 throw new Error(errorMsg);
             }
-            
+
             // 上传成功！
             currentSessionId = data.session_id;
             uploadInitialScreen.style.display = 'none'; // 隐藏上传界面
             chatInputArea.style.display = 'block';     // 显示输入框
 
             // 显示AI的首次分析
-            appendBotMessage(data.initial_response);
+            appendBotMessage(data, true);
+            // 【核心新增】为新创建的“构建拓扑”按钮绑定事件
+            const buildTopoBtn = document.getElementById('build-topo-btn');
+            if (buildTopoBtn) {
+                buildTopoBtn.addEventListener('click', (e) => {
+                    // 在跳转前，将文件内容存入 localStorage
+                    localStorage.setItem('pendingTopology', fileContent);
+                });
+            }
             toggleLoadingState(false);
 
         } catch (error) {
@@ -303,12 +311,12 @@ document.addEventListener('DOMContentLoaded', function() {
         chatWindow.appendChild(messageDiv);
         chatWindow.scrollTop = chatWindow.scrollHeight;
     };
-    
-    const appendBotMessage = (data) => {
+
+    window.appendBotMessage = (data, isInitialUpload = false) => {
         const messageDiv = document.createElement('div');
         messageDiv.className = 'chat-message bot';
         let htmlContent = '';
-        
+
         // 渲染Markdown分析
         if (data.analysis) {
             htmlContent += `<div class="message-content">${marked.parse(data.analysis)}</div>`;
@@ -326,7 +334,19 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             htmlContent += '</div>';
         }
-        
+
+        // 这个按钮只在首次上传成功后显示
+        if (isInitialUpload && data.build_enabled) {
+            htmlContent += `
+                <div class="build-topology-section">
+                    <p>是否需要根据分析结果，生成py与流表文件并构建拓扑？</p>
+                    <a href="/topology/your_topology" id="build-topo-btn" class="chat-button build-button">
+                        <i class="fas fa-cogs"></i> 构建我的拓扑
+                    </a>
+                </div>
+            `;
+        }
+
         messageDiv.innerHTML = htmlContent;
         chatWindow.appendChild(messageDiv);
         // 渲染"猜你想问"
@@ -337,24 +357,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 const btn = document.createElement('button');
                 btn.className = 'suggested-question-btn';
                 btn.textContent = q;
-                
+
                 // 【核心修正】为按钮的点击事件添加 event.stopPropagation()
                 btn.onclick = (event) => {
                     // 阻止这个点击事件继续冒泡到 document
-                    event.stopPropagation(); 
-                    
+                    event.stopPropagation();
+
                     // 执行原有的功能
                     userInput.value = q;
                     sendMessage();
                 };
-                
+
                 suggestedQuestionsContainer.appendChild(btn);
             });
         }
-        
+
         chatWindow.scrollTop = chatWindow.scrollHeight;
     };
-    
+
     // --- 绑定事件 ---
     sendBtn.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', (e) => {

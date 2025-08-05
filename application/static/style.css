@@ -568,3 +568,23 @@ button:hover,
 .download-button:hover {
     background-color: #2a6f2d;
 }
+.build-topology-section {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #e0f2f1;
+    border: 1px solid #b2dfdb;
+    border-radius: 5px;
+}
+.build-topology-section p {
+    margin-top: 0;
+    font-weight: 500;
+    color: #004d66;
+}
+.build-button {
+    background-color: #388e3c !important;
+    text-decoration: none;
+    display: inline-block;
+}
+.build-button:hover {
+    background-color: #2a6f2d !important;
+}

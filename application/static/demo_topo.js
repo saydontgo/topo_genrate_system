@@ -17,7 +17,7 @@ let topoSettings = {
 // });
 
 fatTree6.addEventListener('click', () => {
-    sendTopology("fat6");
+    sendTopology("demo");
 });
 
 let nodeDetailMap = {};  // 保存节点的详细信息（IP、MAC）
@@ -178,6 +178,36 @@ function clearNodeInfo() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    // --- START: 自动上传和构建拓扑的逻辑 ---
+    const pendingTopology = localStorage.getItem('pendingTopology');
+
+    if (pendingTopology) {
+        console.log("检测到待处理的拓扑，开始自动构建...");
+
+        // 1. 清除 localStorage，防止刷新页面时重复构建
+        localStorage.removeItem('pendingTopology');
+
+        // 2. 将存储的拓扑字符串转换为一个File对象，以便复用上传逻辑
+        const topoFile = new File([pendingTopology], "config.json", { type: "application/json" });
+
+        // 3. 打开AI助手侧边栏，让用户看到过程
+        const aiSidebar = document.getElementById('ai-assistant-sidebar');
+        if (aiSidebar) {
+            aiSidebar.classList.add('open');
+        }
+
+        // 4. 调用文件上传逻辑，实现AI会话的无缝衔接
+        // (注意：这里假设AI助手相关的JS在 main.js 中，并且已经被加载)
+        // 我们需要手动触发一次上传
+        autoUploadAndInitAI(topoFile);
+        
+        // 5. 调用后端接口，开始真正的Mininet拓扑构建
+        startDemoTopologyBuild();
+
+    } else {
+        console.log("未检测到待处理的拓扑。");
+    }
+    // --- END: 自动上传和构建拓扑的逻辑 ---
     const loadP4Button = document.querySelector(".loadP4Code");
     const injectFlowTableButton = document.querySelector(".injectFlowTable");
 
@@ -411,4 +441,74 @@ function updateDstSwitchOptions() {
         option.textContent = sw;
         dstSelect.appendChild(option);
     });
+}
+
+// 【新增】一个辅助函数，用于在新页面自动上传拓扑给AI
+async function autoUploadAndInitAI(file) {
+    const uploadInitialScreen = document.getElementById('upload-initial-screen');
+    const uploadBtn = document.getElementById('upload-btn');
+    const chatInputArea = document.getElementById('chat-input-area');
+    const displayError = (message) => { // 需要一个本地的错误显示函数
+        const uploadError = document.getElementById('upload-error');
+        if (uploadError) {
+            uploadError.textContent = message;
+            uploadError.style.display = 'block';
+        }
+    };
+    
+    if (!uploadInitialScreen || !uploadBtn || !chatInputArea) return;
+
+    uploadInitialScreen.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> 正在恢复AI对话状态...</p>';
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const response = await fetch('/upload_topology', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.error || 'AI会话恢复失败');
+
+        // 会话恢复成功！
+        window.currentSessionId = data.session_id; // 将session_id存到全局，以便main.js能用
+        uploadInitialScreen.style.display = 'none';
+        chatInputArea.style.display = 'block';
+
+        // 手动调用在 main.js 中定义的 appendBotMessage
+        if (typeof window.appendBotMessage === 'function') {
+            window.appendBotMessage(data, true);
+            window.toggleLoadingState(false);
+        }
+
+    } catch (error) {
+        displayError(error.message);
+    }
+}
+
+
+// 【新增】一个函数，用于调用后端构建Mininet拓扑
+function startDemoTopologyBuild() {
+    // 这里的 'demo' 字符串需要和后端 run_mininet_topology 函数中的判断条件一致
+    fetch('/select_topology', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topology: 'demo' })
+    }).then(response => response.json())
+      .then(data => {
+        console.log('自定义拓扑构建请求已发送:', data);
+        
+        // 稍等片刻，让后端有时间生成topo.txt，然后获取数据并绘图
+        setTimeout(() => {
+            fetch('/get_topology_data_demo') // 注意：调用新的数据获取接口
+                .then(res => res.json())
+                .then(edgesData => {
+                    fetchSettingsAndDraw(edgesData);
+                })
+                .catch(err => console.error('获取自定义拓扑数据失败:', err));
+        }, 1000); // 等待1秒
+    })
+    .catch(error => console.error('Error:', error));
 }

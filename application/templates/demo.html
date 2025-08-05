@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P4Prime - Demo 拓扑</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/vis-network/styles/vis-network.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <link rel="stylesheet" href="../static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+
+    <div class="top-bar">
+        <h1>P4Prime - Demo 拓扑</h1>
+
+        <!-- 导航菜单 -->
+        <div class="nav-menu">
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> 主页</a></li>
+                <li class="has-submenu">
+                    <a href="#"><i class="fas fa-network-wired"></i> 拓扑</a>
+                    <ul class="sub-menu">
+                        <li><a href="#">FatTree4</a></li>
+                        <li><a href="/topology/fattree6">FatTree6</a></li>
+                        <li><a href="#">新增拓扑</a></li>
+                    </ul>
+                </li>
+                <li><a href="/settings"><i class="fas fa-cog"></i> 设置</a></li>
+            </ul>
+        </div>
+
+        <div id="time"></div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Demo 拓扑结构</h1>
+        </div>
+
+        <!-- 三步构建 -->
+        <div class="section" id="fatTree6">
+            <h2>Demo 拓扑</h2>
+            <div class="section" style="display: flex; gap: 20px; justify-content: space-between;">
+                <div class="section" style="flex: 1;">
+                    <h3 style="color: #006064;">Step 1: 装载 P4 代码</h3>
+                    <button class="loadP4Code">装载</button>
+                    <div id="loadResult" style="margin-top: 10px; color: darkblue;"></div>
+                </div>
+                <div class="section" style="flex: 1;">
+                    <h3 style="color: #006064;">Step 2: 生成拓扑</h3>
+                    <button class="generateFattree6">生成 Demo 拓扑</button>
+                </div>
+                <div class="section" style="flex: 1;">
+                    <h3 style="color: #006064;">Step 3: 注入流表</h3>
+                    <button class="injectFlowTable">注入流表</button>
+                    <div id="injectResult" style="margin-top: 10px; color: darkgreen;"></div>
+                </div>
+            </div>
+
+            <!-- 发送和修改功能 -->
+            <div class="section" style="margin-top: 20px; padding-top: 0;">
+                <h3>发送请求</h3>
+                <label for="srcHost">源主机 ID：</label>
+                <input type="text" id="srcHost" placeholder="如 h1">
+                <label for="dstHost">目标主机 ID：</label>
+                <input type="text" id="dstHost" placeholder="如 h2">
+                <div id="hostHint" style="font-size: 14px; color: #888; margin-bottom: 10px;"></div>
+                <button id="sendButton">发送</button>
+                <div id="sendResult" style="margin-top:10px; color: green;"></div>
+            </div>
+
+            <div class="section" style="margin-top: 20px; padding-top: 0;">
+                <h3>修改流表</h3>
+                <label for="modSwid">被修改交换机 ID：</label>
+                <input type="text" id="modSwid" placeholder="如 s1">
+                <label for="modDstSwid">目标交换机 ID：</label>
+                <select id="modDstSwid"></select>
+                <label for="modDstHost">目标主机 ID：</label>
+                <input type="text" id="modDstHost" placeholder="如 h3">
+                <div id="switchHint" style="font-size: 14px; color: #888; margin-bottom: 10px;"></div>
+                <button id="modifyButton">修改</button>
+                <div id="modifyResult" style="margin-top:10px; color: blue;"></div>
+            </div>
+
+            <div class="network-container">
+                <div id="network"></div>
+                <div id="nodeInfoContainer">
+                    <h3>节点信息</h3>
+                    <div id="nodeInfoContent">点击任意节点查看详情</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../static/main.js"></script>
+    <script src="../static/demo_topo.js"></script>
+<!-- *** START: 新增的AI助手侧边栏 (V2) *** -->
+<div class="ai-assistant-sidebar" id="ai-assistant-sidebar">
+    <div class="sidebar-header">
+        <h3>AI 网络分析助手</h3>
+        <button class="close-btn" id="close-ai-sidebar">×</button>
+    </div>
+
+    <!-- 聊天窗口 -->
+    <div class="chat-window" id="chat-window">
+        <!-- 初始上传界面 -->
+        <div id="upload-initial-screen">
+            <h4>开始分析</h4>
+            <p>请上传您的网络拓扑描述文件 (.json) 来开始对话。</p>
+            <button id="upload-btn" class="chat-button">
+                <i class="fas fa-upload"></i> 点击上传文件
+            </button>
+            <input type="file" id="topology-file-input" accept=".json" style="display: none;">
+            <div id="upload-error" class="error-message"></div>
+            <div class="format-hint">
+                <p><strong>提示:</strong> JSON文件需要包含 "switch", "host", "link" 三个键。 <a href="#" id="show-format-details">查看格式详情</a></p>
+                <pre id="format-details" style="display:none;"><code>{
+                "switch": ["s1", "s2", "s3", "s4"],
+                "host": ["h1", "h2"],
+                "link": [
+                    {
+                    "h1": "s1",
+                    "s1": "h1"
+                    },
+                    {
+                    "s1": "s2",
+                    "s2": "s1"
+                    }
+                ]
+                }</code></pre>
+            </div>
+        </div>
+        
+        <!-- 消息会动态添加到这里 -->
+    </div>
+    
+    <!-- 输入区域 (默认禁用) -->
+    <div class="chat-input-area" id="chat-input-area" style="display: none;">
+        <div class="suggested-questions" id="suggested-questions">
+            <!-- "猜你想问"会在这里显示 -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="输入你的问题..." disabled>
+            <button id="send-btn" disabled><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+<!-- *** END: 新增的AI助手侧边栏 (V2) *** -->
+</body>
+
+</html>

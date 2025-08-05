@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify, request
+from flask import send_file
 from flask import session
 import io
 import zipfile
@@ -13,7 +14,7 @@ import topo.demo.network as demo
 from LLM import secure_session_id, call_llm_1, r
 app = Flask(__name__)
 app.secret_key = 'your-very-secret-and-complex-key-here'
-current_topology = None
+current_topology = ft6.FatTree6()
  
 
 # 首页（主页）
@@ -35,7 +36,7 @@ def fattree6_page():
 # demo 拓扑页面
 @app.route('/topology/your_topology')
 def demo_page():
-    return render_template('your_topology.html')
+    return render_template('demo.html')
 # -------------demo的新增后端代码---------------
 
 # 设置页面
@@ -69,10 +70,7 @@ def run_mininet_topology(topology):
     elif topology == 'demo':
         current_topology = demo.demo()
     print(f"{topology} 拓扑构建完成")
-    try:
-        current_topology.startNetwork()
-    except Exception:
-        current_topology.stopNetwork()
+    current_topology.startNetwork()
 
 # 接收选择拓扑的请求
 @app.route('/select_topology', methods=['POST'])
@@ -285,7 +283,8 @@ def upload_topology():
         return jsonify({
             "message": "文件上传成功并通过验证！",
             "session_id": session_id,
-            "initial_response": response_data
+            "initial_response": response_data,
+            "build_enabled": True
         })
     except Exception as e:
         print(f"Error calling LLM after upload: {e}") # 在服务器端打印错误日志
@@ -324,7 +323,7 @@ def cleanup_redis():
 
 # -------------demo的新增后端代码---------------
 @app.route('/get_topology_data_demo')
-def get_topology_data():
+def get_topology_data_demo():
     # 假设你保存的是 txt 文件，可以在构建拓扑时自动写入或读取已有文件
     edges = []
     try:
