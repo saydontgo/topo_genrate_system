@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from flask import send_file
 from flask import session
-from logging import error, info
+from p4utils.mininetlib.log import setLogLevel, debug, info, output, warning, error
 import threading
 import atexit
 import json
@@ -83,13 +83,13 @@ def initiate_topo():
 # 启动拓扑线程
 def run_mininet_topology(topology):
     global current_topology
-    print(f"开始构建拓扑: {topology}")
+    info(f"开始构建拓扑: {topology}")
     try:
         current_topology.startNetwork()
     except Exception as e:
         error(f"something wrong while building the network. Detailed info is as followed: {e}")
         current_topology.stopNetwork()
-    print(f"{topology} 拓扑构建完成")
+    info(f"{topology} 拓扑构建完成")
 
 
 # 接收选择拓扑的请求
@@ -97,7 +97,7 @@ def run_mininet_topology(topology):
 def handle_select_topology():
     data = request.json
     topology = data.get('topology')
-    print(f"收到拓扑选择请求: {topology}")
+    info(f"收到拓扑选择请求: {topology}")
 
     # 旧的拓扑判断
     # if topology not in [4, 6]:
@@ -144,7 +144,7 @@ def handle_send_command():
     except Exception as e:
         return jsonify({'error': f'IP地址查找失败: {str(e)}'}), 500
 
-    print(f"Receive: {src_host}({src_ip}) → {dst_host}({dst_ip})")
+    info(f"Receive: {src_host}({src_ip}) → {dst_host}({dst_ip})")
 
     try:
         current_topology.send(src_host, dst_host)
@@ -209,18 +209,18 @@ def get_settings():
     
 @app.route("/load_p4_code", methods=["POST"])
 def load_p4_code():
-    print("开始构建拓扑...")
+    info("开始加载p4代码...")
     success = current_topology.clean_and_compile()
-    print("拓扑构建完成")
+    info("p4代码加载完成")
     if success:
         return jsonify({"message": "P4 代码装载成功！"})
     return jsonify({"message": "P4 代码装载失败，请检查错误！"}), 500
 
 @app.route("/inject_flow_table", methods=["POST"])
 def inject_flow_table():
-    print("开始注入流表...")
+    info("开始注入流表...")
     success = current_topology.program_switches()
-    print("流表注入完成")
+    info("流表注入完成")
     if success:
         return jsonify({"message": "流表注入成功！"})
     return jsonify({"message": "流表注入失败，请检查错误！"}), 500
@@ -307,7 +307,7 @@ def upload_topology():
             "build_enabled": True
         })
     except Exception as e:
-        print(f"Error calling LLM after upload: {e}") # 在服务器端打印错误日志
+        info(f"Error calling LLM after upload: {e}") # 在服务器端打印错误日志
         return jsonify({"error": f"AI服务调用失败: {str(e)}"}), 502
 
 # [新增] 对话路由
@@ -332,7 +332,7 @@ def chat():
 # 清除redis内存  
 @atexit.register
 def cleanup_redis():
-    print("quiting Flask, cleanning all the history")
+    info("quiting Flask, cleanning all the history")
     keys = r.keys("chat_history:*")
     if keys:
         r.delete(*keys)
