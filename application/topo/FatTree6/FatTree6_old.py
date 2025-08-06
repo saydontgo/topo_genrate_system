@@ -1,312 +1,432 @@
 from p4utils.mininetlib.network_API import NetworkAPI
+from p4utils.mininetlib.log import setLogLevel, debug, info, output, warning, error
+import time
+import json
+import re
+import os
+from ..helper import hex_IP
 
-def genrate_topo():
-    net = NetworkAPI()
+class FatTree6(NetworkAPI):
+    def __init__(self):
+        super().__init__()
+        self.setLogLevel('info')
+        self.enableCli()
+        self._topoType = 'ft6'
+        self.__isNetworkStart = False
+        self.__isCompiled = False
+        # Switch
+        for i in range(1, 46):
+            self.addP4Switch(f's{i}', cli_input=f'topo/FatTree6/rules/s{i}-commands.txt')
+        
+        self.setP4SourceAll('p4src/switch.p4')
 
-    # Network general options
-    net.setLogLevel('info')
-    net.enableCli()
+        # Host
+        for i in range(1, 55):
+            self.addHost(f'h{i}')
 
-    # Switch
+        # core Link
+        self.addLink('s37', 's19')
+        self.addLink('s37', 's22')
+        self.addLink('s37', 's25')
+        self.addLink('s37', 's28')
+        self.addLink('s37', 's31')
+        self.addLink('s37', 's34')
 
-    # edge switch
-    net.addP4Switch('s1', cli_input='topo/FatTree6/rules/s1-commands.txt')
-    net.addP4Switch('s2', cli_input='topo/FatTree6/rules/s2-commands.txt')
-    net.addP4Switch('s3', cli_input='topo/FatTree6/rules/s3-commands.txt')
-    net.addP4Switch('s4', cli_input='topo/FatTree6/rules/s4-commands.txt')
-    net.addP4Switch('s5', cli_input='topo/FatTree6/rules/s5-commands.txt')
-    net.addP4Switch('s6', cli_input='topo/FatTree6/rules/s6-commands.txt')
-    net.addP4Switch('s7', cli_input='topo/FatTree6/rules/s7-commands.txt')
-    net.addP4Switch('s8', cli_input='topo/FatTree6/rules/s8-commands.txt')
-    net.addP4Switch('s9', cli_input='topo/FatTree6/rules/s9-commands.txt')
-    net.addP4Switch('s10', cli_input='topo/FatTree6/rules/s10-commands.txt')
-    net.addP4Switch('s11', cli_input='topo/FatTree6/rules/s11-commands.txt')
-    net.addP4Switch('s12', cli_input='topo/FatTree6/rules/s12-commands.txt')
-    net.addP4Switch('s13', cli_input='topo/FatTree6/rules/s13-commands.txt')
-    net.addP4Switch('s14', cli_input='topo/FatTree6/rules/s14-commands.txt')
-    net.addP4Switch('s15', cli_input='topo/FatTree6/rules/s15-commands.txt')
-    net.addP4Switch('s16', cli_input='topo/FatTree6/rules/s16-commands.txt')
-    net.addP4Switch('s17', cli_input='topo/FatTree6/rules/s17-commands.txt')
-    net.addP4Switch('s18', cli_input='topo/FatTree6/rules/s18-commands.txt')
+        self.addLink('s38', 's19')
+        self.addLink('s38', 's22')
+        self.addLink('s38', 's25')
+        self.addLink('s38', 's28')
+        self.addLink('s38', 's31')
+        self.addLink('s38', 's34')
 
-    # aggregate switch
-    net.addP4Switch('s19', cli_input='topo/FatTree6/rules/s19-commands.txt')
-    net.addP4Switch('s20', cli_input='topo/FatTree6/rules/s20-commands.txt')
-    net.addP4Switch('s21', cli_input='topo/FatTree6/rules/s21-commands.txt')
-    net.addP4Switch('s22', cli_input='topo/FatTree6/rules/s22-commands.txt')
-    net.addP4Switch('s23', cli_input='topo/FatTree6/rules/s23-commands.txt')
-    net.addP4Switch('s24', cli_input='topo/FatTree6/rules/s24-commands.txt')
-    net.addP4Switch('s25', cli_input='topo/FatTree6/rules/s25-commands.txt')
-    net.addP4Switch('s26', cli_input='topo/FatTree6/rules/s26-commands.txt')
-    net.addP4Switch('s27', cli_input='topo/FatTree6/rules/s27-commands.txt')
-    net.addP4Switch('s28', cli_input='topo/FatTree6/rules/s28-commands.txt')
-    net.addP4Switch('s29', cli_input='topo/FatTree6/rules/s29-commands.txt')
-    net.addP4Switch('s30', cli_input='topo/FatTree6/rules/s30-commands.txt')
-    net.addP4Switch('s31', cli_input='topo/FatTree6/rules/s31-commands.txt')
-    net.addP4Switch('s32', cli_input='topo/FatTree6/rules/s32-commands.txt')
-    net.addP4Switch('s33', cli_input='topo/FatTree6/rules/s33-commands.txt')
-    net.addP4Switch('s34', cli_input='topo/FatTree6/rules/s34-commands.txt')
-    net.addP4Switch('s35', cli_input='topo/FatTree6/rules/s35-commands.txt')
-    net.addP4Switch('s36', cli_input='topo/FatTree6/rules/s36-commands.txt')
+        self.addLink('s39', 's19')
+        self.addLink('s39', 's22')
+        self.addLink('s39', 's25')
+        self.addLink('s39', 's28')
+        self.addLink('s39', 's31')
+        self.addLink('s39', 's34')
 
-    # core switch 
-    net.addP4Switch('s37', cli_input='topo/FatTree6/rules/s37-commands.txt')
-    net.addP4Switch('s38', cli_input='topo/FatTree6/rules/s38-commands.txt')
-    net.addP4Switch('s39', cli_input='topo/FatTree6/rules/s39-commands.txt')
-    net.addP4Switch('s40', cli_input='topo/FatTree6/rules/s40-commands.txt')
-    net.addP4Switch('s41', cli_input='topo/FatTree6/rules/s41-commands.txt')
-    net.addP4Switch('s42', cli_input='topo/FatTree6/rules/s42-commands.txt')
-    net.addP4Switch('s43', cli_input='topo/FatTree6/rules/s43-commands.txt')
-    net.addP4Switch('s44', cli_input='topo/FatTree6/rules/s44-commands.txt')
-    net.addP4Switch('s45', cli_input='topo/FatTree6/rules/s45-commands.txt')
+        self.addLink('s40', 's20')
+        self.addLink('s40', 's23')
+        self.addLink('s40', 's26')
+        self.addLink('s40', 's29')
+        self.addLink('s40', 's32')
+        self.addLink('s40', 's35')
 
-    net.setP4SourceAll('p4src/switch.p4')
+        self.addLink('s41', 's20')
+        self.addLink('s41', 's23')
+        self.addLink('s41', 's26')
+        self.addLink('s41', 's29')
+        self.addLink('s41', 's32')
+        self.addLink('s41', 's35')
 
-    # Host
-    net.addHost('h1')
-    net.addHost('h2')
-    net.addHost('h3')
-    net.addHost('h4')
-    net.addHost('h5')
-    net.addHost('h6')
-    net.addHost('h7')
-    net.addHost('h8')
-    net.addHost('h9')
-    net.addHost('h10')
-    net.addHost('h11')
-    net.addHost('h12')
-    net.addHost('h13')
-    net.addHost('h14')
-    net.addHost('h15')
-    net.addHost('h16')
-    net.addHost('h17')
-    net.addHost('h18')
-    net.addHost('h19')
-    net.addHost('h20')
-    net.addHost('h21')
-    net.addHost('h22')
-    net.addHost('h23')
-    net.addHost('h24')
-    net.addHost('h25')
-    net.addHost('h26')
-    net.addHost('h27')
-    net.addHost('h28')
-    net.addHost('h29')
-    net.addHost('h30')
-    net.addHost('h31')
-    net.addHost('h32')
-    net.addHost('h33')
-    net.addHost('h34')
-    net.addHost('h35')
-    net.addHost('h36')
-    net.addHost('h37')
-    net.addHost('h38')
-    net.addHost('h39')
-    net.addHost('h40')
-    net.addHost('h41')
-    net.addHost('h42')
-    net.addHost('h43')
-    net.addHost('h44')
-    net.addHost('h45')
-    net.addHost('h46')
-    net.addHost('h47')
-    net.addHost('h48')
-    net.addHost('h49')
-    net.addHost('h50')
-    net.addHost('h51')
-    net.addHost('h52')
-    net.addHost('h53')
-    net.addHost('h54')
+        self.addLink('s42', 's20')
+        self.addLink('s42', 's23')
+        self.addLink('s42', 's26')
+        self.addLink('s42', 's29')
+        self.addLink('s42', 's32')
+        self.addLink('s42', 's35')
 
+        self.addLink('s43', 's21')
+        self.addLink('s43', 's24')
+        self.addLink('s43', 's27')
+        self.addLink('s43', 's30')
+        self.addLink('s43', 's33')
+        self.addLink('s43', 's36')
 
-    # core Link
-    net.addLink('s37', 's19')
-    net.addLink('s37', 's22')
-    net.addLink('s37', 's25')
-    net.addLink('s37', 's28')
-    net.addLink('s37', 's31')
-    net.addLink('s37', 's34')
+        self.addLink('s44', 's21')
+        self.addLink('s44', 's24')
+        self.addLink('s44', 's27')
+        self.addLink('s44', 's30')
+        self.addLink('s44', 's33')
+        self.addLink('s44', 's36')
 
-    net.addLink('s38', 's19')
-    net.addLink('s38', 's22')
-    net.addLink('s38', 's25')
-    net.addLink('s38', 's28')
-    net.addLink('s38', 's31')
-    net.addLink('s38', 's34')
+        self.addLink('s45', 's21')
+        self.addLink('s45', 's24')
+        self.addLink('s45', 's27')
+        self.addLink('s45', 's30')
+        self.addLink('s45', 's33')
+        self.addLink('s45', 's36')
 
-    net.addLink('s39', 's19')
-    net.addLink('s39', 's22')
-    net.addLink('s39', 's25')
-    net.addLink('s39', 's28')
-    net.addLink('s39', 's31')
-    net.addLink('s39', 's34')
+        # aggregate Link
+        self.addLink('s19', 's1')
+        self.addLink('s19', 's2')
+        self.addLink('s19', 's3')
+        self.addLink('s20', 's1')
+        self.addLink('s20', 's2')
+        self.addLink('s20', 's3')
+        self.addLink('s21', 's1')
+        self.addLink('s21', 's2')
+        self.addLink('s21', 's3')
 
-    net.addLink('s40', 's20')
-    net.addLink('s40', 's23')
-    net.addLink('s40', 's26')
-    net.addLink('s40', 's29')
-    net.addLink('s40', 's32')
-    net.addLink('s40', 's35')
+        self.addLink('s22', 's4')
+        self.addLink('s22', 's5')
+        self.addLink('s22', 's6')
+        self.addLink('s23', 's4')
+        self.addLink('s23', 's5')
+        self.addLink('s23', 's6')
+        self.addLink('s24', 's4')
+        self.addLink('s24', 's5')
+        self.addLink('s24', 's6')
 
-    net.addLink('s41', 's20')
-    net.addLink('s41', 's23')
-    net.addLink('s41', 's26')
-    net.addLink('s41', 's29')
-    net.addLink('s41', 's32')
-    net.addLink('s41', 's35')
+        self.addLink('s25', 's7')
+        self.addLink('s25', 's8')
+        self.addLink('s25', 's9')
+        self.addLink('s26', 's7')
+        self.addLink('s26', 's8')
+        self.addLink('s26', 's9')
+        self.addLink('s27', 's7')
+        self.addLink('s27', 's8')
+        self.addLink('s27', 's9')
 
-    net.addLink('s42', 's20')
-    net.addLink('s42', 's23')
-    net.addLink('s42', 's26')
-    net.addLink('s42', 's29')
-    net.addLink('s42', 's32')
-    net.addLink('s42', 's35')
+        self.addLink('s28', 's10')
+        self.addLink('s28', 's11')
+        self.addLink('s28', 's12')
+        self.addLink('s29', 's10')
+        self.addLink('s29', 's11')
+        self.addLink('s29', 's12')
+        self.addLink('s30', 's10')
+        self.addLink('s30', 's11')
+        self.addLink('s30', 's12')
 
-    net.addLink('s43', 's21')
-    net.addLink('s43', 's24')
-    net.addLink('s43', 's27')
-    net.addLink('s43', 's30')
-    net.addLink('s43', 's33')
-    net.addLink('s43', 's36')
+        self.addLink('s31', 's13')
+        self.addLink('s31', 's14')
+        self.addLink('s31', 's15')
+        self.addLink('s32', 's13')
+        self.addLink('s32', 's14')
+        self.addLink('s32', 's15')
+        self.addLink('s33', 's13')
+        self.addLink('s33', 's14')
+        self.addLink('s33', 's15')
 
-    net.addLink('s44', 's21')
-    net.addLink('s44', 's24')
-    net.addLink('s44', 's27')
-    net.addLink('s44', 's30')
-    net.addLink('s44', 's33')
-    net.addLink('s44', 's36')
+        self.addLink('s34', 's16')
+        self.addLink('s34', 's17')
+        self.addLink('s34', 's18')
+        self.addLink('s35', 's16')
+        self.addLink('s35', 's17')
+        self.addLink('s35', 's18')
+        self.addLink('s36', 's16')
+        self.addLink('s36', 's17')
+        self.addLink('s36', 's18')
 
-    net.addLink('s45', 's21')
-    net.addLink('s45', 's24')
-    net.addLink('s45', 's27')
-    net.addLink('s45', 's30')
-    net.addLink('s45', 's33')
-    net.addLink('s45', 's36')
-
-    # aggregate Link
-    net.addLink('s19', 's1')
-    net.addLink('s19', 's2')
-    net.addLink('s19', 's3')
-    net.addLink('s20', 's1')
-    net.addLink('s20', 's2')
-    net.addLink('s20', 's3')
-    net.addLink('s21', 's1')
-    net.addLink('s21', 's2')
-    net.addLink('s21', 's3')
-
-    net.addLink('s22', 's4')
-    net.addLink('s22', 's5')
-    net.addLink('s22', 's6')
-    net.addLink('s23', 's4')
-    net.addLink('s23', 's5')
-    net.addLink('s23', 's6')
-    net.addLink('s24', 's4')
-    net.addLink('s24', 's5')
-    net.addLink('s24', 's6')
-
-    net.addLink('s25', 's7')
-    net.addLink('s25', 's8')
-    net.addLink('s25', 's9')
-    net.addLink('s26', 's7')
-    net.addLink('s26', 's8')
-    net.addLink('s26', 's9')
-    net.addLink('s27', 's7')
-    net.addLink('s27', 's8')
-    net.addLink('s27', 's9')
-
-    net.addLink('s28', 's10')
-    net.addLink('s28', 's11')
-    net.addLink('s28', 's12')
-    net.addLink('s29', 's10')
-    net.addLink('s29', 's11')
-    net.addLink('s29', 's12')
-    net.addLink('s30', 's10')
-    net.addLink('s30', 's11')
-    net.addLink('s30', 's12')
-
-    net.addLink('s31', 's13')
-    net.addLink('s31', 's14')
-    net.addLink('s31', 's15')
-    net.addLink('s32', 's13')
-    net.addLink('s32', 's14')
-    net.addLink('s32', 's15')
-    net.addLink('s33', 's13')
-    net.addLink('s33', 's14')
-    net.addLink('s33', 's15')
-
-    net.addLink('s34', 's16')
-    net.addLink('s34', 's17')
-    net.addLink('s34', 's18')
-    net.addLink('s35', 's16')
-    net.addLink('s35', 's17')
-    net.addLink('s35', 's18')
-    net.addLink('s36', 's16')
-    net.addLink('s36', 's17')
-    net.addLink('s36', 's18')
-
-    # host link
-    net.addLink('s1', 'h1')
-    net.addLink('s1', 'h2')
-    net.addLink('s1', 'h3')
-    net.addLink('s2', 'h4')
-    net.addLink('s2', 'h5')
-    net.addLink('s2', 'h6')
-    net.addLink('s3', 'h7')
-    net.addLink('s3', 'h8')
-    net.addLink('s3', 'h9')
-    net.addLink('s4', 'h10')
-    net.addLink('s4', 'h11')
-    net.addLink('s4', 'h12')
-    net.addLink('s5', 'h13')
-    net.addLink('s5', 'h14')
-    net.addLink('s5', 'h15')
-    net.addLink('s6', 'h16')
-    net.addLink('s6', 'h17')
-    net.addLink('s6', 'h18')
-    net.addLink('s7', 'h19')
-    net.addLink('s7', 'h20')
-    net.addLink('s7', 'h21')
-    net.addLink('s8', 'h22')
-    net.addLink('s8', 'h23')
-    net.addLink('s8', 'h24')
-    net.addLink('s9', 'h25')
-    net.addLink('s9', 'h26')
-    net.addLink('s9', 'h27')
-    net.addLink('s10', 'h28')
-    net.addLink('s10', 'h29')
-    net.addLink('s10', 'h30')
-    net.addLink('s11', 'h31')
-    net.addLink('s11', 'h32')
-    net.addLink('s11', 'h33')
-    net.addLink('s12', 'h34')
-    net.addLink('s12', 'h35')
-    net.addLink('s12', 'h36')
-    net.addLink('s13', 'h37')
-    net.addLink('s13', 'h38')
-    net.addLink('s13', 'h39')
-    net.addLink('s14', 'h40')
-    net.addLink('s14', 'h41')
-    net.addLink('s14', 'h42')
-    net.addLink('s15', 'h43')
-    net.addLink('s15', 'h44')
-    net.addLink('s15', 'h45')
-    net.addLink('s16', 'h46')
-    net.addLink('s16', 'h47')
-    net.addLink('s16', 'h48')
-    net.addLink('s17', 'h49')
-    net.addLink('s17', 'h50')
-    net.addLink('s17', 'h51')
-    net.addLink('s18', 'h52')
-    net.addLink('s18', 'h53')
-    net.addLink('s18', 'h54')
+        # host link
+        self.addLink('s1', 'h1')
+        self.addLink('s1', 'h2')
+        self.addLink('s1', 'h3')
+        self.addLink('s2', 'h4')
+        self.addLink('s2', 'h5')
+        self.addLink('s2', 'h6')
+        self.addLink('s3', 'h7')
+        self.addLink('s3', 'h8')
+        self.addLink('s3', 'h9')
+        self.addLink('s4', 'h10')
+        self.addLink('s4', 'h11')
+        self.addLink('s4', 'h12')
+        self.addLink('s5', 'h13')
+        self.addLink('s5', 'h14')
+        self.addLink('s5', 'h15')
+        self.addLink('s6', 'h16')
+        self.addLink('s6', 'h17')
+        self.addLink('s6', 'h18')
+        self.addLink('s7', 'h19')
+        self.addLink('s7', 'h20')
+        self.addLink('s7', 'h21')
+        self.addLink('s8', 'h22')
+        self.addLink('s8', 'h23')
+        self.addLink('s8', 'h24')
+        self.addLink('s9', 'h25')
+        self.addLink('s9', 'h26')
+        self.addLink('s9', 'h27')
+        self.addLink('s10', 'h28')
+        self.addLink('s10', 'h29')
+        self.addLink('s10', 'h30')
+        self.addLink('s11', 'h31')
+        self.addLink('s11', 'h32')
+        self.addLink('s11', 'h33')
+        self.addLink('s12', 'h34')
+        self.addLink('s12', 'h35')
+        self.addLink('s12', 'h36')
+        self.addLink('s13', 'h37')
+        self.addLink('s13', 'h38')
+        self.addLink('s13', 'h39')
+        self.addLink('s14', 'h40')
+        self.addLink('s14', 'h41')
+        self.addLink('s14', 'h42')
+        self.addLink('s15', 'h43')
+        self.addLink('s15', 'h44')
+        self.addLink('s15', 'h45')
+        self.addLink('s16', 'h46')
+        self.addLink('s16', 'h47')
+        self.addLink('s16', 'h48')
+        self.addLink('s17', 'h49')
+        self.addLink('s17', 'h50')
+        self.addLink('s17', 'h51')
+        self.addLink('s18', 'h52')
+        self.addLink('s18', 'h53')
+        self.addLink('s18', 'h54')
 
 
-    # Assignment strategy
-    net.mixed()
-    # Nodes general options
-    # net.enableCpuPortAll()
-    # net.enablePcapDumpAll()
-    # net.enableLogAll()
+        # Asignment strategy
+        self.mixed()
+        # Nodes general options
+        # self.enableCpuPortAll()
+        # self.enablePcapDumpAll()
+        # self.enableLogAll()
 
-    # Start the network
-    net.startNetwork()
+        # Start the self.network
+
+    @property
+    def topoType(self):
+        return self._topoType
+    
+    def clean_and_compile(self):
+        """清理旧网络信息并加载p4代码进入交换机"""
+        debug('Cleanup old files and processes...\n')
+        self.cleanup()
+
+        debug('Auto configuration of not configured interfaces...\n')
+        self.auto_assignment()
+
+        try:
+            info('Compiling P4 files...\n')
+            self.compile()
+            output('P4 Files compiled!\n')
+        except Exception as e:
+            error('There is something wrong while compiling p4 source\n')
+            return False
+        self.printPortMapping()
+
+        self.__isCompiled = True
+
+        return True
+
+    def program_switches(self):  
+        """装载流表"""  
+        try:    
+            info('Programming switches...\n')
+            # super().program_switches()
+            for i in range(1,46):
+                cur_sw = self.net.get(f's{i}')
+                thriftPort = 9089+i
+                cur_sw.cmd(f"simple_switch_CLI --thrift-port {thriftPort} < topo/FatTree6/rules/s{i}-commands.txt")
+            output('Switches programmed correctly!\n')
+        except Exception as e:
+            error(f"There is something wrong while programming switches. Detailed info is as followed:{e}\n")
+            return False
+        return True
+ 
+    def startNetwork(self):
+        """Starts and configures the network."""
+        
+        try:
+            assert self.__isCompiled
+        except AssertionError as e:
+            error(f"{e}\nYou haven't compiled your P4 code yet, so you can't start the network now!")
+
+        info('Creating network...\n')
+        self.net = self.module('net', topo=self, controller=None)
+        output('Network created!\n')
+
+        info('Starting network...\n')
+        self.net.start()
+        output('Network started!\n')
+
+        info('Starting schedulers...\n')
+        self.start_schedulers()
+        output('Schedulers started correctly!\n')
+
+        info('Saving topology to disk...\n')
+        self.save_topology()
+        output('Topology saved to disk!\n')
+
+        # 装载流表的部分，需单独写出
+        info('Programming switches...\n')
+        self.program_switches()
+        output('Switches programmed correctly!\n')
+
+        info('Programming hosts...\n')
+        self.program_hosts()
+        output('Hosts programmed correctly!\n')
+
+        info('Executing scripts...\n')
+        self.exec_scripts()
+        output('All scripts executed correctly!\n')
+
+        info('Distributing tasks...\n')
+        self.distribute_tasks()
+        output('All tasks distributed correctly!\n')
+
+        if self.cli_enabled:
+            self.start_net_cli()
+            # Stop right after the CLI is exited
+            self.stopNetwork()
+
+
+        self.__isNetworkStart = True
+
+    def get_path(self, src_host, dst_host):
+        dst_ip = self.net.get(dst_host).IP()
+        src_ip = self.net.get(src_host).IP()
+        with open("topo/FatTree6/rules.json", "r")as f:
+            paths = json.load(f)
+            for path in paths:
+                if path['src_ip'] == src_ip and path['dst_ip'] == dst_ip:
+                    return path['path']
+        return None        
+
+    def send(self, src_host, dst_host):
+        """
+        返回值为bool 表示send操作是否成功，如果失败将不会产生任何文件，成功将会在application文件夹下生成res.json。
+        调用此方法前网络必须启动。
+        """
+        try:
+            assert self.__isNetworkStart and self.__isCompiled
+        except AssertionError as e:
+            error(f"{e}\nYou haven't compiled your P4 code or started your network yet, so you can't send any packet now!")
+
+        dst_shell = self.net.get(dst_host)
+        src_shell = self.net.get(src_host)
+        output = ""
+        try:
+            info('executing receive.py...\n')
+            output = dst_shell.cmd('./topo/FatTree6/receive.py &')
+        except Exception as e:
+            error(f"fail to launch receive.py on {dst_host}. Detailed info is as follow:{e}\n")
+            return False
+        
+        if output != "":
+            info("successful execution:")
+            info(output)
+        time.sleep(3)
+
+        try:
+            output = src_shell.cmd(f'./topo/FatTree6/send.py --ip {dst_shell.IP()} --m tag')
+        except Exception as e:
+            error(f"fail to launch send.py on {src_host}. Detailed info is as follow:{e}\n")
+            return False
+        if output != "":
+            info("successful execution:")
+            info(output)
+        time.sleep(1)
+
+        res=None
+
+        if not os.path.isfile('res.json'):
+            return False
+
+        with open("res.json", "r")as f:
+            res = json.load(f)
+
+        res["stop_receiving"] = False
+
+        try:
+            dst_shell.cmd("pkill -f 'python3 ./topo/FatTree6/receive.py'")
+            info('receive.py killed.\n')
+            res["stop_receiving"] = True
+        except Exception as e:
+            error(f'fail to kill receive.py. Detailed info is as follow:{e}\n')
+
+        with open("res.json", "w")as f:
+            json.dump(res, f, indent=4)
+
+
+    
+    def modify_switch(self, swid, dst_host, dst_swid):
+        """
+        swid:被修改的交换机
+        dst_host:被修改流表表项对应的主机
+        dst_swid:流表表项修改的目标交换机
+        """
+        #TODO 要将结果以什么样的形式传回去？
+
+        try:
+            assert self.__isNetworkStart and self.__isCompiled
+        except AssertionError as e:
+            error(f"{e}\nYou haven't compiled your P4 code or started your network yet, so you can't send any packet now!")
+
+        cur_sw = self.net.get(swid)
+        dst_sw = self.net.get(dst_swid)
+        dst_port = None
+
+        # 获取交换机连接的端口信息
+        for intf in cur_sw.intfList():
+            if intf.name != 'lo':
+                peer = intf.link.intf2 if intf.link.intf1 == intf else intf.link.intf1
+                if peer.node == dst_sw:
+                    dst_port = re.findall("eth(.*)", intf.name)[0]
+        if dst_port == None: 
+            info(f'These two switches are not neighbours! You can\'t modify switch {swid}.\n')
+            return False
+        
+        # 将每一条有关该目的地主机的流表进行修改
+        h = self.net.get(dst_host)
+        thriftPort = 9089+int(swid[1:])
+        try:
+            output = self.net.get(swid).cmd(f'echo "table_dump MyIngress.ipv4_lpm" | simple_switch_CLI --thrift-port {thriftPort}')
+        except Exception as e:
+            error(f"Execution of your command failed. Detailed info is as follow:{e}\n")
+            return False
+        handle = None
+        hexIP = hex_IP(h.IP())
+        for line in output.strip().split('\n'):
+            if "Dumping entry" in line:
+                handle = int(line[16:], 16)
+            if hexIP in line:
+                if handle == None:
+                    continue
+                cmd = f'echo "table_modify ipv4_lpm ipv4_forward {handle} {h.MAC()} {dst_port}" | simple_switch_CLI --thrift-port {thriftPort}'
+                res = self.net.get(swid).cmd(cmd)
+                handle = None
+                info('modify results:\n' + res + '\n')
+        
+        return True
+
+    def stopNetwork(self):
+        super().stopNetwork()
+        self.__isNetworkStart = False
+
+
+if __name__ == '__main__':
+    ft6=FatTree6()
+    ft6.clean_and_compile()
+    ft6.startNetwork()

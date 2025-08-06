@@ -10,7 +10,7 @@ from scapy.all import sniff
 from scapy.all import Packet
 from scapy.all import IP, UDP, TCP
 from ..tools import get_if, SwitchTrace, IPOption_TAG, IPOption_MRI
-from topo import Topology
+from topo.FatTree6.topo import Topology
 
     
 def load_rules(rule_path):

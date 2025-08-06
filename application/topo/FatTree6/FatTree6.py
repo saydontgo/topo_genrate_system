@@ -11,8 +11,9 @@ class FatTree6(NetworkAPI):
         super().__init__()
         self.setLogLevel('info')
         self.disableCli()
-        self.isNetworkStart = False
-        self.isCompiled = False
+        self._topoType = 'ft6'
+        self.__isNetworkStart = False
+        self.__isCompiled = False
         # Switch
         for i in range(1, 46):
             self.addP4Switch(f's{i}', cli_input=f'topo/FatTree6/rules/s{i}-commands.txt')
@@ -214,6 +215,10 @@ class FatTree6(NetworkAPI):
 
         # Start the self.network
 
+    @property
+    def topoType(self):
+        return self._topoType
+    
     def clean_and_compile(self):
         """清理旧网络信息并加载p4代码进入交换机"""
         debug('Cleanup old files and processes...\n')
@@ -231,7 +236,7 @@ class FatTree6(NetworkAPI):
             return False
         self.printPortMapping()
 
-        self.isCompiled = True
+        self.__isCompiled = True
 
         return True
 
@@ -254,7 +259,7 @@ class FatTree6(NetworkAPI):
         """Starts and configures the network."""
         
         try:
-            assert self.isCompiled
+            assert self.__isCompiled
         except AssertionError as e:
             error(f"{e}\nYou haven't compiled your P4 code yet, so you can't start the network now!")
 
@@ -297,7 +302,7 @@ class FatTree6(NetworkAPI):
             self.stopNetwork()
 
 
-        self.isNetworkStart = True
+        self.__isNetworkStart = True
 
     def get_path(self, src_host, dst_host):
         dst_ip = self.net.get(dst_host).IP()
@@ -315,7 +320,7 @@ class FatTree6(NetworkAPI):
         调用此方法前网络必须启动。
         """
         try:
-            assert self.isNetworkStart and self.isCompiled
+            assert self.__isNetworkStart and self.__isCompiled
         except AssertionError as e:
             error(f"{e}\nYou haven't compiled your P4 code or started your network yet, so you can't send any packet now!")
 
@@ -330,8 +335,8 @@ class FatTree6(NetworkAPI):
             return False
         
         if output != "":
-            print("successful execution:")
-            print(output)
+            info("successful execution:")
+            info(output)
         time.sleep(3)
 
         try:
@@ -340,8 +345,8 @@ class FatTree6(NetworkAPI):
             error(f"fail to launch send.py on {src_host}. Detailed info is as follow:{e}\n")
             return False
         if output != "":
-            print("successful execution:")
-            print(output)
+            info("successful execution:")
+            info(output)
         time.sleep(1)
 
         res=None
@@ -375,7 +380,7 @@ class FatTree6(NetworkAPI):
         #TODO 要将结果以什么样的形式传回去？
 
         try:
-            assert self.isNetworkStart and self.isCompiled
+            assert self.__isNetworkStart and self.__isCompiled
         except AssertionError as e:
             error(f"{e}\nYou haven't compiled your P4 code or started your network yet, so you can't send any packet now!")
 
@@ -418,7 +423,7 @@ class FatTree6(NetworkAPI):
 
     def stopNetwork(self):
         super().stopNetwork()
-        self.isNetworkStart = False
+        self.__isNetworkStart = False
 
 
 if __name__ == '__main__':

@@ -46,8 +46,15 @@ def settings_page():
 def get_topology_data():
     # 假设你保存的是 txt 文件，可以在构建拓扑时自动写入或读取已有文件
     edges = []
+    if current_topology.topoType == 'ft6':
+        topo_data_file = r'topo/FatTree6/topo.txt'
+    elif current_topology.topoType == 'demo':
+        topo_data_file = r'topo/demo/topo.txt'
+    else:
+        return jsonify({'error': 'invalid topo'}), 404
+    
     try:
-        with open('topo/demo/topo.txt', 'r') as f:
+        with open(topo_data_file, 'r') as f:
             for line in f:
                 # 格式：(s1, h1)
                 line = line.strip().replace('(', '').replace(')', '').replace(',', '')

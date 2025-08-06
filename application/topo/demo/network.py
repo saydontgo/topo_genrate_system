@@ -14,8 +14,9 @@ class demo(NetworkAPI):
         super().__init__()
         self.setLogLevel('info')
         self.disableCli()
-        self.isNetworkStart = False
-        self.isCompiled = False
+        self._topoType = 'demo'
+        self.__isNetworkStart = False
+        self.__isCompiled = False
 
         # Network definition
         # Switch
@@ -37,6 +38,10 @@ class demo(NetworkAPI):
         # Assignment strategy
         self.mixed()  
     
+    @property
+    def topoType(self):
+        return self._topoType
+    
     def clean_and_compile(self):
         """清理旧网络信息并加载p4代码进入交换机"""
         debug('Cleanup old files and processes...\n')
@@ -54,7 +59,7 @@ class demo(NetworkAPI):
             return False
         self.printPortMapping()
 
-        self.isCompiled = True
+        self.__isCompiled = True
 
         return True
 
@@ -76,7 +81,7 @@ class demo(NetworkAPI):
     def startNetwork(self):
         """Starts and configures the network."""
         
-        assert self.isCompiled
+        assert self.__isCompiled
         
         info('Creating network...\n')
         self.net = self.module('net', topo=self, controller=None)
@@ -117,7 +122,7 @@ class demo(NetworkAPI):
             self.stopNetwork()
 
 
-        self.isNetworkStart = True  
+        self.__isNetworkStart = True  
 
     def get_path(self, src_host, dst_host):
         dst_ip = self.net.get(dst_host).IP()
@@ -134,7 +139,7 @@ class demo(NetworkAPI):
         返回值为bool 表示send操作是否成功，如果失败将不会产生任何文件，成功将会在application文件夹下生成res.json。
         调用此方法前网络必须启动。
         """
-        assert self.isNetworkStart and self.isCompiled
+        assert self.__isNetworkStart and self.__isCompiled
         dst_shell = self.net.get(dst_host)
         src_shell = self.net.get(src_host)
         output = ""
@@ -187,7 +192,7 @@ class demo(NetworkAPI):
         dst_swid:流表表项修改的目标交换机
         """
 
-        assert self.isNetworkStart and self.isCompiled
+        assert self.__isNetworkStart and self.__isCompiled
         cur_sw = self.net.get(swid)
         dst_sw = self.net.get(dst_swid)
         dst_port = None
@@ -227,7 +232,7 @@ class demo(NetworkAPI):
 
     def stopNetwork(self):
         super().stopNetwork()
-        self.isNetworkStart = False
+        self.__isNetworkStart = False
 
 if __name__ == '__main__':
     topo = demo()
