@@ -14,6 +14,9 @@ class FatTree6(NetworkAPI):
         self._topoType = 'ft6'
         self.__isNetworkStart = False
         self.__isCompiled = False
+
+        with open('topo/FatTree6/rules.json', 'r') as ori, open('topo/rules.json', 'w') as dst:
+            dst.write(ori.read())
         # Switch
         for i in range(1, 46):
             self.addP4Switch(f's{i}', cli_input=f'topo/FatTree6/rules/s{i}-commands.txt')
@@ -329,7 +332,7 @@ class FatTree6(NetworkAPI):
         output = ""
         try:
             info('executing receive.py...\n')
-            output = dst_shell.cmd('./topo/FatTree6/receive.py &')
+            output = dst_shell.cmd('./topo/receive.py &')
         except Exception as e:
             error(f"fail to launch receive.py on {dst_host}. Detailed info is as follow:{e}\n")
             return False
@@ -340,7 +343,7 @@ class FatTree6(NetworkAPI):
         time.sleep(3)
 
         try:
-            output = src_shell.cmd(f'./topo/FatTree6/send.py --ip {dst_shell.IP()} --m tag')
+            output = src_shell.cmd(f'./topo/send.py --ip {dst_shell.IP()} --m tag')
         except Exception as e:
             error(f"fail to launch send.py on {src_host}. Detailed info is as follow:{e}\n")
             return False
@@ -360,7 +363,7 @@ class FatTree6(NetworkAPI):
         res["stop_receiving"] = False
 
         try:
-            dst_shell.cmd("pkill -f 'python3 ./topo/FatTree6/receive.py'")
+            dst_shell.cmd("pkill -f 'python3 ./topo/receive.py'")
             info('receive.py killed.\n')
             res["stop_receiving"] = True
         except Exception as e:
@@ -428,4 +431,6 @@ class FatTree6(NetworkAPI):
 
 if __name__ == '__main__':
     ft6=FatTree6()
+    ft6.clean_and_compile()
     ft6.startNetwork()
+    ft6.program_switches()

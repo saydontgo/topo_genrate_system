@@ -18,6 +18,9 @@ class demo(NetworkAPI):
         self.__isNetworkStart = False
         self.__isCompiled = False
 
+        with open('topo/demo/rules/rules.json', 'r') as ori, open('topo/rules.json', 'w') as dst:
+            dst.write(ori.read())
+
         # Network definition
         # Switch
         for i in range(1, 5):
@@ -145,24 +148,24 @@ class demo(NetworkAPI):
         output = ""
         try:
             info('executing receive.py...\n')
-            output = dst_shell.cmd('./topo/dmeo/receive.py &')
+            output = dst_shell.cmd('./topo/receive.py &')
         except Exception as e:
             error(f"fail to launch receive.py on {dst_host}. Detailed info is as follow:{e}\n")
             return False
         
         if output != "":
-            print("successful execution:")
-            print(output)
+            info("successful execution:")
+            info(output)
         time.sleep(3)
 
         try:
-            output = src_shell.cmd(f'./topo/demo/send.py --ip {dst_shell.IP()} --m tag')
+            output = src_shell.cmd(f'./topo/send.py --ip {dst_shell.IP()} --m tag')
         except Exception as e:
             error(f"fail to launch send.py on {src_host}. Detailed info is as follow:{e}\n")
             return False
         if output != "":
-            print("successful execution:")
-            print(output)
+            info("successful execution:")
+            info(output)
         time.sleep(1)
 
         res=None
@@ -176,7 +179,7 @@ class demo(NetworkAPI):
         res["stop_receiving"] = False
 
         try:
-            dst_shell.cmd("pkill -f 'python3 ./topo/demo/receive.py'")
+            dst_shell.cmd("pkill -f 'python3 ./topo/receive.py'")
             info('receive.py killed.\n')
             res["stop_receiving"] = True
         except Exception as e:

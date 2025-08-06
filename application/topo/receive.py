@@ -9,7 +9,7 @@ logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 from scapy.all import sniff
 from scapy.all import Packet
 from scapy.all import IP, UDP, TCP
-from ..tools import get_if, SwitchTrace, IPOption_TAG, IPOption_MRI
+from tools import get_if, SwitchTrace, IPOption_TAG, IPOption_MRI
 from topo import Topology
 
     
@@ -42,7 +42,7 @@ check_bytes = 0
 end_time = time.time()
 topo = Topology('topology.json')
 # rules = load_rules('./topo/FatTree/rules.json')
-rules = load_rules('rules/rules.json')
+rules = load_rules('topo/rules.json')
 # bug_num = 0
 
 
