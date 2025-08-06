@@ -1,5 +1,6 @@
 application/p4src/switch.json
 application/p4src/switch.p4i
+application/topo/rules.json
 *.pyc
 __pycache__/
 **/__pycache__/
