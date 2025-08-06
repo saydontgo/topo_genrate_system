@@ -6,6 +6,7 @@ import threading
 import atexit
 import json
 import os
+import io
 import topo.FatTree6.FatTree6 as ft6
 import topo.demo.network as demo
 from LLM import secure_session_id, call_llm_1, r
@@ -46,7 +47,7 @@ def get_topology_data():
     # 假设你保存的是 txt 文件，可以在构建拓扑时自动写入或读取已有文件
     edges = []
     try:
-        with open('topo/FatTree6/topo.txt', 'r') as f:
+        with open('topo/demo/topo.txt', 'r') as f:
             for line in f:
                 # 格式：(s1, h1)
                 line = line.strip().replace('(', '').replace(')', '').replace(',', '')
@@ -304,7 +305,11 @@ def upload_topology():
             "message": "文件上传成功并通过验证！",
             "session_id": session_id,
             "initial_response": response_data,
-            "build_enabled": True
+            "build_enabled": True,
+            "download_links": {
+                "script": "/download/network_script",
+                "config": "/download/topology_json"
+            }
         })
     except Exception as e:
         info(f"Error calling LLM after upload: {e}") # 在服务器端打印错误日志
@@ -328,6 +333,32 @@ def chat():
     
     # 假设 response_data 是一个包含分析、代码、问题等内容的复杂JSON字符串
     return jsonify(response_data)
+
+# 路由1: 用于下载静态的 network.py 文件
+@app.route('/download/network_script')
+def download_network_script():
+    # 从session中检查拓扑是否已上传，增加安全性，防止随意下载
+    if 'topology_data' not in session:
+        return "会话无效或已过期，请重新上传拓扑。", 403
+    try:
+        # 构建文件的安全路径
+        script_path = os.path.join(app.root_path, 'topo', 'demo', 'network.py')
+        return send_file(script_path, as_attachment=True)
+    except FileNotFoundError:
+        return "服务器上未找到 network.py 文件。", 404
+
+# 路由2: 用于下载用户刚刚上传的、存储在session中的 topology.json
+@app.route('/download/topology_json')
+def download_topology_json():
+    # 同样可以保留 session 检查作为权限控制
+    if 'topology_data' not in session:
+        return "会话无效或已过期，请重新上传拓扑。", 403
+    try:
+        # 构建 topology.json 的安全路径
+        json_path = os.path.join(app.root_path, 'topology.json')
+        return send_file(json_path, as_attachment=True, mimetype='json')
+    except FileNotFoundError:
+        return "服务器上未找到 application/topology.json 文件。", 404
 
 # 清除redis内存  
 @atexit.register

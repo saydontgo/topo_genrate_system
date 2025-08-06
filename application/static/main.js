@@ -220,59 +220,75 @@ document.addEventListener('DOMContentLoaded', function () {
     // 1. 文件上传逻辑
     uploadBtn.addEventListener('click', () => fileInput.click());
 
+    let sharedFileContent = null; 
+
     fileInput.addEventListener('change', async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
+    const file = event.target.files[0];
+    if (!file) return;
 
-        uploadError.style.display = 'none';
-        uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上传并验证中...';
-        uploadBtn.disabled = true;
+    // 【核心修正2】将读取到的文件内容赋值给外部的共享变量
+    sharedFileContent = await file.text(); 
 
-        const formData = new FormData();
-        formData.append('file', file);
+    uploadError.style.display = 'none';
+    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上传并验证中...';
+    uploadBtn.disabled = true;
 
-        try {
-            const response = await fetch('/upload_topology', {
-                method: 'POST',
-                body: formData
-            });
+    const formData = new FormData();
+    formData.append('file', file);
 
-            const data = await response.json();
+    try {
+        const response = await fetch('/upload_topology', {
+            method: 'POST',
+            body: formData
+        });
 
-            if (!response.ok) {
-                // 显示后端返回的详细错误信息
-                let errorMsg = data.error || `服务器错误: ${response.status}`;
-                if (data.template) {
-                    errorMsg += `\n期望的格式类似: ${data.template}`;
-                }
-                throw new Error(errorMsg);
+        const data = await response.json();
+
+        if (!response.ok) {
+            let errorMsg = data.error || `服务器错误: ${response.status}`;
+            if (data.template) {
+                errorMsg += `\n期望的格式类似: ${data.template}`;
             }
-
-            // 上传成功！
-            currentSessionId = data.session_id;
-            uploadInitialScreen.style.display = 'none'; // 隐藏上传界面
-            chatInputArea.style.display = 'block';     // 显示输入框
-
-            // 显示AI的首次分析
-            appendBotMessage(data, true);
-            // 【核心新增】为新创建的“构建拓扑”按钮绑定事件
-            const buildTopoBtn = document.getElementById('build-topo-btn');
-            if (buildTopoBtn) {
-                buildTopoBtn.addEventListener('click', (e) => {
-                    // 在跳转前，将文件内容存入 localStorage
-                    localStorage.setItem('pendingTopology', fileContent);
-                });
-            }
-            toggleLoadingState(false);
-
-        } catch (error) {
-            displayError(error.message);
-        } finally {
-            uploadBtn.innerHTML = '<i class="fas fa-upload"></i> 点击上传文件';
-            uploadBtn.disabled = false;
-            fileInput.value = ''; // 清空文件选择，以便下次上传
+            throw new Error(errorMsg);
         }
-    });
+        
+        currentSessionId = data.session_id;
+        uploadInitialScreen.style.display = 'none';
+        chatInputArea.style.display = 'block';
+
+        appendBotMessage(data, true); 
+        
+        const buildTopoBtn = document.getElementById('build-topo-btn');
+        if (buildTopoBtn) {
+            // 这个监听器现在可以访问到外部的 sharedFileContent
+            buildTopoBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log("构建按钮被点击，准备存储拓扑到 localStorage...");
+                try {
+                    // 使用共享变量 sharedFileContent
+                    if (sharedFileContent) {
+                        localStorage.setItem('pendingTopology', sharedFileContent);
+                        console.log("拓扑已成功存入 localStorage。准备跳转...");
+                        window.location.href = '/topology/your_topology';
+                    } else {
+                        throw new Error("文件内容为空，无法存储。");
+                    }
+                } catch (error) {
+                    console.error("存储到 localStorage 失败:", error);
+                    alert("无法保存会话状态，跳转失败。请检查浏览器设置。");
+                }
+            });
+        }
+        toggleLoadingState(false);
+
+    } catch (error) {
+        displayError(error.message);
+    } finally {
+        uploadBtn.innerHTML = '<i class="fas fa-upload"></i> 点击上传文件';
+        uploadBtn.disabled = false;
+        fileInput.value = '';
+    }
+});
 
     // 2. 发送消息逻辑
     const sendMessage = async () => {
@@ -312,68 +328,86 @@ document.addEventListener('DOMContentLoaded', function () {
         chatWindow.scrollTop = chatWindow.scrollHeight;
     };
 
+    // 【最终版本】appendBotMessage 函数
     window.appendBotMessage = (data, isInitialUpload = false) => {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'chat-message bot';
-        let htmlContent = '';
-
-        // 渲染Markdown分析
-        if (data.analysis) {
-            htmlContent += `<div class="message-content">${marked.parse(data.analysis)}</div>`;
-        }
-
-        // 创建可下载的文件链接
-        if (data.files && data.files.length > 0) {
-            htmlContent += '<div class="download-section">';
-            data.files.forEach(file => {
-                if (file.content) {
-                    const blob = new Blob([file.content], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-                    htmlContent += `<a href="${url}" download="${file.filename}" class="download-button"><i class="fas fa-download"></i> 下载 ${file.filename}</a> `;
-                }
-            });
-            htmlContent += '</div>';
-        }
-
-        // 这个按钮只在首次上传成功后显示
-        if (isInitialUpload && data.build_enabled) {
-            htmlContent += `
-                <div class="build-topology-section">
-                    <p>是否需要根据分析结果，生成py与流表文件并构建拓扑？</p>
-                    <a href="/topology/your_topology" id="build-topo-btn" class="chat-button build-button">
-                        <i class="fas fa-cogs"></i> 构建我的拓扑
-                    </a>
-                </div>
-            `;
-        }
-
-        messageDiv.innerHTML = htmlContent;
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat-message bot';
+    
+    const aiResponse = isInitialUpload ? data.initial_response : data;
+    
+    if (!aiResponse || typeof aiResponse !== 'object') {
+        const errorContent = `AI回复格式错误: ${JSON.stringify(aiResponse)}`;
+        messageDiv.innerHTML = `<div class="message-content">${marked.parse(errorContent)}</div>`;
         chatWindow.appendChild(messageDiv);
-        // 渲染"猜你想问"
-        suggestedQuestionsContainer.innerHTML = '';
-        if (data.questions && data.questions.length > 0) {
-            data.questions.forEach(q => {
-                if (!q) return;
-                const btn = document.createElement('button');
-                btn.className = 'suggested-question-btn';
-                btn.textContent = q;
+        return;
+    }
 
-                // 【核心修正】为按钮的点击事件添加 event.stopPropagation()
-                btn.onclick = (event) => {
-                    // 阻止这个点击事件继续冒泡到 document
-                    event.stopPropagation();
+    let htmlContent = '';
+    
+    // 1. 渲染Markdown分析
+    if (aiResponse.analysis) {
+        htmlContent += `<div class="message-content">${marked.parse(aiResponse.analysis)}</div>`;
+    }
 
-                    // 执行原有的功能
-                    userInput.value = q;
-                    sendMessage();
-                };
+    // 2. 创建用户可下载的、由AI生成的文件链接
+    if (aiResponse.files && aiResponse.files.length > 0) {
+        htmlContent += '<div class="download-section">';
+        aiResponse.files.forEach(file => {
+            if (file.content) {
+                const blob = new Blob([file.content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                htmlContent += `<a href="${url}" download="${file.filename}" class="download-button"><i class="fas fa-download"></i> 下载 ${file.filename}</a> `;
+            }
+        });
+        htmlContent += '</div>';
+    }
 
-                suggestedQuestionsContainer.appendChild(btn);
-            });
-        }
+    // 3. 如果存在，创建用于构建拓扑的核心文件下载链接
+    // 这个只在首次上传时执行
+    if (isInitialUpload && data.download_links) {
+        htmlContent += '<div class="download-section">'; // 复用样式
+        // 下载 network.py 的链接
+        htmlContent += `<a href="${data.download_links.script}" download="network.py" class="download-button"><i class="fab fa-python"></i> 下载 network.py</a> `;
+        // 下载 topology.json 的链接
+        htmlContent += `<a href="${data.download_links.config}" download="topology.json" class="download-button"><i class="fas fa-file-code"></i> 下载 topology.json</a>`;
+        htmlContent += '</div>';
+    }
+    
+    // 4. 检查是否需要添加“构建拓扑”按钮
+    const isBuildPage = window.location.pathname.includes('/topology/your_topology');
+    if (isInitialUpload && data.build_enabled && !isBuildPage) {
+        htmlContent += `
+            <div class="build-topology-section">
+                <p>是否需要根据分析结果，生成py与流表文件并构建拓扑？</p>
+                <a href="javascript:void(0);" id="build-topo-btn" class="chat-button build-button">
+                    <i class="fas fa-cogs"></i> 构建我的拓扑
+                </a>
+            </div>
+        `;
+    }
+    
+    messageDiv.innerHTML = htmlContent;
+    chatWindow.appendChild(messageDiv);
 
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-    };
+    // 5. 渲染"猜你想问"
+    suggestedQuestionsContainer.innerHTML = '';
+    if (aiResponse.questions && aiResponse.questions.length > 0) {
+        aiResponse.questions.forEach(q => {
+            if(!q) return;
+            const btn = document.createElement('button');
+            btn.className = 'suggested-question-btn';
+            btn.textContent = q;
+            btn.onclick = (event) => {
+                event.stopPropagation();
+                userInput.value = q;
+                sendMessage();
+            };
+            suggestedQuestionsContainer.appendChild(btn);
+});
+    }
+    
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+};
 
     // --- 绑定事件 ---
     sendBtn.addEventListener('click', sendMessage);

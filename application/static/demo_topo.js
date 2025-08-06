@@ -195,14 +195,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (aiSidebar) {
             aiSidebar.classList.add('open');
         }
-
-        // 4. 调用文件上传逻辑，实现AI会话的无缝衔接
-        // (注意：这里假设AI助手相关的JS在 main.js 中，并且已经被加载)
-        // 我们需要手动触发一次上传
+        // 4. 调用辅助函数，自动上传拓扑并初始化AI会话
         autoUploadAndInitAI(topoFile);
         
-        // 5. 调用后端接口，开始真正的Mininet拓扑构建
-        startDemoTopologyBuild();
 
     } else {
         console.log("未检测到待处理的拓扑。");
@@ -486,29 +481,4 @@ async function autoUploadAndInitAI(file) {
     } catch (error) {
         displayError(error.message);
     }
-}
-
-
-// 【新增】一个函数，用于调用后端构建Mininet拓扑
-function startDemoTopologyBuild() {
-    // 这里的 'demo' 字符串需要和后端 run_mininet_topology 函数中的判断条件一致
-    fetch('/select_topology', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topology: 'demo' })
-    }).then(response => response.json())
-      .then(data => {
-        console.log('自定义拓扑构建请求已发送:', data);
-        
-        // 稍等片刻，让后端有时间生成topo.txt，然后获取数据并绘图
-        setTimeout(() => {
-            fetch('/get_topology_data_demo') // 注意：调用新的数据获取接口
-                .then(res => res.json())
-                .then(edgesData => {
-                    fetchSettingsAndDraw(edgesData);
-                })
-                .catch(err => console.error('获取自定义拓扑数据失败:', err));
-        }, 1000); // 等待1秒
-    })
-    .catch(error => console.error('Error:', error));
 }
