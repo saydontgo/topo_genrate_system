@@ -310,7 +310,7 @@ class FatTree6(NetworkAPI):
     def get_path(self, src_host, dst_host):
         dst_ip = self.net.get(dst_host).IP()
         src_ip = self.net.get(src_host).IP()
-        with open("topo/FatTree6/rules.json", "r")as f:
+        with open("topo/rules.json", "r")as f:
             paths = json.load(f)
             for path in paths:
                 if path['src_ip'] == src_ip and path['dst_ip'] == dst_ip:
