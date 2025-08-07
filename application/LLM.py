@@ -3,12 +3,19 @@ import redis
 import json
 import uuid, hashlib
 from openai import OpenAI
-
 # redis默认使用6379接口
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
 # 维护一个动态session列表
 active_sessions = []
+
+ecnu_ai = "ecnu_max"
+ecnu_api = "https://chat.ecnu.edu.cn/open/api/v1"
+ecnu_api_key = "sk-79784ea536174319bd82937f20da9c52"
+
+deepseek = "deepseek-chat"
+deepseek_api = "https://api.deepseek.com/v1"
+deepseek_api_key = "sk-10f4595be8434076abcb3a3bd3166d1a"
 
 # 【修改】新的系统提示词，指导模型输出特定格式
 original_prompt = [{
@@ -55,23 +62,10 @@ def append_message(session_id, role, content):
     history.append({"role": role, "content": content})
     r.set(key, json.dumps(history))
 
-# 修改后的 call_llm_1 函数
-def call_llm_1(session_id, user_message, topo_str=None):
-    client = OpenAI(
-        api_key='sk-79784ea536174319bd82937f20da9c52', 
-        base_url="https://chat.ecnu.edu.cn/open/api/v1",
-    )
-
-    content_to_send = user_message
-    if topo_str:
-        content_to_send += "\n\n" + topo_str
-
-    append_message(session_id, 'user', content_to_send)
-    history = get_history(session_id)
-
+def get_response(client, model, history):
     try:
         completion = client.chat.completions.create(
-            model="ecnu-max",
+            model=model,
             messages=history,
             response_format={"type": "json_object"}
         )
@@ -101,16 +95,39 @@ def call_llm_1(session_id, user_message, topo_str=None):
         append_message(session_id, 'assistant', json.dumps(fallback_response))
         return fallback_response
 
+# 修改后的 call_llm_1 函数
+def call_llm(model, session_id, user_message, topo_str=None):
+    if model == ecnu_ai:
+        base_url = ecnu_api
+        api_key = ecnu_api_key
+    elif model == deepseek:
+        base_url = deepseek_api
+        api_key = deepseek_api_key
+    else:
+        raise Exception
+    client = OpenAI(
+        api_key=api_key, 
+        base_url=base_url,
+    )
+
+    content_to_send = user_message
+    if topo_str:
+        content_to_send += "\n\n" + topo_str
+
+    append_message(session_id, 'user', content_to_send)
+    history = get_history(session_id)
+
+    return get_response(client, model, history)
+    
+
 if __name__ == '__main__':
     session_id = secure_session_id()
-    with open('test.json', 'r') as f:
-        topo = f.read()
-        print(topo)
+    setLogLevel('info')
     # ctrl + c 退出
     try:
         while True:
             message = input('请输入: ')
-            response = call_llm_1(session_id, message, topo)
+            response = call_llm(deepseek, session_id, message)
             print('--------------以下是ai的回复----------------')
             print(response)
             print('--------------以上是ai的回复----------------')
