@@ -458,6 +458,8 @@ async function autoUploadAndInitAI(file) {
     const formData = new FormData();
     formData.append('file', file);
 
+    // 指定用户选择的模型，这里默认deepseek
+    formData.append('model', 'deepseek')
     try {
         const response = await fetch('/upload_topology', {
             method: 'POST',

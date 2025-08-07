@@ -9,7 +9,7 @@ import os
 import io
 import topo.FatTree6.FatTree6 as ft6
 import topo.demo.network as demo
-from LLM import secure_session_id, call_llm_1, r
+from LLM import secure_session_id, call_llm, r, deepseek, ecnu_ai
 app = Flask(__name__)
 app.secret_key = 'your-very-secret-and-complex-key-here'
 current_topology = None
@@ -237,22 +237,26 @@ def inject_flow_table():
 # [新增] 拓扑文件上传与验证路由
 @app.route("/upload_topology", methods=["POST"])
 def upload_topology():
-    if 'file' not in request.files:
-        return jsonify({"error": "请求中没有找到文件部分"}), 400
+    if 'file' not in request.files or 'model' not in request.form:
+        return jsonify({"error": "请求中没有找到文件或模型部分"}), 400
     
     file = request.files['file']
+    model = request.form['model']
     if file.filename == '':
         return jsonify({"error": "没有选择任何文件"}), 400
 
     if not file or not file.filename.endswith('.json'):
         return jsonify({"error": "文件无效或不是.json格式"}), 400
-        
+
+    if model != deepseek and model != ecnu_ai:
+        return jsonify({"error": "invalid model"}), 400
+    
     try:
         content = file.read().decode('utf-8')
         topo_data = json.loads(content)
     except Exception as e:
         return jsonify({"error": f"JSON文件解析失败，请检查语法: {str(e)}"}), 400
-
+  
     # --- START: 【核心修改】基于新格式的严格验证逻辑 ---
     try:
         # 1. 验证顶层必需的键是否存在
@@ -306,8 +310,9 @@ def upload_topology():
     initial_prompt = "请对以下网络拓扑进行初步分析，并以Markdown格式返回。拓扑结构如下："
     
     try:
-        # 这里的 call_llm_1 来自你的 LLM.py
-        response_data = call_llm_1(session_id, initial_prompt, json.dumps(topo_data, indent=2))
+        # 这里的 call_llm
+        response_data = call_llm(model, session_id, initial_prompt, json.dumps(topo_data, indent=2))
+        print(response_data)
         return jsonify({
             "message": "文件上传成功并通过验证！",
             "session_id": session_id,
@@ -336,7 +341,7 @@ def chat():
         return jsonify({"error": "消息内容不能为空。"}), 400
 
     # 这里不再需要传递拓扑信息，因为它已经包含在Redis的历史记录中了
-    response_data = call_llm_1(session_id, user_message)
+    response_data = call_llm(session_id, user_message)
     
     # 假设 response_data 是一个包含分析、代码、问题等内容的复杂JSON字符串
     return jsonify(response_data)

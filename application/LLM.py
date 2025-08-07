@@ -62,7 +62,7 @@ def append_message(session_id, role, content):
     history.append({"role": role, "content": content})
     r.set(key, json.dumps(history))
 
-def get_response(client, model, history):
+def get_response(client, model, history, session_id):
     try:
         completion = client.chat.completions.create(
             model=model,
@@ -95,7 +95,7 @@ def get_response(client, model, history):
         append_message(session_id, 'assistant', json.dumps(fallback_response))
         return fallback_response
 
-# 修改后的 call_llm_1 函数
+# 修改后的 call_llm 函数
 def call_llm(model, session_id, user_message, topo_str=None):
     if model == ecnu_ai:
         base_url = ecnu_api
@@ -117,7 +117,7 @@ def call_llm(model, session_id, user_message, topo_str=None):
     append_message(session_id, 'user', content_to_send)
     history = get_history(session_id)
 
-    return get_response(client, model, history)
+    return get_response(client, model, history, session_id)
     
 
 if __name__ == '__main__':
