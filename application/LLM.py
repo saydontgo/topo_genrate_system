@@ -3,6 +3,7 @@ import redis
 import json
 import uuid, hashlib
 from openai import OpenAI
+from error import InvalidModelException
 # redis默认使用6379接口
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
@@ -104,7 +105,7 @@ def call_llm(model, session_id, user_message, topo_str=None):
         base_url = deepseek_api
         api_key = deepseek_api_key
     else:
-        raise Exception
+        raise InvalidModelException
     client = OpenAI(
         api_key=api_key, 
         base_url=base_url,
