@@ -10,7 +10,7 @@ r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 # 维护一个动态session列表
 active_sessions = []
 
-ecnu_ai = "ecnu_max"
+ecnu_ai = "ecnu-max"
 ecnu_api = "https://chat.ecnu.edu.cn/open/api/v1"
 ecnu_api_key = "sk-79784ea536174319bd82937f20da9c52"
 
