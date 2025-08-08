@@ -180,12 +180,14 @@ function clearNodeInfo() {
 document.addEventListener("DOMContentLoaded", function () {
     // --- START: 自动上传和构建拓扑的逻辑 ---
     const pendingTopology = localStorage.getItem('pendingTopology');
+    const pendingModel = localStorage.getItem('pendingModel');
 
     if (pendingTopology) {
         console.log("检测到待处理的拓扑，开始自动构建...");
 
         // 1. 清除 localStorage，防止刷新页面时重复构建
         localStorage.removeItem('pendingTopology');
+        localStorage.removeItem('pendingModel');
 
         // 2. 将存储的拓扑字符串转换为一个File对象，以便复用上传逻辑
         const topoFile = new File([pendingTopology], "config.json", { type: "application/json" });
@@ -196,8 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
             aiSidebar.classList.add('open');
         }
         // 4. 调用辅助函数，自动上传拓扑并初始化AI会话
-        autoUploadAndInitAI(topoFile);
-        
+        autoUploadAndInitAI(topoFile,pendingModel);
 
     } else {
         console.log("未检测到待处理的拓扑。");
@@ -439,7 +440,7 @@ function updateDstSwitchOptions() {
 }
 
 // 【新增】一个辅助函数，用于在新页面自动上传拓扑给AI
-async function autoUploadAndInitAI(file) {
+async function autoUploadAndInitAI(file, modelName) {
     const uploadInitialScreen = document.getElementById('upload-initial-screen');
     const uploadBtn = document.getElementById('upload-btn');
     const chatInputArea = document.getElementById('chat-input-area');
@@ -458,8 +459,7 @@ async function autoUploadAndInitAI(file) {
     const formData = new FormData();
     formData.append('file', file);
 
-    // 指定用户选择的模型，这里默认deepseek
-    formData.append('model', 'deepseek')
+    formData.append('model', modelName);
     try {
         const response = await fetch('/upload_topology', {
             method: 'POST',

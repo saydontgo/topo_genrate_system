@@ -121,6 +121,13 @@
         <div id="upload-initial-screen">
             <h4>开始分析</h4>
             <p>请上传您的网络拓扑描述文件 (.json) 来开始对话。</p>
+            <div class="model-selector-container" style="margin: 15px 0;">
+                <label for="llm-model-select" style="font-weight: 500; margin-right: 10px;">选择大模型:</label>
+                <select id="llm-model-select" style="padding: 5px; border-radius: 4px;">
+                    <option value="deepseek-chat" selected>DeepSeek</option>
+                    <option value="ecnu_max">ECNU Max</option>
+                </select>
+            </div>
             <button id="upload-btn" class="chat-button">
                 <i class="fas fa-upload"></i> 点击上传文件
             </button>

@@ -333,6 +333,7 @@ def chat():
     data = request.get_json()
     user_message = data.get("message")
     session_id = session.get("session_id") # 从session中安全地获取session_id
+    model = session.get("model")
 
     if not session_id:
         return jsonify({"error": "对话未初始化，请先上传拓扑文件。"}), 403
@@ -341,7 +342,7 @@ def chat():
         return jsonify({"error": "消息内容不能为空。"}), 400
 
     # 这里不再需要传递拓扑信息，因为它已经包含在Redis的历史记录中了
-    response_data = call_llm(session_id, user_message)
+    response_data = call_llm(model, session_id, user_message, None)
     
     # 假设 response_data 是一个包含分析、代码、问题等内容的复杂JSON字符串
     return jsonify(response_data)

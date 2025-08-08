@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const file = event.target.files[0];
     if (!file) return;
 
-    // 【核心修正2】将读取到的文件内容赋值给外部的共享变量
+    // 将读取到的文件内容赋值给外部的共享变量
     sharedFileContent = await file.text(); 
 
     uploadError.style.display = 'none';
@@ -234,10 +234,10 @@ document.addEventListener('DOMContentLoaded', function () {
     uploadBtn.disabled = true;
 
     const formData = new FormData();
+    const selectedModel = document.getElementById('llm-model-select').value; // 获取模型值
     formData.append('file', file);
 
-    // 指定用户选择的模型，这里默认deepseek
-    formData.append('model', 'deepseek-chat')
+    formData.append('model', selectedModel); // 将模型附加到表单数据
 
     try {
         const response = await fetch('/upload_topology', {
@@ -271,6 +271,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // 使用共享变量 sharedFileContent
                     if (sharedFileContent) {
                         localStorage.setItem('pendingTopology', sharedFileContent);
+                        localStorage.setItem('pendingModel', selectedModel); 
                         console.log("拓扑已成功存入 localStorage。准备跳转...");
                         window.location.href = '/topology/your_topology';
                     } else {
