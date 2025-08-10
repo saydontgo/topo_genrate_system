@@ -343,6 +343,7 @@ class FatTree6(NetworkAPI):
         time.sleep(3)
 
         try:
+            info('executing send.py...\n')
             output = src_shell.cmd(f'./topo/send.py --ip {dst_shell.IP()} --m tag')
         except Exception as e:
             error(f"fail to launch send.py on {src_host}. Detailed info is as follow:{e}\n")
