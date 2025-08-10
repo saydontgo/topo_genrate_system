@@ -332,7 +332,7 @@ class FatTree6(NetworkAPI):
         output = ""
         try:
             info('executing receive.py...\n')
-            output = dst_shell.cmd('./topo/receive.py &')
+            output = dst_shell.cmd('python3 topo/receive.py &')
         except Exception as e:
             error(f"fail to launch receive.py on {dst_host}. Detailed info is as follow:{e}\n")
             return False
@@ -344,7 +344,7 @@ class FatTree6(NetworkAPI):
 
         try:
             info('executing send.py...\n')
-            output = src_shell.cmd(f'./topo/send.py --ip {dst_shell.IP()} --m tag')
+            output = src_shell.cmd(f'python3 topo/send.py --ip {dst_shell.IP()} --m tag')
         except Exception as e:
             error(f"fail to launch send.py on {src_host}. Detailed info is as follow:{e}\n")
             return False
