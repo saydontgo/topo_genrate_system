@@ -381,7 +381,6 @@ class FatTree6(NetworkAPI):
         dst_host:被修改流表表项对应的主机
         dst_swid:流表表项修改的目标交换机
         """
-        #TODO 要将结果以什么样的形式传回去？
 
         try:
             assert self.__isNetworkStart and self.__isCompiled

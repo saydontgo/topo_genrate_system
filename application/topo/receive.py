@@ -71,7 +71,6 @@ def verification(pkt: Packet):
         if IPOption_TAG in pkt:
             prime_prod = pkt['TAG'].prime_product
             # 验证质数乘积是否正确
-            # TODO
             expected_prod = 1
             for node in expected_path:
                 prime = topo.get_prime('s' + str(node))
