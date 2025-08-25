@@ -312,7 +312,8 @@ def upload_topology():
     try:
         # 这里的 call_llm
         response_data = call_llm(model, session_id, initial_prompt, json.dumps(topo_data, indent=2))
-        print(response_data)
+        if not response_data["success"]:
+            raise Exception             # 如果过程中产生了任何错误，需告知前端
         return jsonify({
             "message": "文件上传成功并通过验证！",
             "session_id": session_id,

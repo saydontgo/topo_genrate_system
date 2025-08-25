@@ -65,6 +65,7 @@ def append_message(session_id, role, content):
 
 def get_response(client, model, history, session_id):
     try:
+        success = True
         completion = client.chat.completions.create(
             model=model,
             messages=history,
@@ -72,6 +73,7 @@ def get_response(client, model, history, session_id):
         )
         response_content = completion.choices[0].message.content.strip('```').lstrip('json\n')
     except Exception as e:
+        success = False
         # 如果API调用失败，返回一个错误结构
         info(f"OpenAI API call failed: {e}")
         error_response = {
@@ -79,20 +81,25 @@ def get_response(client, model, history, session_id):
             "files": [],
             "questions": ["什么是P4？", "什么是FatTree拓扑？", "如何开始学习网络编程？"]
         }
+        error_response["success"] = success
         append_message(session_id, 'assistant', json.dumps(error_response))
         return error_response
 
     append_message(session_id, 'assistant', response_content)
     
     try:
-        return json.loads(response_content)
+        response_content = json.loads(response_content)
+        response_content["success"] = success
+        return response_content
     except json.JSONDecodeError:
+        success = False
         info(f"LLM did not return valid JSON: {response_content}")
         fallback_response = {
             "analysis": f"抱歉，模型返回的格式有误，请您重试。\n\n**原始回复：**\n```\n\" + {response_content} + \"\n```",
             "files": [],
             "questions": ["如何实现基本的L2转发？", "这个拓扑的瓶颈可能在哪里？", "如何为h1到h2生成一条静态路径？"]
         }
+        fallback_response["success"] = success
         append_message(session_id, 'assistant', json.dumps(fallback_response))
         return fallback_response
 
