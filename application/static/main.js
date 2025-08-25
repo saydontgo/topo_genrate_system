@@ -1,17 +1,17 @@
-// 更新时间
-function updateTime() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString();
-    const dateString = now.toLocaleDateString();
-    const timeElement = document.getElementById('time');
-    timeElement.textContent = `${dateString} ${timeString}`;
-}
+// // 更新时间
+// function updateTime() {
+//     const now = new Date();
+//     const timeString = now.toLocaleTimeString();
+//     const dateString = now.toLocaleDateString();
+//     const timeElement = document.getElementById('time');
+//     timeElement.textContent = `${dateString} ${timeString}`;
+// }
 
-// 初始调用更新时间
-updateTime();
+// // 初始调用更新时间
+// updateTime();
 
-// 每秒更新一次时间
-setInterval(updateTime, 1000);
+// // 每秒更新一次时间
+// setInterval(updateTime, 1000);
 
 // 子菜单的展开与收起
 const submenuItems = document.querySelectorAll('.has-submenu > a');
