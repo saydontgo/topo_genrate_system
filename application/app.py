@@ -10,6 +10,7 @@ import io
 import topo.FatTree6.FatTree6 as ft6
 import topo.demo.network as demo
 from LLM import secure_session_id, call_llm, r, deepseek, ecnu_ai
+from error import InvalidModelException
 app = Flask(__name__)
 app.secret_key = 'your-very-secret-and-complex-key-here'
 current_topology = None
@@ -309,8 +310,7 @@ def upload_topology():
     
     initial_prompt = "请对以下网络拓扑进行初步分析，并以Markdown格式返回。拓扑结构如下："
     
-    try:
-        # 这里的 call_llm
+    try:   
         response_data = call_llm(model, session_id, initial_prompt, json.dumps(topo_data, indent=2))
         if not response_data["success"]:
             raise Exception             # 如果过程中产生了任何错误，需告知前端
@@ -342,8 +342,14 @@ def chat():
     if not user_message:
         return jsonify({"error": "消息内容不能为空。"}), 400
 
-    # 这里不再需要传递拓扑信息，因为它已经包含在Redis的历史记录中了
-    response_data = call_llm(model, session_id, user_message, None)
+    try:
+        # 这里不再需要传递拓扑信息，因为它已经包含在Redis的历史记录中了
+        response_data = call_llm(model, session_id, user_message, None)
+    except InvalidModelException:
+        return jsonify({"error": "模型无效。"}), 400
+
+    if not response_data['success']:
+        return jsonify({"error": f"AI服务调用失败。"}), 502
     
     # 假设 response_data 是一个包含分析、代码、问题等内容的复杂JSON字符串
     return jsonify(response_data)

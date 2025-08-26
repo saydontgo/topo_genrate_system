@@ -68,10 +68,10 @@ def get_response(client, model, history, session_id):
         success = True
         completion = client.chat.completions.create(
             model=model,
-            messages=history,
-            response_format={"type": "json_object"}
+            messages=history
         )
-        response_content = completion.choices[0].message.content.strip('```').lstrip('json\n')
+        info = completion.model_dump_json()
+        response_content = json.loads(info)['choices'][0]['message']['content'].strip('```').lstrip('json\n')
     except Exception as e:
         success = False
         # 如果API调用失败，返回一个错误结构
