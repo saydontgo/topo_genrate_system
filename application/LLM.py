@@ -11,12 +11,12 @@ r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 active_sessions = []
 
 ecnu_ai = "ecnu-max"
-ecnu_api = "https://chat.ecnu.edu.cn/open/api/v1"
-ecnu_api_key = "sk-79784ea536174319bd82937f20da9c52"
+ecnu_api = "your_api"
+ecnu_api_key = "your_api_key"
 
 deepseek = "deepseek-chat"
-deepseek_api = "https://api.deepseek.com/v1"
-deepseek_api_key = "sk-10f4595be8434076abcb3a3bd3166d1a"
+deepseek_api = "your_api"
+deepseek_api_key = "your_api_key"
 
 # 【修改】新的系统提示词，指导模型输出特定格式
 original_prompt = [{
