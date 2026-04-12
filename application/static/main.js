@@ -234,7 +234,8 @@ document.addEventListener('DOMContentLoaded', function () {
     uploadBtn.disabled = true;
 
     const formData = new FormData();
-    const selectedModel = document.getElementById('llm-model-select').value; // 获取模型值
+    const modelSelect = document.getElementById('llm-model-select');
+    const selectedModel = modelSelect ? modelSelect.value : 'deepseek-chat'; // 获取模型值
     formData.append('file', file);
 
     formData.append('model', selectedModel); // 将模型附加到表单数据
@@ -264,10 +265,20 @@ document.addEventListener('DOMContentLoaded', function () {
         const buildTopoBtn = document.getElementById('build-topo-btn');
         if (buildTopoBtn) {
             // 这个监听器现在可以访问到外部的 sharedFileContent
-            buildTopoBtn.addEventListener('click', (e) => {
+            buildTopoBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
-                console.log("构建按钮被点击，准备存储拓扑到 localStorage...");
+                console.log("构建按钮被点击，准备调用 intent 接口并存储拓扑到 localStorage...");
                 try {
+                    const intentResponse = await fetch('/apply_intent', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    const intentData = await intentResponse.json();
+                    if (!intentResponse.ok) {
+                        throw new Error(intentData.error || '后端意图接口调用失败');
+                    }
+                    console.log("后端 intent 接口返回：", intentData);
+
                     // 使用共享变量 sharedFileContent
                     if (sharedFileContent) {
                         localStorage.setItem('pendingTopology', sharedFileContent);
@@ -353,6 +364,20 @@ document.addEventListener('DOMContentLoaded', function () {
         htmlContent += `<div class="message-content">${marked.parse(aiResponse.analysis)}</div>`;
     }
 
+    // 1.1 渲染结构化意图
+    if (aiResponse.intent && typeof aiResponse.intent === 'object') {
+        const hasIntentSummary = Boolean(aiResponse.intent.summary);
+        const hasIntentFlows = Array.isArray(aiResponse.intent.flows) && aiResponse.intent.flows.length > 0;
+        if (hasIntentSummary || hasIntentFlows) {
+            htmlContent += `
+                <div class="message-content">
+                    <h4>形式化意图 intent.json</h4>
+                    <pre><code>${JSON.stringify(aiResponse.intent, null, 2)}</code></pre>
+                </div>
+            `;
+        }
+    }
+
     // 2. 创建用户可下载的、由AI生成的文件链接
     if (aiResponse.files && aiResponse.files.length > 0) {
         htmlContent += '<div class="download-section">';
@@ -373,7 +398,11 @@ document.addEventListener('DOMContentLoaded', function () {
         // 下载 network.py 的链接
         htmlContent += `<a href="${data.download_links.script}" download="network.py" class="download-button"><i class="fab fa-python"></i> 下载 network.py</a> `;
         // 下载 topology.json 的链接
-        htmlContent += `<a href="${data.download_links.config}" download="topology.json" class="download-button"><i class="fas fa-file-code"></i> 下载 topology.json</a>`;
+        htmlContent += `<a href="${data.download_links.config}" download="topology.json" class="download-button"><i class="fas fa-file-code"></i> 下载 topology.json</a> `;
+        // 下载 intent.json 的链接
+        if (data.download_links.intent) {
+            htmlContent += `<a href="${data.download_links.intent}" download="intent.json" class="download-button"><i class="fas fa-diagram-project"></i> 下载 intent.json</a>`;
+        }
         htmlContent += '</div>';
     }
     

@@ -14,6 +14,51 @@ from error import InvalidModelException
 app = Flask(__name__)
 app.secret_key = 'your-very-secret-and-complex-key-here'
 current_topology = None
+
+
+def get_uploaded_topology_path():
+    return os.path.join(app.root_path, 'topology.json')
+
+
+def get_generated_intent_path():
+    generated_dir = os.path.join(app.root_path, 'generated')
+    os.makedirs(generated_dir, exist_ok=True)
+    return os.path.join(generated_dir, 'intent.json')
+
+
+def normalize_intent_payload(intent_data):
+    if not isinstance(intent_data, dict):
+        intent_data = {}
+
+    flows = intent_data.get('flows', [])
+    if not isinstance(flows, list):
+        flows = []
+
+    normalized_flows = []
+    for flow in flows:
+        if not isinstance(flow, dict):
+            continue
+        normalized_flows.append({
+            'src': flow.get('src', ''),
+            'dst': flow.get('dst', ''),
+            'must_pass': flow.get('must_pass', []) if isinstance(flow.get('must_pass', []), list) else [],
+            'avoid': flow.get('avoid', []) if isinstance(flow.get('avoid', []), list) else [],
+            'priority': flow.get('priority', ''),
+            'backup_level': flow.get('backup_level', 0)
+        })
+
+    return {
+        'summary': intent_data.get('summary', ''),
+        'flows': normalized_flows
+    }
+
+
+def persist_intent(intent_data):
+    normalized_intent = normalize_intent_payload(intent_data)
+    intent_path = get_generated_intent_path()
+    with open(intent_path, 'w', encoding='utf-8') as f:
+        json.dump(normalized_intent, f, ensure_ascii=False, indent=2)
+    return normalized_intent, intent_path
  
 
 # 首页（主页）
@@ -305,8 +350,12 @@ def upload_topology():
 
     # 验证通过，将拓扑数据存入session，并初始化对话
     session['topology_data'] = topo_data
+    session['model'] = model
     session_id = secure_session_id()
     session['session_id'] = session_id
+
+    with open(get_uploaded_topology_path(), 'w', encoding='utf-8') as f:
+        json.dump(topo_data, f, ensure_ascii=False, indent=2)
     
     initial_prompt = "请对以下网络拓扑进行初步分析，并以Markdown格式返回。拓扑结构如下："
     
@@ -314,6 +363,8 @@ def upload_topology():
         response_data = call_llm(model, session_id, initial_prompt, json.dumps(topo_data, indent=2))
         if not response_data["success"]:
             raise Exception             # 如果过程中产生了任何错误，需告知前端
+        normalized_intent, _ = persist_intent(response_data.get('intent', {}))
+        session['intent_data'] = normalized_intent
         return jsonify({
             "message": "文件上传成功并通过验证！",
             "session_id": session_id,
@@ -321,8 +372,10 @@ def upload_topology():
             "build_enabled": True,
             "download_links": {
                 "script": "/download/network_script",
-                "config": "/download/topology_json"
-            }
+                "config": "/download/topology_json",
+                "intent": "/download/intent_json"
+            },
+            "intent_apply_url": "/apply_intent"
         })
     except Exception as e:
         info(f"Error calling LLM after upload: {e}") # 在服务器端打印错误日志
@@ -350,6 +403,9 @@ def chat():
 
     if not response_data['success']:
         return jsonify({"error": f"AI服务调用失败。"}), 502
+
+    normalized_intent, _ = persist_intent(response_data.get('intent', {}))
+    session['intent_data'] = normalized_intent
     
     # 假设 response_data 是一个包含分析、代码、问题等内容的复杂JSON字符串
     return jsonify(response_data)
@@ -375,10 +431,42 @@ def download_topology_json():
         return "会话无效或已过期，请重新上传拓扑。", 403
     try:
         # 构建 topology.json 的安全路径
-        json_path = os.path.join(app.root_path, 'topology.json')
+        json_path = get_uploaded_topology_path()
         return send_file(json_path, as_attachment=True, mimetype='json')
     except FileNotFoundError:
         return "服务器上未找到 application/topology.json 文件。", 404
+
+
+@app.route('/download/intent_json')
+def download_intent_json():
+    if 'session_id' not in session:
+        return "会话无效或已过期，请重新上传拓扑。", 403
+    try:
+        intent_path = get_generated_intent_path()
+        if not os.path.exists(intent_path):
+            normalized_intent, intent_path = persist_intent(session.get('intent_data', {}))
+            session['intent_data'] = normalized_intent
+        return send_file(intent_path, as_attachment=True, download_name='intent.json', mimetype='application/json')
+    except FileNotFoundError:
+        return "服务器上未找到 intent.json 文件。", 404
+
+
+@app.route('/apply_intent', methods=['POST'])
+def apply_intent():
+    if 'session_id' not in session:
+        return jsonify({'error': '对话未初始化，请先上传拓扑文件。'}), 403
+
+    intent_data = session.get('intent_data', {})
+    normalized_intent, intent_path = persist_intent(intent_data)
+    flow_count = len(normalized_intent.get('flows', []))
+
+    return jsonify({
+        'status': 'success',
+        'message': 'intent.json 已提交到后端编排接口（演示版）。当前版本仅完成意图接入与记录，暂未实际下发到拓扑。',
+        'intent_path': intent_path,
+        'flow_count': flow_count,
+        'summary': normalized_intent.get('summary', '')
+    })
 
 # 清除redis内存  
 @atexit.register
