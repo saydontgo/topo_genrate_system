@@ -1,0 +1,38 @@
+[
+  {
+    "src_ip": "10.0.1.1",
+    "dst_ip": "10.0.4.2",
+    "behaviors": [
+      {
+        "path": [1, 2, 4],
+        "prime_product": 42,
+        "level": "primary",
+        "label": "命中主路径"
+      },
+      {
+        "path": [1, 3, 4],
+        "prime_product": 70,
+        "level": "backup",
+        "label": "命中备份路径"
+      }
+    ]
+  },
+  {
+    "src_ip": "10.0.4.2",
+    "dst_ip": "10.0.1.1",
+    "behaviors": [
+      {
+        "path": [1, 3, 4],
+        "prime_product": 70,
+        "level": "primary",
+        "label": "命中主路径"
+      },
+      {
+        "path": [1, 2, 4],
+        "prime_product": 42,
+        "level": "backup",
+        "label": "命中备份路径"
+      }
+    ]
+  }
+]

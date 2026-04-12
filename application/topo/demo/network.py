@@ -188,6 +188,58 @@ class demo(NetworkAPI):
 
         with open("res.json", "w")as f:
             json.dump(res, f, indent=4)
+
+    def send_vbp(self, src_host, dst_host):
+        """
+        VBP 演示版发送逻辑。
+        与 send() 保持一致，只是接收端使用 receive_vbp.py 来完成合法行为池验证。
+        """
+        assert self.__isNetworkStart and self.__isCompiled
+        dst_shell = self.net.get(dst_host)
+        src_shell = self.net.get(src_host)
+        output = ""
+        try:
+            info('executing receive_vbp.py...\n')
+            output = dst_shell.cmd('python3 topo/receive_vbp.py &')
+        except Exception as e:
+            error(f"fail to launch receive_vbp.py on {dst_host}. Detailed info is as follow:{e}\n")
+            return False
+
+        if output != "":
+            info("successful execution:")
+            info(output)
+        time.sleep(3)
+
+        try:
+            info('executing send.py in VBP mode...\n')
+            output = src_shell.cmd(f'python3 topo/send.py --ip {dst_shell.IP()} --m tag')
+        except Exception as e:
+            error(f"fail to launch send.py on {src_host}. Detailed info is as follow:{e}\n")
+            return False
+        if output != "":
+            info("successful execution:")
+            info(output)
+        time.sleep(1)
+
+        res = None
+
+        if not os.path.isfile('res.json'):
+            return False
+
+        with open("res.json", "r") as f:
+            res = json.load(f)
+
+        res["stop_receiving"] = False
+
+        try:
+            dst_shell.cmd("pkill -f 'python3 topo/receive_vbp.py'")
+            info('receive_vbp.py killed.\n')
+            res["stop_receiving"] = True
+        except Exception as e:
+            error(f'fail to kill receive_vbp.py. Detailed info is as follow:{e}\n')
+
+        with open("res.json", "w") as f:
+            json.dump(res, f, indent=4)
     
     def modify_switch(self, swid, dst_host, dst_swid):
         """

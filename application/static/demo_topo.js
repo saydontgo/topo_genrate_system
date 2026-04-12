@@ -246,6 +246,14 @@ function injectFlowTable() {
 }
 
 document.getElementById('sendButton').addEventListener('click', function () {
+    sendTraffic('/send_command', '单路径验证');
+});
+
+document.getElementById('sendVbpButton').addEventListener('click', function () {
+    sendTraffic('/send_command_vbp', 'VBP 合法行为池验证');
+});
+
+function sendTraffic(endpoint, modeLabel) {
     const srcHost = document.getElementById('srcHost').value.trim();
     const dstHost = document.getElementById('dstHost').value.trim();
     const resultBox = document.getElementById('sendResult');
@@ -256,7 +264,7 @@ document.getElementById('sendButton').addEventListener('click', function () {
         return;
     }
 
-    fetch('/send_command', {
+    fetch(endpoint, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -267,10 +275,11 @@ document.getElementById('sendButton').addEventListener('click', function () {
     .then(data => {
         if (data.result) {
             resultBox.style.color = 'green';
-            resultBox.textContent = '发送成功：' + data.result;
+            resultBox.textContent = `[${modeLabel}] 发送成功：` + data.result;
         } else if (data.error) {
             resultBox.style.color = 'red';
-            resultBox.textContent = '发送失败：' + data.error;
+            resultBox.textContent = `[${modeLabel}] 发送失败：` + data.error;
+            return;
         }
 
         // 等待文件生成完成（读取 res.json）
@@ -280,11 +289,30 @@ document.getElementById('sendButton').addEventListener('click', function () {
                 .then(pathData => {
                     if (pathData) {
                         // 如果返回了路径信息，则处理路径高亮
-                        jsonData = JSON.parse(pathData);
+                        const jsonData = JSON.parse(pathData);
                         highlightPath(jsonData);
-                        let pathText = `预期路径：${jsonData.expected_path.map(id => 's' + id).join(' → ')}`;
-                        if (!jsonData.consistence && jsonData.recover_path) {
-                            pathText += `\n实际错误路径：${jsonData.recover_path.map(id => 's' + id).join(' → ')}`;
+                        const expectedPath = Array.isArray(jsonData.expected_path) ? jsonData.expected_path : [];
+                        const matchedBehaviorPath = Array.isArray(jsonData.matched_behavior_path) ? jsonData.matched_behavior_path : [];
+                        const recoverPath = Array.isArray(jsonData.recover_path) ? jsonData.recover_path : [];
+                        let pathText = expectedPath.length
+                            ? `预期主路径：${expectedPath.map(id => 's' + id).join(' → ')}`
+                            : '预期主路径：无';
+
+                        if (jsonData.behavior_status) {
+                            pathText += `\nVBP 判定：${jsonData.behavior_label || jsonData.behavior_status}`;
+                            if (jsonData.behavior_status === 'backup') {
+                                resultBox.style.color = '#f9a825';
+                            } else if (jsonData.behavior_status === 'illegal') {
+                                resultBox.style.color = '#c62828';
+                            } else if (jsonData.behavior_status === 'primary') {
+                                resultBox.style.color = '#2e7d32';
+                            }
+                        }
+                        if (matchedBehaviorPath.length > 0) {
+                            pathText += `\n命中路径：${matchedBehaviorPath.map(id => 's' + id).join(' → ')}`;
+                        }
+                        if (!jsonData.consistence && recoverPath.length > 0) {
+                            pathText += `\n实际错误路径：${recoverPath.map(id => 's' + id).join(' → ')}`;
                         }
                         resultBox.innerText += '\n' + pathText;
                     }
@@ -299,34 +327,50 @@ document.getElementById('sendButton').addEventListener('click', function () {
         resultBox.style.color = 'red';
         resultBox.textContent = '发送请求出错：' + error.message;
     });
-});
+}
 
 function highlightPath(data) {
     // 确保 paths 是数组，若不存在或无效则设为空数组
     const expectedPath = Array.isArray(data.expected_path) ? data.expected_path : [];
+    const matchedBehaviorPath = Array.isArray(data.matched_behavior_path) ? data.matched_behavior_path : [];
     const recoverPath = Array.isArray(data.recover_path) ? data.recover_path : [];
     const consistence = data.consistence;
+    const behaviorStatus = data.behavior_status;
     const edgeUpdates = [];
 
-    // 构造 expected_path 的边（绿色）
-    if (expectedPath.length > 0) {
-        for (let i = 0; i < expectedPath.length - 1; i++) {
+    if (behaviorStatus === 'primary' && matchedBehaviorPath.length > 1) {
+        for (let i = 0; i < matchedBehaviorPath.length - 1; i++) {
             edgeUpdates.push({
-                from: `s${expectedPath[i]}`,
-                to: `s${expectedPath[i + 1]}`,
-                color: { color: 'green' },
+                from: `s${matchedBehaviorPath[i]}`,
+                to: `s${matchedBehaviorPath[i + 1]}`,
+                color: { color: '#2e7d32' },
                 width: 4
             });
         }
-    }
-
-    // 如果路径不一致，构造 recover_path 的边（红色）
-    if (!consistence && recoverPath.length > 1) {
+    } else if (behaviorStatus === 'backup' && matchedBehaviorPath.length > 1) {
+        for (let i = 0; i < matchedBehaviorPath.length - 1; i++) {
+            edgeUpdates.push({
+                from: `s${matchedBehaviorPath[i]}`,
+                to: `s${matchedBehaviorPath[i + 1]}`,
+                color: { color: '#f9a825' },
+                width: 4
+            });
+        }
+    } else if (!consistence && recoverPath.length > 1) {
         for (let i = 0; i < recoverPath.length - 1; i++) {
             edgeUpdates.push({
                 from: `s${recoverPath[i]}`,
                 to: `s${recoverPath[i + 1]}`,
-                color: { color: 'red' },
+                color: { color: '#c62828' },
+                width: 4
+            });
+        }
+    } else if (expectedPath.length > 1) {
+        for (let i = 0; i < expectedPath.length - 1; i++) {
+            edgeUpdates.push({
+                from: `s${expectedPath[i]}`,
+                to: `s${expectedPath[i + 1]}`,
+                color: { color: '#2e7d32' },
                 width: 4
             });
         }

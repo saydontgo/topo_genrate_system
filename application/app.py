@@ -218,6 +218,44 @@ def handle_send_command():
 
     return jsonify({'result': f'命令已发送：{src_host} → {dst_host}'})
 
+
+@app.route('/send_command_vbp', methods=['POST'])
+def handle_send_command_vbp():
+    global current_topology
+
+    if current_topology is None:
+        return jsonify({'error': 'No topology built yet'}), 400
+
+    data = request.get_json()
+    src_host = data.get('src')
+    dst_host = data.get('dst')
+
+    if not src_host or not dst_host:
+        return jsonify({'error': '请提供源主机和目标主机'}), 400
+
+    try:
+        with open('topology.json', 'r', encoding='utf-8') as f:
+            topo = json.load(f)
+            node_map = {node['id']: node for node in topo.get('nodes', [])}
+            if src_host not in node_map or dst_host not in node_map:
+                return jsonify({'error': '主机 ID 不存在'}), 400
+            src_ip = node_map[src_host].get('ip', '')
+            dst_ip = node_map[dst_host].get('ip', '')
+    except Exception as e:
+        return jsonify({'error': f'IP地址查找失败: {str(e)}'}), 500
+
+    info(f"Receive VBP: {src_host}({src_ip}) → {dst_host}({dst_ip})")
+
+    if not hasattr(current_topology, 'send_vbp'):
+        return jsonify({'error': '当前拓扑未启用 VBP 演示接口'}), 400
+
+    try:
+        current_topology.send_vbp(src_host, dst_host)
+    except Exception as e:
+        return jsonify({'error': f'VBP 发送执行失败: {str(e)}'}), 500
+
+    return jsonify({'result': f'VBP 命令已发送：{src_host} → {dst_host}'})
+
 @app.route('/get_res_json', methods=['GET'])
 def get_res_json():
     # 假设 res.json 位于项目根目录
