@@ -26,6 +26,17 @@ def get_generated_intent_path():
     return os.path.join(generated_dir, 'intent.json')
 
 
+def build_llm_topology_payload(topo_data):
+    return {
+        'intent_description': topo_data.get('intent_description', ''),
+        'topology': {
+            'switch': topo_data.get('switch', []),
+            'host': topo_data.get('host', []),
+            'link': topo_data.get('link', [])
+        }
+    }
+
+
 def normalize_intent_payload(intent_data):
     if not isinstance(intent_data, dict):
         intent_data = {}
@@ -302,30 +313,55 @@ def upload_topology():
         topo_data = json.loads(content)
     except Exception as e:
         return jsonify({"error": f"JSON文件解析失败，请检查语法: {str(e)}"}), 400
+
+    if not isinstance(topo_data, dict):
+        return jsonify({"error": "JSON格式错误：文件顶层必须是对象，不能是数组或其他类型。"}), 400
   
-    # --- START: 【核心修改】基于新格式的严格验证逻辑 ---
+    # --- START: 基于新格式的严格验证逻辑 ---
     try:
         # 1. 验证顶层必需的键是否存在
-        required_keys = {"switch", "host", "link"}
+        required_keys = {"intent_description", "switch", "host", "link"}
         if not required_keys.issubset(topo_data.keys()):
             return jsonify({
-                "error": "JSON格式错误：文件必须包含 'switch', 'host', 和 'link' 三个顶级键。",
-                "template": "{ \"switch\": [...], \"host\": [...], \"link\": [...] }"
+                "error": "JSON格式错误：文件必须包含 'intent_description', 'switch', 'host', 和 'link' 四个顶级键。",
+                "template": json.dumps({
+                    "intent_description": "例如：h1 到 h2 的流量优先走低时延路径，必须经过 s2，避免经过 s3。",
+                    "switch": ["s1", "s2", "s3", "s4"],
+                    "host": ["h1", "h2"],
+                    "link": [
+                        {"h1": "s1", "s1": "h1"},
+                        {"s1": "s2", "s2": "s1"}
+                    ]
+                }, ensure_ascii=False, indent=2)
             }), 400
         
-        # 2. 验证非 'switch', 'host', 'link' 的其他键是否存在
-        allowed_keys = {"switch", "host", "link"}
+        # 2. 验证非允许字段的其他键是否存在
+        allowed_keys = {"intent_description", "switch", "host", "link"}
         extra_keys = set(topo_data.keys()) - allowed_keys
         if extra_keys:
              return jsonify({"error": f"JSON格式错误：发现了不允许的顶级键: {', '.join(extra_keys)}"}), 400
 
+        intent_description = topo_data.get("intent_description")
+        if not isinstance(intent_description, str) or not intent_description.strip():
+            return jsonify({"error": "JSON格式错误：'intent_description' 必须是非空字符串，用于说明用户希望实现的网络意图。"}), 400
+
+        switches = topo_data.get("switch", [])
+        hosts = topo_data.get("host", [])
+        links = topo_data.get("link", [])
+
+        if not isinstance(switches, list) or not isinstance(hosts, list) or not isinstance(links, list):
+            return jsonify({"error": "JSON格式错误：'switch'、'host'、'link' 的值都必须是数组。"}), 400
+
+        if any(not isinstance(node, str) or not node.strip() for node in switches + hosts):
+            return jsonify({"error": "JSON格式错误：'switch' 和 'host' 列表中的节点 ID 必须都是非空字符串。"}), 400
+
         # 3. 创建所有已定义节点的集合，用于快速查找
-        all_nodes = set(topo_data.get("switch", [])) | set(topo_data.get("host", []))
+        all_nodes = set(switches) | set(hosts)
         if not all_nodes:
             return jsonify({"error": "JSON格式错误：'switch' 和 'host' 列表不能为空。"}), 400
 
         # 4. 遍历并验证 'link' 数组中的每一个链接对象
-        for link_obj in topo_data.get("link", []):
+        for link_obj in links:
             if not isinstance(link_obj, dict):
                  return jsonify({"error": f"JSON格式错误：link数组中的元素必须是对象 (字典)。出错的元素: {link_obj}"}), 400
 
@@ -357,10 +393,15 @@ def upload_topology():
     with open(get_uploaded_topology_path(), 'w', encoding='utf-8') as f:
         json.dump(topo_data, f, ensure_ascii=False, indent=2)
     
-    initial_prompt = "请对以下网络拓扑进行初步分析，并以Markdown格式返回。拓扑结构如下："
+    initial_prompt = (
+        "请结合用户上传的网络拓扑与其中的 intent_description 进行初步分析，并以Markdown格式返回。"
+        "其中 intent_description 是用户对网络编排目标的说明，你需要优先根据这段说明生成对应的结构化 intent.json。"
+        "输入内容如下："
+    )
     
     try:   
-        response_data = call_llm(model, session_id, initial_prompt, json.dumps(topo_data, indent=2))
+        llm_payload = build_llm_topology_payload(topo_data)
+        response_data = call_llm(model, session_id, initial_prompt, json.dumps(llm_payload, ensure_ascii=False, indent=2))
         if not response_data["success"]:
             raise Exception             # 如果过程中产生了任何错误，需告知前端
         normalized_intent, _ = persist_intent(response_data.get('intent', {}))

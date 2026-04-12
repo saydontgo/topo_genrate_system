@@ -132,21 +132,30 @@
             <input type="file" id="topology-file-input" accept=".json" style="display: none;">
             <div id="upload-error" class="error-message"></div>
             <div class="format-hint">
-                <p><strong>提示:</strong> JSON文件需要包含 "switch", "host", "link" 三个键。 <a href="#" id="show-format-details">查看格式详情</a></p>
+                <p><strong>提示:</strong> JSON文件需要包含 "intent_description", "switch", "host", "link" 四个键。 <a href="#" id="show-format-details">查看格式详情</a></p>
                 <pre id="format-details" style="display:none;"><code>{
-                "switch": ["s1", "s2", "s3", "s4"],
-                "host": ["h1", "h2"],
-                "link": [
-                    {
-                    "h1": "s1",
-                    "s1": "h1"
-                    },
-                    {
-                    "s1": "s2",
-                    "s2": "s1"
-                    }
-                ]
-                }</code></pre>
+  "intent_description": "h1 到 h2 的流量优先走低时延路径，必须经过 s2，避免经过 s3。",
+  "switch": ["s1", "s2", "s3", "s4"],
+  "host": ["h1", "h2"],
+  "link": [
+    {
+      "h1": "s1",
+      "s1": "h1"
+    },
+    {
+      "s1": "s2",
+      "s2": "s1"
+    },
+    {
+      "s2": "s4",
+      "s4": "s2"
+    },
+    {
+      "s4": "h2",
+      "h2": "s4"
+    }
+  ]
+}</code></pre>
             </div>
         </div>
         
