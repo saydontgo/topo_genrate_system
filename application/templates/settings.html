@@ -1,100 +1,140 @@
-<!DOCTYPE html>
-<html lang="zh">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P4Prime - 设置</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../static/style.css">
-</head>
+{% block title %}P4Prime - 设置{% endblock %}
+{% block brand_subtitle %}视觉设置面板{% endblock %}
 
-<body>
-    <div class="top-bar">
-        <h1>P4Prime - 设置</h1>
+{% block top_actions %}
+    <a class="button-secondary" href="/topology/your_topology">返回拓扑页</a>
+{% endblock %}
 
-        <!-- 导航菜单 -->
-        <div class="nav-menu">
-            <ul>
-                <li><a href="/"><i class="fas fa-home"></i> 主页</a></li>
-                <li class="has-submenu">
-                    <a href="#"><i class="fas fa-network-wired"></i> 拓扑</a>
-                    <ul class="sub-menu">
-                        <li><a href="#">FatTree4</a></li>
-                        <li><a href="/topology/fattree6">FatTree6</a></li>
-                        <li><a href="#">新增拓扑</a></li>
-                    </ul>
-                </li>
-                <li><a href="/settings"><i class="fas fa-cog"></i> 设置</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- 主内容 -->
-    <div class="main-content">
-        <div class="header">
-            <h1>系统设置</h1>
-        </div>
-        <div class="section">
-            <h2>网络配置</h2>
-            <p>在此处调整 P4Prime 的网络参数。</p>
-            <div class="sub-section" style="margin-top: 20px;">
-                <h3 style="color: #006064;">主机节点配置</h3>
-            
-                <!-- 主机形状 -->
-                <label for="hostShape">主机形状：</label>
-                <select id="hostShape">
-                    <option value="dot">圆形 (dot)</option>
-                    <option value="box">方形 (box)</option>
-                    <option value="ellipse" selected>椭圆形 (ellipse)</option>
-                    <option value="triangle">三角形 (triangle)</option>
-                    <option value="star">星形 (star)</option>
-                    <option value="hexagon">六边形 (hexagon)</option>
-                </select>
-            
-                <!-- 主机颜色 -->
-                <label for="hostColor" style="margin-top:10px;">主机颜色：</label>
-                <input type="color" id="hostColor" value="#FFD700">
-            
-                <!-- 主机大小 -->
-                <label for="hostSize" style="margin-top:10px;">主机大小：</label>
-                <input type="range" id="hostSize" min="10" max="80" value="25">
-                <span id="hostSizeValue">25</span>
+{% block content %}
+        <section class="page-hero">
+            <div class="hero-copy">
+                <span class="eyebrow"><i class="fas fa-palette"></i> Visual Tuning</span>
+                <h1>把节点外观调成适合展示、投屏和录屏的状态。</h1>
+                <p>设置页负责调整主机与交换机的可视化外观，不改变网络逻辑。你可以修改形状、颜色和尺寸，让不同拓扑在答辩时更易读。</p>
             </div>
-            
-            <div class="sub-section" style="margin-top: 20px;">
-                <h3 style="color: #006064;">交换机节点配置</h3>
-            
-                <!-- 交换机形状 -->
-                <label for="switchShape">交换机形状：</label>
-                <select id="switchShape">
-                    <option value="dot">圆形 (dot)</option>
-                    <option value="box" selected>方形 (box)</option>
-                    <option value="ellipse">椭圆形 (ellipse)</option>
-                    <option value="triangle">三角形 (triangle)</option>
-                    <option value="star">星形 (star)</option>
-                    <option value="hexagon">六边形 (hexagon)</option>
-                </select>
-            
-                <!-- 交换机颜色 -->
-                <label for="switchColor" style="margin-top:10px;">交换机颜色：</label>
-                <input type="color" id="switchColor" value="#87CEEB">
-            
-                <!-- 交换机大小 -->
-                <label for="switchSize" style="margin-top:10px;">交换机大小：</label>
-                <input type="range" id="switchSize" min="10" max="80" value="25">
-                <span id="switchSizeValue">25</span>
+            <div class="hero-panel">
+                <span class="panel-kicker">Design Goal</span>
+                <h3 class="section-title">建议风格</h3>
+                <p class="panel-lead">主机和交换机尽量保持明显对比。颜色建议避免过亮，优先使用高投屏可读性的中高对比度组合。</p>
             </div>
-            
-            <button id="saveSettingsBtn" style="margin-top: 15px;">保存设置</button>
-            <div id="saveStatus" style="margin-top: 8px; color: green;"></div>
-            
-        </div>
-    </div>
+        </section>
 
-    <!-- 外部 JS -->
-    <script src="../static/main.js"></script>
-    <script src="../static/settings.js"></script>
-</body>
+        <section class="section">
+            <div class="section-title-row">
+                <div>
+                    <span class="panel-kicker">Style Controls</span>
+                    <h2>节点样式设置</h2>
+                </div>
+            </div>
 
-</html>
+            <div class="settings-grid">
+                <article class="settings-card">
+                    <h3 class="section-title">主机节点</h3>
+                    <p>用于区分终端设备，建议保持形状柔和、色彩偏亮。</p>
+                    <div class="field-group">
+                        <label for="hostShape">主机形状</label>
+                        <select id="hostShape">
+                            <option value="dot">圆形 (dot)</option>
+                            <option value="box">方形 (box)</option>
+                            <option value="ellipse" selected>椭圆形 (ellipse)</option>
+                            <option value="triangle">三角形 (triangle)</option>
+                            <option value="star">星形 (star)</option>
+                            <option value="hexagon">六边形 (hexagon)</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="hostColor">主机颜色</label>
+                        <input type="color" id="hostColor" value="#FFD700">
+                    </div>
+                    <div class="field-group">
+                        <label for="hostSize">主机大小</label>
+                        <input type="range" id="hostSize" min="10" max="80" value="25">
+                        <div class="value-row"><span>当前尺寸</span><span id="hostSizeValue">25</span></div>
+                    </div>
+                </article>
+
+                <article class="settings-card">
+                    <h3 class="section-title">交换机节点</h3>
+                    <p>用于区分网络设备，建议保持结构感更强的形状和更冷静的色彩。</p>
+                    <div class="field-group">
+                        <label for="switchShape">交换机形状</label>
+                        <select id="switchShape">
+                            <option value="dot">圆形 (dot)</option>
+                            <option value="box" selected>方形 (box)</option>
+                            <option value="ellipse">椭圆形 (ellipse)</option>
+                            <option value="triangle">三角形 (triangle)</option>
+                            <option value="star">星形 (star)</option>
+                            <option value="hexagon">六边形 (hexagon)</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="switchColor">交换机颜色</label>
+                        <input type="color" id="switchColor" value="#87CEEB">
+                    </div>
+                    <div class="field-group">
+                        <label for="switchSize">交换机大小</label>
+                        <input type="range" id="switchSize" min="10" max="80" value="25">
+                        <div class="value-row"><span>当前尺寸</span><span id="switchSizeValue">25</span></div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="form-actions">
+                <button id="saveSettingsBtn" type="button">保存设置</button>
+            </div>
+            <div id="saveStatus"></div>
+        </section>
+
+        <section class="section">
+            <div class="section-title-row">
+                <div>
+                    <span class="panel-kicker">AI Providers</span>
+                    <h2>大模型配置</h2>
+                </div>
+            </div>
+
+            <div class="settings-grid">
+                <article class="settings-card">
+                    <h3 class="section-title">DeepSeek</h3>
+                    <p>用于上传拓扑后的分析、结构化 intent 提取和继续追问。</p>
+                    <div class="field-group">
+                        <label for="deepseekBaseUrl">API 地址</label>
+                        <input type="text" id="deepseekBaseUrl" placeholder="例如 https://api.deepseek.com/v1">
+                    </div>
+                    <div class="field-group">
+                        <label for="deepseekApiKey">API 密钥</label>
+                        <input type="password" id="deepseekApiKey" placeholder="输入 DeepSeek API Key">
+                    </div>
+                </article>
+
+                <article class="settings-card">
+                    <h3 class="section-title">ECNU AI</h3>
+                    <p>如果你使用校内或自建兼容接口，可以在这里配置备用模型。</p>
+                    <div class="field-group">
+                        <label for="ecnuBaseUrl">API 地址</label>
+                        <input type="text" id="ecnuBaseUrl" placeholder="例如 https://your-ecnu-endpoint/v1">
+                    </div>
+                    <div class="field-group">
+                        <label for="ecnuApiKey">API 密钥</label>
+                        <input type="password" id="ecnuApiKey" placeholder="输入 ECNU AI API Key">
+                    </div>
+                </article>
+            </div>
+
+            <div class="form-actions">
+                <button id="saveLlmSettingsBtn" type="button">保存 AI 配置</button>
+            </div>
+            <div id="llmSaveStatus"></div>
+        </section>
+{% endblock %}
+
+{% block common_scripts %}
+    <script src="{{ url_for('static', filename='js/common/ai_assistant.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pages/settings_page.js') }}"></script>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{{ url_for('static', filename='js/entrypoints/settings_page_bootstrap.js') }}"></script>
+{% endblock %}

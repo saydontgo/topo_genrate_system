@@ -1,95 +1,68 @@
-<!DOCTYPE html>
-<html lang="zh">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P4Prime - Demo 拓扑</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% block title %}P4Prime - 我的拓扑{% endblock %}
+{% block brand_subtitle %}我的拓扑工作台{% endblock %}
+
+{% block vendor_head %}
     <link href="https://unpkg.com/vis-network/styles/vis-network.min.css" rel="stylesheet">
     <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-    <link rel="stylesheet" href="../static/style.css">
+{% endblock %}
+
+{% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-</head>
+{% endblock %}
 
-<body>
+{% block top_actions %}
+    <button class="ai-assistant-switch" id="ai-assistant-switch" data-ai-trigger type="button">
+        <i class="fas fa-robot"></i>
+        <span>打开 AI 助手</span>
+    </button>
+{% endblock %}
 
-    <div class="top-bar">
-        <h1>P4Prime - Demo 拓扑</h1>
-        <div class="ai-assistant-switch" id="ai-assistant-switch">
-            <i class="fas fa-robot"></i> AI 助手
-        </div>
-        <!-- 导航菜单 -->
-        <div class="nav-menu">
-            <ul>
-                <li><a href="/"><i class="fas fa-home"></i> 主页</a></li>
-                <li class="has-submenu">
-                    <a href="#"><i class="fas fa-network-wired"></i> 拓扑</a>
-                    <ul class="sub-menu">
-                        <li><a href="#">FatTree4</a></li>
-                        <li><a href="/topology/fattree6">FatTree6</a></li>
-                        <li><a href="#">新增拓扑</a></li>
-                    </ul>
-                </li>
-                <li><a href="/settings"><i class="fas fa-cog"></i> 设置</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="main-content">
-        <div class="header">
-            <h1>Demo 拓扑结构</h1>
-        </div>
-
-        <!-- 三步构建 -->
-        <div class="section" id="fatTree6">
-            <h2>Demo 拓扑</h2>
-            <div class="section" style="display: flex; gap: 20px; justify-content: space-between;">
-                <div class="section" style="flex: 1;">
-                    <h3 style="color: #006064;">Step 1: 装载 P4 代码</h3>
-                    <button class="loadP4Code">装载</button>
-                    <div id="loadResult" style="margin-top: 10px; color: darkblue;"></div>
-                </div>
-                <div class="section" style="flex: 1;">
-                    <h3 style="color: #006064;">Step 2: 生成拓扑</h3>
-                    <button class="generateFattree6">生成 Demo 拓扑</button>
-                </div>
-                <div class="section" style="flex: 1;">
-                    <h3 style="color: #006064;">Step 3: 注入流表</h3>
-                    <button class="injectFlowTable">注入流表</button>
-                    <div id="injectResult" style="margin-top: 10px; color: darkgreen;"></div>
+{% block content %}
+        <section class="page-hero">
+            <div class="hero-copy">
+                <span class="eyebrow"><i class="fas fa-sparkles"></i> Dynamic Demo</span>
+                <h1>上传你的 JSON 拓扑后，这里会把构建、验证、可视化和 AI 辅助串成一条完整流程。</h1>
+                <p>你不用在多个页面之间来回切换。系统会根据当前会话自动恢复拓扑、规则和验证上下文，让演示从上传到结果一气呵成；没有上传时，也会自动回退到内置 demo 保证可演示。</p>
+                <div class="legend-pills">
+                    <span class="legend-pill primary">主路径合法</span>
+                    <span class="legend-pill backup">备份路径合法</span>
+                    <span class="legend-pill illegal">未命中行为池</span>
                 </div>
             </div>
+            <div class="hero-stats">
+                <article class="stat-card">
+                    <strong>JSON</strong>
+                    <span>上传一次拓扑配置，就会自动联动 network.py、intent.json 和活动规则文件。</span>
+                </article>
+                <article class="stat-card">
+                    <strong>VBP</strong>
+                    <span>除了单路径一致性，还能同时展示主路径与备份路径的合法行为池判定。</span>
+                </article>
+                <article class="stat-card">
+                    <strong>SSA</strong>
+                    <span>flow-aware semantic runtime 会自动给出状态转移、不变量和违规分类。</span>
+                </article>
+            </div>
+        </section>
 
-            <!-- 发送和修改功能 -->
-            <div class="section" style="margin-top: 20px; padding-top: 0;">
-                <h3>发送请求</h3>
-                <label for="srcHost">源主机 ID：</label>
-                <input type="text" id="srcHost" placeholder="如 h1">
-                <label for="dstHost">目标主机 ID：</label>
-                <input type="text" id="dstHost" placeholder="如 h2">
-                <div id="hostHint" style="font-size: 14px; color: #888; margin-bottom: 10px;"></div>
-                <button id="sendButton">发送</button>
-                <button id="sendVbpButton" style="margin-left: 10px; background-color: #f9a825;">VBP 发送</button>
-                <div id="vbpLegend" style="font-size: 14px; color: #666; margin-top: 10px;">
-                    VBP 颜色说明：绿色=主路径合法，黄色=备份路径合法，红色=未命中合法行为池
+        <section class="info-banner">
+            <div>
+                <strong>当前工作方式：</strong>
+                如果已经上传拓扑，这里会优先构建你的网络；没有上传时才会回退到内置 demo，保证你始终能继续演示。
+            </div>
+            <div id="topologyBuildStatus">请先装载 P4，再生成当前上传拓扑。</div>
+        </section>
+
+        <section class="workspace-panel workspace-panel-priority">
+            <div class="workspace-header">
+                <div>
+                    <span class="panel-kicker">Workspace</span>
+                    <h2>先看网络图，再安排验证动作</h2>
+                    <p class="panel-lead">拓扑图已经提前放到页面上半区，进入页面就能先确认当前网络结构、节点分布和点击详情。</p>
                 </div>
-                <div id="sendResult" style="margin-top:10px; color: green;"></div>
             </div>
-
-            <div class="section" style="margin-top: 20px; padding-top: 0;">
-                <h3>修改流表</h3>
-                <label for="modSwid">被修改交换机 ID：</label>
-                <input type="text" id="modSwid" placeholder="如 s1">
-                <label for="modDstSwid">目标交换机 ID：</label>
-                <select id="modDstSwid"></select>
-                <label for="modDstHost">目标主机 ID：</label>
-                <input type="text" id="modDstHost" placeholder="如 h3">
-                <div id="switchHint" style="font-size: 14px; color: #888; margin-bottom: 10px;"></div>
-                <button id="modifyButton">修改</button>
-                <div id="modifyResult" style="margin-top:10px; color: blue;"></div>
-            </div>
-
             <div class="network-container">
                 <div id="network"></div>
                 <div id="nodeInfoContainer">
@@ -97,73 +70,217 @@
                     <div id="nodeInfoContent">点击任意节点查看详情</div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <script src="../static/main.js"></script>
-    <script src="../static/demo_topo.js"></script>
-    <script src="../static/loading.js"></script>
-<!-- *** START: 新增的AI助手侧边栏 (V2) *** -->
-<div class="ai-assistant-sidebar" id="ai-assistant-sidebar">
-    <div class="sidebar-header">
-        <h3>AI 网络分析助手</h3>
-        <button class="close-btn" id="close-ai-sidebar">×</button>
-    </div>
-
-    <!-- 聊天窗口 -->
-    <div class="chat-window" id="chat-window">
-        <!-- 初始上传界面 -->
-        <div id="upload-initial-screen">
-            <h4>开始分析</h4>
-            <p>请上传您的网络拓扑描述文件 (.json) 来开始对话。</p>
-            <button id="upload-btn" class="chat-button">
-                <i class="fas fa-upload"></i> 点击上传文件
-            </button>
-            <input type="file" id="topology-file-input" accept=".json" style="display: none;">
-            <div id="upload-error" class="error-message"></div>
-            <div class="format-hint">
-                <p><strong>提示:</strong> JSON文件需要包含 "intent_description", "switch", "host", "link" 四个键。 <a href="#" id="show-format-details">查看格式详情</a></p>
-                <pre id="format-details" style="display:none;"><code>{
-  "intent_description": "h1 到 h2 的流量优先走低时延路径，必须经过 s2，避免经过 s3。",
-  "switch": ["s1", "s2", "s3", "s4"],
-  "host": ["h1", "h2"],
-  "link": [
-    {
-      "h1": "s1",
-      "s1": "h1"
-    },
-    {
-      "s1": "s2",
-      "s2": "s1"
-    },
-    {
-      "s2": "s4",
-      "s4": "s2"
-    },
-    {
-      "s4": "h2",
-      "h2": "s4"
-    }
-  ]
-}</code></pre>
+        <section class="section">
+            <div class="section-title-row">
+                <div>
+                    <span class="panel-kicker">Build Sequence</span>
+                    <h2>三步完成当前网络准备</h2>
+                </div>
             </div>
-        </div>
-        
-        <!-- 消息会动态添加到这里 -->
-    </div>
-    
-    <!-- 输入区域 (默认禁用) -->
-    <div class="chat-input-area" id="chat-input-area" style="display: none;">
-        <div class="suggested-questions" id="suggested-questions">
-            <!-- "猜你想问"会在这里显示 -->
-        </div>
-        <div class="chat-input">
-            <input type="text" id="user-input" placeholder="输入你的问题..." disabled>
-            <button id="send-btn" disabled><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
-</div>
-<!-- *** END: 新增的AI助手侧边栏 (V2) *** -->
-</body>
+            <div class="step-grid">
+                <article class="control-card">
+                    <h3 class="section-title">Step 1. 装载 P4</h3>
+                    <p>先让交换机程序进入可运行状态，后续拓扑生成和流表注入都会依赖这一步。</p>
+                    <button class="loadP4Code" type="button">装载 P4 代码</button>
+                    <div id="loadResult"></div>
+                </article>
+                <article class="control-card">
+                    <h3 class="section-title">Step 2. 生成拓扑</h3>
+                    <p>启动当前上传拓扑，刷新节点范围、链路状态和页面中的可视化图结构。</p>
+                    <button class="generateFattree6" type="button">生成当前上传拓扑</button>
+                </article>
+                <article class="control-card">
+                    <h3 class="section-title">Step 3. 注入流表</h3>
+                    <p>把活动规则文件对应的流表真正下发到交换机，完成之后就可以开始发送测试流量。</p>
+                    <button class="injectFlowTable" type="button">注入流表</button>
+                    <div id="injectResult"></div>
+                </article>
+            </div>
+        </section>
 
-</html>
+        <section class="operations-grid">
+            <article class="section">
+                <div class="section-title-row">
+                    <div>
+                        <span class="panel-kicker">Send Traffic</span>
+                        <h2>路径验证发送区</h2>
+                    </div>
+                </div>
+                <p class="panel-lead">这里适合做第一轮演示。输入源主机和目标主机后，就能快速展示当前路径是否按预期经过关键节点。</p>
+                <div class="form-grid">
+                    <div class="field-group">
+                        <label for="srcHost">源主机 ID</label>
+                        <input type="text" id="srcHost" placeholder="如 h1">
+                    </div>
+                    <div class="field-group">
+                        <label for="dstHost">目标主机 ID</label>
+                        <input type="text" id="dstHost" placeholder="如 h2">
+                    </div>
+                </div>
+                <div id="hostHint" class="helper-text"></div>
+                <div class="form-actions">
+                    <button id="sendButton" type="button">单路径发送</button>
+                    <button id="sendVbpButton" type="button">VBP 发送</button>
+                </div>
+                <div id="vbpLegend" class="helper-text">绿色表示命中主路径，黄色表示命中备份路径，红色表示未命中合法行为池。</div>
+                <div id="sendResult"></div>
+            </article>
+
+            <article class="section">
+                <div class="section-title-row">
+                    <div>
+                        <span class="panel-kicker">Path Orchestrator</span>
+                        <h2>按 flow 调整预期路径</h2>
+                    </div>
+                </div>
+                <p>这里可以直接基于 VBP 候选路径切换当前 flow 的主路径。保存后会同步更新 intent、runtime rules、behavior pool 和交换机流表，不需要你再手动改某一跳。</p>
+                <div class="form-grid">
+                    <div class="field-group">
+                        <label for="pathFlowSelector">选择 flow</label>
+                        <select id="pathFlowSelector">
+                            <option value="">暂无可调 flow</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="pathCandidateSelector">选择候选路径</label>
+                        <select id="pathCandidateSelector">
+                            <option value="">暂无候选路径</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="pathPlannerMeta" class="result-box">生成拓扑并注入流表后，这里会显示当前 flow 的候选路径、must_pass / avoid 和主路径说明。</div>
+                <div class="form-actions">
+                    <button id="applyExpectedPathButton" type="button">切换为当前候选路径</button>
+                    <button id="resetExpectedPathButton" class="button-secondary" type="button">恢复自动主路径</button>
+                </div>
+                <div id="pathPlannerStatus" class="result-box">这里会显示预期路径切换结果，并提示是否已经同步到运行时流表。</div>
+                <div class="vbp-path-editor">
+                    <h3 class="section-title">直接增删 VBP 候选路径</h3>
+                    <p class="panel-lead">勾选要保留的路径后保存。第一条会作为主路径，其余路径会按顺序作为备份路径，更适合现场快速演示主备切换。</p>
+                    <div id="vbpPathManager" class="path-catalog-list">生成拓扑并注入流表后，这里会显示当前 flow 的 VBP 路径集合。</div>
+                    <div class="form-actions">
+                        <button id="saveVbpPathsButton" type="button">保存当前 VBP 路径集</button>
+                        <button id="resetVbpPathsButton" class="button-secondary" type="button">恢复系统推荐</button>
+                    </div>
+                    <div id="vbpPathStatus" class="result-box">这里会显示当前 flow 的 VBP 路径集合与保存结果。</div>
+                </div>
+                <p>如果你还想做底层故障注入或临时旁路，可以继续使用下面这组交换机级覆写。</p>
+                <div class="form-grid">
+                    <div class="field-group">
+                        <label for="modSwid">被修改交换机 ID</label>
+                        <input type="text" id="modSwid" placeholder="如 s1">
+                    </div>
+                    <div class="field-group">
+                        <label for="modDstSwid">目标交换机 ID</label>
+                        <select id="modDstSwid"></select>
+                    </div>
+                    <div class="field-group">
+                        <label for="modDstHost">目标主机 ID</label>
+                        <input type="text" id="modDstHost" placeholder="如 h3">
+                    </div>
+                </div>
+                <div id="switchHint" class="helper-text"></div>
+                <div class="form-actions">
+                    <button id="modifyButton" type="button">修改流表</button>
+                </div>
+                <div id="modifyResult"></div>
+            </article>
+        </section>
+
+        <section class="operations-grid">
+            <article class="section">
+                <div class="section-title-row">
+                    <div>
+                        <span class="panel-kicker">Semantic SSA</span>
+                        <h2>自动生成的语义验证策略</h2>
+                    </div>
+                </div>
+                <p>这里展示系统自动生成的 flow 级语义约束，包括状态范围、不变量和允许状态转移。你也可以直接确认或微调当前 flow 的策略。</p>
+                <div id="semanticPolicySummary" class="result-box">当前拓扑还没有生成 semantic policy。先装载 P4、生成拓扑并注入流表后再查看。</div>
+                <div class="form-grid">
+                    <div class="field-group">
+                        <label for="semanticFlowSelector">选择 flow</label>
+                        <select id="semanticFlowSelector">
+                            <option value="">暂无可编辑 flow</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="semanticMaxPackets">最大包计数</label>
+                        <input type="text" id="semanticMaxPackets" placeholder="如 64">
+                    </div>
+                    <div class="field-group">
+                        <label for="semanticMaxHops">最大跳数</label>
+                        <input type="text" id="semanticMaxHops" placeholder="如 3">
+                    </div>
+                    <div class="field-group">
+                        <label for="semanticMaxDegradedPackets">备份包预算</label>
+                        <input type="text" id="semanticMaxDegradedPackets" placeholder="如 3">
+                    </div>
+                    <div class="field-group">
+                        <label for="semanticMaxStateChanges">状态变更预算</label>
+                        <input type="text" id="semanticMaxStateChanges" placeholder="如 6">
+                    </div>
+                    <div class="field-group">
+                        <label for="semanticRequireRecovery">要求备份后回到 PRIMARY</label>
+                        <select id="semanticRequireRecovery">
+                            <option value="true">是</option>
+                            <option value="false">否</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="semanticFlowMeta" class="result-box">选择一个 flow 后，这里会显示当前策略作用域、候选路径和编辑提示。</div>
+                <div class="field-group">
+                    <label for="semanticInvariantsEditor">不变量 JSON</label>
+                    <textarea id="semanticInvariantsEditor" class="code-textarea" rows="10" placeholder='[{"var":"packet_count","type":"COUNTER","suggested_bound":64}]'></textarea>
+                </div>
+                <div class="field-group">
+                    <label for="semanticTransitionsEditor">AllowedTransitions JSON</label>
+                    <textarea id="semanticTransitionsEditor" class="code-textarea" rows="10" placeholder='[{"from":"INIT","to":"PRIMARY"}]'></textarea>
+                </div>
+                <div class="form-actions">
+                    <button id="semanticReloadButton" class="button-secondary" type="button">恢复当前加载值</button>
+                    <button id="semanticSaveButton" type="button">保存语义策略</button>
+                </div>
+                <div id="semanticSaveStatus" class="result-box">当前 flow 使用自动生成策略。调整后保存，下一次发送流量时就会按新约束验证。</div>
+            </article>
+
+            <article class="section">
+                <div class="section-title-row">
+                    <div>
+                        <span class="panel-kicker">Flow Runtime</span>
+                        <h2>跨包状态与违规分类</h2>
+                    </div>
+                </div>
+                <p>发送验证流量后，这里会显示每个 flow 的当前状态、包计数，以及 INVALID_TRANSITION / INCONSISTENT_STATE 等违规分类。</p>
+                <div id="semanticRuntimeSummary" class="result-box">还没有 flow 级语义验证历史。发送一次单路径或 VBP 流量后，这里会更新。</div>
+            </article>
+        </section>
+
+{% endblock %}
+
+{% block common_scripts %}
+    <script src="{{ url_for('static', filename='js/common/ai_assistant.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/topology_view.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/workspace_runtime.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pages/uploaded_workspace.js') }}"></script>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{{ url_for('static', filename='js/entrypoints/uploaded_workspace_bootstrap.js') }}"></script>
+{% endblock %}
+
+{% block overlay %}
+    <button class="assistant-dock" type="button" data-ai-trigger aria-label="打开 AI 助手">
+        <i class="fas fa-sparkles"></i>
+        <span class="assistant-dock-copy">
+            <strong>AI 助手</strong>
+            <small>继续分析当前拓扑</small>
+        </span>
+    </button>
+    {% set ai_sidebar_upload_title = '上传拓扑并恢复会话' %}
+    {% set ai_sidebar_upload_description = '在当前页面继续上传新的 JSON 拓扑，系统会重新校验结构并生成新的动态网络配置。' %}
+    {% set ai_sidebar_input_placeholder = '继续问这个拓扑该怎么验证、怎么展示...' %}
+    {% include 'includes/ai_sidebar.html' with context %}
+{% endblock %}

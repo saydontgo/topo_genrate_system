@@ -2,6 +2,7 @@ import sys
 import time
 import logging
 import json
+import os
 
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
@@ -11,6 +12,7 @@ from scapy.all import IP, UDP, TCP
 from tools import get_if, IPOption_TAG, IPOption_MRI
 from topo import Topology
 from behavior_pool import BehaviorPool
+from semantic_runtime import SemanticVerifier
 
 
 def load_rules(rule_path):
@@ -71,9 +73,16 @@ NUM = 0
 bytes = 0
 check_bytes = 0
 end_time = time.time()
-topo = Topology('topology.json')
-rules = load_rules('topo/rules.json')
-behavior_pool = BehaviorPool('topo/demo/rules/behavior_pool.json', 'topology.json')
+runtime_topology_path = os.environ.get('RUNTIME_TOPOLOGY_JSON_PATH', 'topology.json')
+runtime_rules_path = os.environ.get('RUNTIME_RULES_JSON_PATH', 'topo/rules.json')
+runtime_behavior_pool_path = os.environ.get('RUNTIME_BEHAVIOR_POOL_PATH', 'topo/behavior_pool.json')
+runtime_semantic_policy_path = os.environ.get('RUNTIME_SEMANTIC_POLICY_PATH', 'topo/semantic_policy.json')
+runtime_semantic_state_path = os.environ.get('RUNTIME_SEMANTIC_STATE_PATH', 'topo/semantic_state.json')
+runtime_semantic_history_path = os.environ.get('RUNTIME_SEMANTIC_HISTORY_PATH', 'topo/semantic_history.json')
+topo = Topology(runtime_topology_path)
+rules = load_rules(runtime_rules_path)
+behavior_pool = BehaviorPool(runtime_behavior_pool_path, runtime_topology_path)
+semantic_verifier = SemanticVerifier(runtime_semantic_policy_path, runtime_semantic_state_path, runtime_semantic_history_path)
 
 
 def verification(pkt: Packet):
@@ -83,6 +92,8 @@ def verification(pkt: Packet):
     with open("res.json", "w") as f:
         primary_behavior = behavior_pool.get_primary_behavior(src_ip, dst_ip)
         expected_path = primary_behavior['path'] if primary_behavior else rules.get(key)
+        observed_path = []
+        semantic_match_result = None
         res = {
             "src_ip": src_ip,
             "dst_ip": dst_ip,
@@ -101,12 +112,14 @@ def verification(pkt: Packet):
         if IPOption_TAG in pkt:
             prime_prod = pkt['TAG'].prime_product
             match_result = behavior_pool.classify(src_ip, dst_ip, prime_prod)
+            semantic_match_result = match_result
 
             if match_result['matched']:
                 res['behavior_status'] = match_result['level']
                 res['behavior_label'] = match_result['label']
                 res['matched_behavior_path'] = match_result['path']
                 res['consistence'] = True
+                observed_path = match_result['path'] or []
                 print(
                     'VBP matched = source-destination pair: (%s, %s), level: %s, prime_prod: %s, path: %s\n'
                     % (src_ip, dst_ip, match_result['level'], prime_prod, match_result['path'])
@@ -120,6 +133,7 @@ def verification(pkt: Packet):
                 res['behavior_status'] = 'illegal'
                 res['behavior_label'] = '未命中合法行为池'
                 res['recover_path'] = recover_path_from_prime_product(topo, dst_ip, prime_prod)
+                observed_path = res['recover_path'] or []
                 if res['recover_path']:
                     print("recover success! prime_prod: %s, forward path: %s\n" % (prime_prod, res['recover_path']))
                 else:
@@ -145,15 +159,32 @@ def verification(pkt: Packet):
                 res['behavior_status'] = match_result['level']
                 res['behavior_label'] = match_result['label']
                 res['matched_behavior_path'] = match_result['path']
+                semantic_match_result = {
+                    'matched': True,
+                    'index': match_result.get('index', 0),
+                    'level': match_result['level'],
+                    'tier': match_result.get('tier', 0),
+                    'label': match_result['label'],
+                    'path': match_result['path'],
+                }
+                observed_path = match_result['path'] or path
             else:
                 res['consistence'] = False
                 res['behavior_status'] = 'illegal'
                 res['behavior_label'] = '未命中合法行为池'
                 res['recover_path'] = path
+                observed_path = path
 
             if path != primary_path and not match_result:
                 print('VBP illegal = source-destination pair: (%s, %s), path: %s, primary_path: %s, time: %s'
                       % (src_ip, dst_ip, path, primary_path, time.time()))
+
+        res['semantic_verification'] = semantic_verifier.verify_observation(
+            src_ip,
+            dst_ip,
+            observed_path,
+            semantic_match_result,
+        )
 
         json.dump(res, f, indent=4)
 

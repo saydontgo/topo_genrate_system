@@ -1,89 +1,48 @@
-<!DOCTYPE html>
-<html lang="zh">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P4Prime - FatTree6 拓扑</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% block title %}P4Prime - FatTree6 拓扑{% endblock %}
+{% block brand_subtitle %}FatTree6 演示舱{% endblock %}
+
+{% block vendor_head %}
     <link href="https://unpkg.com/vis-network/styles/vis-network.min.css" rel="stylesheet">
     <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-    <link rel="stylesheet" href="../static/style.css">
+{% endblock %}
+
+{% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-</head>
+{% endblock %}
 
-<body>
+{% block top_actions %}
+    <a class="button-secondary" href="/topology">查看其它模式</a>
+{% endblock %}
 
-    <div class="top-bar">
-        <h1>P4Prime - FatTree6 拓扑</h1>
+{% block content %}
+        <section class="page-hero">
+            <div class="hero-copy">
+                <span class="eyebrow"><i class="fas fa-cubes"></i> Built-in Baseline</span>
+                <h1>如果你想稳定展示一整套 P4 路径验证流程，FatTree6 是最省心的起点。</h1>
+                <p>这里已经把常用动作拆成清晰步骤。你可以先准备环境，再发送验证流量和修改流表，整体节奏更适合课堂展示、答辩投屏和流程讲解。</p>
+            </div>
+            <div class="hero-stats">
+                <article class="stat-card">
+                    <strong>6</strong>
+                    <span>固定拓扑结构，适合稳定复现路径分布和转发表变化。</span>
+                </article>
+                <article class="stat-card">
+                    <strong>P4</strong>
+                    <span>直接在数据面携带路径信息并完成一致性验证，不依赖事后离线推断。</span>
+                </article>
+            </div>
+        </section>
 
-        <!-- 导航菜单 -->
-        <div class="nav-menu">
-            <ul>
-                <li><a href="/"><i class="fas fa-home"></i> 主页</a></li>
-                <li class="has-submenu">
-                    <a href="#"><i class="fas fa-network-wired"></i> 拓扑</a>
-                    <ul class="sub-menu">
-                        <li><a href="#">FatTree4</a></li>
-                        <li><a href="/topology/fattree6">FatTree6</a></li>
-                        <li><a href="#">新增拓扑</a></li>
-                    </ul>
-                </li>
-                <li><a href="/settings"><i class="fas fa-cog"></i> 设置</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="main-content">
-        <div class="header">
-            <h1>FatTree6 拓扑结构</h1>
-        </div>
-
-        <!-- 三步构建 -->
-        <div class="section" id="fatTree6">
-            <h2>FatTree6 拓扑</h2>
-            <div class="section" style="display: flex; gap: 20px; justify-content: space-between;">
-                <div class="section" style="flex: 1;">
-                    <h3 style="color: #006064;">Step 1: 装载 P4 代码</h3>
-                    <button class="loadP4Code">装载</button>
-                    <div id="loadResult" style="margin-top: 10px; color: darkblue;"></div>
-                </div>
-                <div class="section" style="flex: 1;">
-                    <h3 style="color: #006064;">Step 2: 生成拓扑</h3>
-                    <button class="generateFattree6">生成 FatTree6 拓扑</button>
-                </div>
-                <div class="section" style="flex: 1;">
-                    <h3 style="color: #006064;">Step 3: 注入流表</h3>
-                    <button class="injectFlowTable">注入流表</button>
-                    <div id="injectResult" style="margin-top: 10px; color: darkgreen;"></div>
+        <section class="workspace-panel workspace-panel-priority">
+            <div class="workspace-header">
+                <div>
+                    <span class="panel-kicker">Workspace</span>
+                    <h2>先看网络图，再进行操作</h2>
+                    <p class="panel-lead">拓扑图已经提前放到页面上半区，进入页面就能先看到网络结构、节点分布和节点详情。</p>
                 </div>
             </div>
-
-            <!-- 发送和修改功能 -->
-            <div class="section" style="margin-top: 20px; padding-top: 0;">
-                <h3>发送请求</h3>
-                <label for="srcHost">源主机 ID：</label>
-                <input type="text" id="srcHost" placeholder="如 h1">
-                <label for="dstHost">目标主机 ID：</label>
-                <input type="text" id="dstHost" placeholder="如 h2">
-                <div id="hostHint" style="font-size: 14px; color: #888; margin-bottom: 10px;"></div>
-                <button id="sendButton">发送</button>
-                <div id="sendResult" style="margin-top:10px; color: green;"></div>
-            </div>
-
-            <div class="section" style="margin-top: 20px; padding-top: 0;">
-                <h3>修改流表</h3>
-                <label for="modSwid">被修改交换机 ID：</label>
-                <input type="text" id="modSwid" placeholder="如 s1">
-                <label for="modDstSwid">目标交换机 ID：</label>
-                <select id="modDstSwid"></select>
-                <label for="modDstHost">目标主机 ID：</label>
-                <input type="text" id="modDstHost" placeholder="如 h3">
-                <div id="switchHint" style="font-size: 14px; color: #888; margin-bottom: 10px;"></div>
-                <button id="modifyButton">修改</button>
-                <div id="modifyResult" style="margin-top:10px; color: blue;"></div>
-            </div>
-
             <div class="network-container">
                 <div id="network"></div>
                 <div id="nodeInfoContainer">
@@ -91,13 +50,101 @@
                     <div id="nodeInfoContent">点击任意节点查看详情</div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <script src="../static/main.js"></script>
-    <script src="../static/topo.js"></script>
-    <script src="../static/loading.js"></script>
-</body>
-</body>
+        <section class="section">
+            <div class="section-title-row">
+                <div>
+                    <span class="panel-kicker">Build Sequence</span>
+                    <h2>按顺序完成三步准备</h2>
+                </div>
+            </div>
+            <div class="step-grid">
+                <article class="control-card">
+                    <h3 class="section-title">Step 1. 装载 P4</h3>
+                    <p>先完成程序装载和环境初始化，保证后续拓扑生成与流表注入都能顺利执行。</p>
+                    <button class="loadP4Code" type="button">装载 P4 代码</button>
+                    <div id="loadResult"></div>
+                </article>
+                <article class="control-card">
+                    <h3 class="section-title">Step 2. 生成拓扑</h3>
+                    <p>根据固定的 FatTree6 规则和链路定义启动实验网络，并同步刷新可视化节点。</p>
+                    <button class="generateFattree6" type="button">生成 FatTree6 拓扑</button>
+                </article>
+                <article class="control-card">
+                    <h3 class="section-title">Step 3. 注入流表</h3>
+                    <p>将转发表项真正下发到交换机，完成后就可以进入发送与路径验证阶段。</p>
+                    <button class="injectFlowTable" type="button">注入流表</button>
+                    <div id="injectResult"></div>
+                </article>
+            </div>
+        </section>
 
-</html>
+        <section class="operations-grid">
+            <article class="section">
+                <div class="section-title-row">
+                    <div>
+                        <span class="panel-kicker">Traffic</span>
+                        <h2>发送路径验证请求</h2>
+                    </div>
+                </div>
+                <p class="panel-lead">输入源主机和目标主机后即可发起验证，用最短操作链路展示正常路径是否按预期转发。</p>
+                <div class="form-grid">
+                    <div class="field-group">
+                        <label for="srcHost">源主机 ID</label>
+                        <input type="text" id="srcHost" placeholder="如 h1">
+                    </div>
+                    <div class="field-group">
+                        <label for="dstHost">目标主机 ID</label>
+                        <input type="text" id="dstHost" placeholder="如 h2">
+                    </div>
+                </div>
+                <div id="hostHint" class="helper-text"></div>
+                <div class="form-actions">
+                    <button id="sendButton" type="button">发送</button>
+                </div>
+                <div id="sendResult"></div>
+            </article>
+
+            <article class="section">
+                <div class="section-title-row">
+                    <div>
+                        <span class="panel-kicker">Flow Table</span>
+                        <h2>手动修改流表</h2>
+                    </div>
+                </div>
+                <p class="panel-lead">如果你想现场演示故障切换或异常绕路，可以在这里直接覆写某一跳的转发表项。</p>
+                <div class="form-grid">
+                    <div class="field-group">
+                        <label for="modSwid">被修改交换机 ID</label>
+                        <input type="text" id="modSwid" placeholder="如 s1">
+                    </div>
+                    <div class="field-group">
+                        <label for="modDstSwid">目标交换机 ID</label>
+                        <select id="modDstSwid"></select>
+                    </div>
+                    <div class="field-group">
+                        <label for="modDstHost">目标主机 ID</label>
+                        <input type="text" id="modDstHost" placeholder="如 h3">
+                    </div>
+                </div>
+                <div id="switchHint" class="helper-text"></div>
+                <div class="form-actions">
+                    <button id="modifyButton" type="button">修改流表</button>
+                </div>
+                <div id="modifyResult"></div>
+            </article>
+        </section>
+
+{% endblock %}
+
+{% block common_scripts %}
+    <script src="{{ url_for('static', filename='js/common/ai_assistant.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/topology_view.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/workspace_runtime.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pages/fattree_workspace.js') }}"></script>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{{ url_for('static', filename='js/entrypoints/fattree_workspace_bootstrap.js') }}"></script>
+{% endblock %}

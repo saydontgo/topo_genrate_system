@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}P4Prime{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block vendor_head %}{% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="app-shell page-{{ page_key|default('default') }}">
+    <header class="top-bar">
+        <a class="brand" href="/">
+            <span class="brand-mark">P4</span>
+            <span class="brand-copy">
+                <strong>P4Prime</strong>
+                <small>{% block brand_subtitle %}Runtime Verification Console{% endblock %}</small>
+            </span>
+        </a>
+
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="切换导航">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="nav-menu" id="primary-nav" aria-label="Primary Navigation">
+            <ul>
+                <li>
+                    <a href="/" class="{% if page_key == 'home' %}is-active{% endif %}">
+                        <i class="fas fa-house"></i>
+                        <span>主页</span>
+                    </a>
+                </li>
+                <li class="has-submenu">
+                    <a href="/topology" class="{% if page_key in ['topology', 'fattree6', 'your_topology'] %}is-active{% endif %}">
+                        <i class="fas fa-network-wired"></i>
+                        <span>拓扑</span>
+                        <i class="fas fa-angle-down"></i>
+                    </a>
+                    <ul class="sub-menu">
+                        <li><a href="/topology" class="{% if page_key == 'topology' %}is-active{% endif %}"><i class="fas fa-compass"></i> 拓扑总览</a></li>
+                        <li><a href="/topology/fattree6" class="{% if page_key == 'fattree6' %}is-active{% endif %}"><i class="fas fa-diagram-project"></i> FatTree6</a></li>
+                        <li><a href="/topology/your_topology" class="{% if page_key == 'your_topology' %}is-active{% endif %}"><i class="fas fa-sparkles"></i> 我的拓扑</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="/settings" class="{% if page_key == 'settings' %}is-active{% endif %}">
+                        <i class="fas fa-sliders"></i>
+                        <span>设置</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="top-actions">
+            {% block top_actions %}{% endblock %}
+        </div>
+    </header>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <div class="shell-backdrop" id="shell-backdrop" aria-hidden="true"></div>
+    {% block overlay %}{% endblock %}
+
+    <script src="{{ url_for('static', filename='js/common/shell.js') }}"></script>
+    {% block common_scripts %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/entrypoints/main_bootstrap.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

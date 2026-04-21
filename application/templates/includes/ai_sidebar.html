@@ -1,0 +1,61 @@
+<div class="ai-assistant-sidebar" id="ai-assistant-sidebar">
+    <div class="sidebar-header">
+    <h3>{{ ai_sidebar_heading | default('AI 拓扑助手') }}</h3>
+        <button class="close-btn" id="close-ai-sidebar" type="button">×</button>
+    </div>
+
+    <div class="chat-window" id="chat-window">
+        <div id="upload-initial-screen">
+      <span class="eyebrow"><i class="fas fa-file-arrow-up"></i> {{ ai_sidebar_eyebrow | default('Start With Your Topology') }}</span>
+      <h4 class="section-title">{{ ai_sidebar_upload_title | default('上传拓扑，让 AI 先帮你读懂网络') }}</h4>
+      <p class="panel-lead">{{ ai_sidebar_upload_description | default('上传 JSON 后，系统会先检查结构、提炼用户意图，再给出一份适合展示和验证的分析结果。') }}</p>
+            <div class="model-selector-container">
+                <label for="llm-model-select">选择大模型</label>
+                <select id="llm-model-select">
+                    <option value="deepseek-chat" selected>DeepSeek</option>
+                    <option value="ecnu-max">My AI</option>
+                </select>
+            </div>
+            <button id="upload-btn" class="chat-button" type="button">
+                <i class="fas fa-upload"></i>
+              <span>{{ ai_sidebar_upload_button_label | default('上传拓扑 JSON') }}</span>
+            </button>
+            <input type="file" id="topology-file-input" accept=".json" style="display: none;">
+            <div id="upload-error" class="error-message"></div>
+            <div class="format-hint">
+              <p><strong>上传要求：</strong>文件需要包含 intent_description、switch、host、link 四个字段。 <a href="#" id="show-format-details">查看示例</a></p>
+                <pre id="format-details" style="display:none;"><code>{
+  "intent_description": "h1 到 h2 的流量优先走低时延路径，必须经过 s2，避免经过 s3。",
+  "switch": ["s1", "s2", "s3", "s4"],
+  "host": ["h1", "h2"],
+  "link": [
+    {
+      "h1": "s1",
+      "s1": "h1"
+    },
+    {
+      "s1": "s2",
+      "s2": "s1"
+    },
+    {
+      "s2": "s4",
+      "s4": "s2"
+    },
+    {
+      "s4": "h2",
+      "h2": "s4"
+    }
+  ]
+}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-input-area" id="chat-input-area" style="display: none;">
+        <div class="suggested-questions" id="suggested-questions"></div>
+        <div class="chat-input">
+        <input type="text" id="user-input" placeholder="{{ ai_sidebar_input_placeholder | default('继续问我这个拓扑该怎么验证、怎么演示...') }}" disabled>
+            <button id="send-btn" type="button" disabled><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>

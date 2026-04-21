@@ -1,180 +1,119 @@
-<!DOCTYPE html>
-<html lang="zh">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P4Prime - 网络路径检测</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../static/style.css">
+{% block title %}P4Prime - 网络路径检测{% endblock %}
+{% block brand_subtitle %}路径验证与动态拓扑工作台{% endblock %}
+
+{% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-</head>
+{% endblock %}
 
-<body>
-    <div class="top-bar">
-        <h1>P4Prime - 主页</h1>
-        <!-- *** START: 新增的AI助手开关 *** -->
-        <div class="ai-assistant-switch" id="ai-assistant-switch">
-            <i class="fas fa-robot"></i> AI 助手
-        </div>
-        <!-- *** END: 新增的AI助手开关 *** -->
-        <!-- 导航菜单 -->
-        <div class="nav-menu">
-            <ul>
-                <li><a href="/"><i class="fas fa-home"></i> 主页</a></li>
-                <li class="has-submenu">
-                    <a href="#"><i class="fas fa-network-wired"></i> 拓扑</a>
-                    <ul class="sub-menu">
-                        <li><a href="#">FatTree4</a></li>
-                        <li><a href="/topology/fattree6">FatTree6</a></li>
-                        <li><a href="#">新增拓扑</a></li>
-                    </ul>
-                </li>
-                <li><a href="/settings"><i class="fas fa-cog"></i> 设置</a></li>
-            </ul>
-        </div>
-    </div>
+{% block top_actions %}
+    <button class="ai-assistant-switch" id="ai-assistant-switch" data-ai-trigger type="button">
+        <i class="fas fa-robot"></i>
+        <span>打开 AI 助手</span>
+    </button>
+{% endblock %}
 
-    <!-- 主内容 -->
-    <div class="main-content">
-        <div class="header">
-            <h1>✨ 欢迎使用 P4Prime</h1>
-        </div>
-
-        <!-- 系统介绍 -->
-        <div class="section">
-            <h2>📜 系统简介</h2>
-            <p>P4Prime 是一个基于 <span class="highlight">P4 网络编程语言</span> 的网络路径一致性检测与故障交换机定位系统，帮助用户快速定位网络故障。</p>
-            <ul>
-                <li>💻 支持 FatTree 网络拓扑（FatTree4、FatTree6）的可视化展示与管理</li>
-                <li>📊 实现网络流量路径一致性检测与流量注入</li>
-                <li>🔧 支持动态修改交换机流表，实现灵活的流量控制</li>
-                <li>🚦 快速定位网络故障并高亮展示异常路径</li>
-            </ul>
-        </div>
-
-        <!-- 功能介绍 -->
-        <div class="section">
-            <h2>🟢 功能使用指南</h2>
-
-            <h3>1️⃣ 构建拓扑</h3>
-            <p>在侧边栏点击 <strong>拓扑</strong> → <strong>FatTree6</strong>，进入拓扑管理页面：</p>
-            <ol>
-                <li>点击 <strong>“装载 P4 代码”</strong>：编译并初始化网络拓扑。</li>
-                <li>点击 <strong>“生成拓扑”</strong>：生成并展示网络拓扑图。</li>
-                <li>点击 <strong>“注入流表”</strong>：向交换机注入初始流表。</li>
-            </ol>
-
-            <h3>2️⃣ 流量注入</h3>
-            <p>在 <strong>FatTree6</strong> 页面中的 <strong>流量注入</strong> 模块：</p>
-            <ol>
-                <li>输入源主机 ID（如 <code>h1</code>）和目标主机 ID（如 <code>h2</code>）。</li>
-                <li>能输入的主机范围会在构建拓扑后给出。</li>
-                <li>点击 <strong>“发送”</strong>：系统会展示流量路径。</li>
-                <li>路径一致显示为 <span class="highlightG">绿色</span>，不一致显示为 <span class="highlightR">红色</span>。</li>
-            </ol>
-
-            <h3>3️⃣ 流表修改</h3>
-            <p>在 <strong>FatTree6</strong> 页面中的 <strong>流表修改</strong> 模块：</p>
-            <ol>
-                <li>选择被修改交换机 ID、目标交换机 ID、目标主机 ID。</li>
-                <li>被修改交换机修改后的下一跳即为目标交换机。</li>
-                <li>点击 <strong>“修改”</strong>：调整流表配置。</li>
-                <li>修改成功后展示新的路径。</li>
-            </ol>
-
-            <h3>4️⃣ 设置</h3>
-            <p>在 <strong>设置</strong> 页面：</p>
-            <ul>
-                <li>配置拓扑样式，定制主机和交换机外观</li>
-                <li>保存配置，实现个性化展示</li>
-            </ul>
-        </div>
-
-        <!-- 系统提示 -->
-        <div class="section">
-            <h2>⚙️ 注意事项</h2>
-            <ul>
-                <li>确保先生成拓扑和注入流表，再进行流量注入。</li>
-                <li>输入的主机和交换机 ID 必须有效。</li>
-                <li>配置修改需点击 <strong>“保存”</strong> 才能生效。</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- 外部 JS -->
-    <script src="../static/main.js"></script>
-
-
-        <!-- *** START: 新增的AI助手侧边栏 (V2) *** -->
-<div class="ai-assistant-sidebar" id="ai-assistant-sidebar">
-    <div class="sidebar-header">
-        <h3>AI 网络分析助手</h3>
-        <button class="close-btn" id="close-ai-sidebar">×</button>
-    </div>
-
-    <!-- 聊天窗口 -->
-    <div class="chat-window" id="chat-window">
-        <!-- 初始上传界面 -->
-        <div id="upload-initial-screen">
-            <h4>开始分析</h4>
-            <p>请上传您的网络拓扑描述文件 (.json) 来开始对话。</p>
-            <div class="model-selector-container" style="margin: 15px 0;">
-                <label for="llm-model-select" style="font-weight: 500; margin-right: 10px;">选择大模型:</label>
-                <select id="llm-model-select" style="padding: 5px; border-radius: 4px;">
-                    <option value="deepseek-chat" selected>DeepSeek</option>
-                    <option value="ecnu-max">My AI</option>
-                </select>
+{% block content %}
+        <section class="page-hero hero-home">
+            <div class="hero-copy">
+                <span class="eyebrow"><i class="fas fa-satellite-dish"></i> 运行时验证平台</span>
+                <h1>上传一份拓扑，就能把构建、验证、异常定位和讲解展示串成一条完整流程。</h1>
+                <p>
+                    P4Prime 面向课堂演示、项目答辩和实验复现。你可以先让 AI 读懂拓扑意图，再进入工作台完成 P4 装载、流表注入、
+                    单路径验证、VBP 合法行为池检查和异常路径高亮，整个过程都保持在同一套界面里。
+                </p>
+                <div class="hero-actions">
+                    <a class="button-primary" href="/topology/your_topology"><i class="fas fa-bolt"></i> 进入我的拓扑工作台</a>
+                    <a class="button-secondary" href="/topology/fattree6"><i class="fas fa-share-nodes"></i> 先看稳定演示样例</a>
+                </div>
             </div>
-            <button id="upload-btn" class="chat-button">
-                <i class="fas fa-upload"></i> 点击上传文件
-            </button>
-            <input type="file" id="topology-file-input" accept=".json" style="display: none;">
-            <div id="upload-error" class="error-message"></div>
-            <div class="format-hint">
-                <p><strong>提示:</strong> JSON文件需要包含 "intent_description", "switch", "host", "link" 四个键。 <a href="#" id="show-format-details">查看格式详情</a></p>
-                <pre id="format-details" style="display:none;"><code>{
-  "intent_description": "h1 到 h2 的流量优先走低时延路径，必须经过 s2，避免经过 s3。",
-  "switch": ["s1", "s2", "s3", "s4"],
-  "host": ["h1", "h2"],
-  "link": [
-    {
-      "h1": "s1",
-      "s1": "h1"
-    },
-    {
-      "s1": "s2",
-      "s2": "s1"
-    },
-    {
-      "s2": "s4",
-      "s4": "s2"
-    },
-    {
-      "s4": "h2",
-      "h2": "s4"
-    }
-  ]
-}</code></pre>
+            <div class="hero-stats">
+                <article class="stat-card">
+                    <strong>3 步</strong>
+                    <span>装载、生成、注入三步完成环境准备，适合现场讲解时按顺序推进。</span>
+                </article>
+                <article class="stat-card">
+                    <strong>2 条验证线</strong>
+                    <span>既能演示单路径一致性，也能演示主路径与备份路径的 VBP 判定。</span>
+                </article>
+                <article class="stat-card">
+                    <strong>1 次上传</strong>
+                    <span>上传一次 JSON，就会联动 AI 分析、intent 生成和动态拓扑实例化。</span>
+                </article>
             </div>
-        </div>
-        
-        <!-- 消息会动态添加到这里 -->
-    </div>
-    
-    <!-- 输入区域 (默认禁用) -->
-    <div class="chat-input-area" id="chat-input-area" style="display: none;">
-        <div class="suggested-questions" id="suggested-questions">
-            <!-- "猜你想问"会在这里显示 -->
-        </div>
-        <div class="chat-input">
-            <input type="text" id="user-input" placeholder="输入你的问题..." disabled>
-            <button id="send-btn" disabled><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
-</div>
-<!-- *** END: 新增的AI助手侧边栏 (V2) *** -->
+        </section>
 
-</body>
+        <section class="section">
+            <div class="section-title-row">
+                <div>
+                    <span class="panel-kicker">What It Does</span>
+                    <h2>系统能力一页看清</h2>
+                </div>
+            </div>
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <h3 class="section-title">动态拓扑构建</h3>
+                    <p>上传包含 intent_description、switch、host、link 的 JSON 后，系统会直接生成可以运行的实验网络，而不是停留在静态解析结果上。</p>
+                </article>
+                <article class="feature-card">
+                    <h3 class="section-title">路径一致性检测</h3>
+                    <p>系统会把预期路径编码进验证流程，在接收端快速比对轨迹，帮助你直观看到哪里发生了偏离转发。</p>
+                </article>
+                <article class="feature-card">
+                    <h3 class="section-title">VBP 行为池验证</h3>
+                    <p>同一源宿对可以同时定义主路径和备份路径，演示时能清晰区分主路径合法、备份路径合法和未命中行为池三种结果。</p>
+                </article>
+            </div>
+        </section>
 
-</html>
+        <section class="section">
+            <div class="section-title-row">
+                <div>
+                    <span class="panel-kicker">Workflow</span>
+                    <h2>建议演示顺序</h2>
+                </div>
+            </div>
+            <div class="step-grid">
+                <article class="control-card">
+                    <h3 class="section-title">01. 上传并分析拓扑</h3>
+                    <p>点击右上角或右下角的 AI 助手，先上传 JSON 拓扑，让系统自动生成结构化 intent.json 和可讲解的分析结论。</p>
+                </article>
+                <article class="control-card">
+                    <h3 class="section-title">02. 进入我的拓扑</h3>
+                    <p>进入“我的拓扑”后，按顺序装载 P4、生成当前网络并注入流表，页面会自动展示网络图、节点状态和可操作入口。</p>
+                </article>
+                <article class="control-card">
+                    <h3 class="section-title">03. 发送并观察结果</h3>
+                    <p>先做一次正常发送，再切换到 VBP 发送或手动改流表，就能把主路径、备份路径和异常路径的差异直观展示出来。</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="info-banner">
+            <div>
+                <strong>现在你能直接做什么：</strong>
+                上传拓扑后，系统会同步生成 network.py、intent.json 和活动规则文件，页面本身就是完整的演示入口，而不是静态壳层。
+            </div>
+            <div class="status-pills">
+                <span class="status-pill" style="color: var(--brand);">动态构建</span>
+                <span class="status-pill" style="color: var(--success);">路径恢复</span>
+                <span class="status-pill" style="color: var(--warning);">VBP 备份路径</span>
+            </div>
+        </section>
+{% endblock %}
+
+{% block common_scripts %}
+    <script src="{{ url_for('static', filename='js/common/ai_assistant.js') }}"></script>
+{% endblock %}
+
+{% block overlay %}
+    <button class="assistant-dock" type="button" data-ai-trigger aria-label="打开 AI 助手">
+        <i class="fas fa-sparkles"></i>
+        <span class="assistant-dock-copy">
+            <strong>AI 助手</strong>
+            <small>上传拓扑，开始分析</small>
+        </span>
+    </button>
+    {% include 'includes/ai_sidebar.html' with context %}
+{% endblock %}

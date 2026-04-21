@@ -5,6 +5,8 @@ import json
 import re
 import os
 from ..helper import hex_IP
+from ..runtime_files import copy_text_file, prepare_output_path
+from ..runtime_files import copy_text_file, prepare_output_path, prepare_p4_build_outputs
 
 class FatTree6(NetworkAPI):
     def __init__(self):
@@ -15,8 +17,7 @@ class FatTree6(NetworkAPI):
         self.__isNetworkStart = False
         self.__isCompiled = False
 
-        with open('topo/FatTree6/rules.json', 'r') as ori, open('topo/rules.json', 'w') as dst:
-            dst.write(ori.read())
+        copy_text_file('topo/FatTree6/rules.json', 'topo/rules.json')
         # Switch
         for i in range(1, 46):
             self.addP4Switch(f's{i}', cli_input=f'topo/FatTree6/rules/s{i}-commands.txt')
@@ -229,6 +230,7 @@ class FatTree6(NetworkAPI):
 
         debug('Auto configuration of not configured interfaces...\n')
         self.auto_assignment()
+        prepare_p4_build_outputs('p4src/switch.p4')
 
         try:
             info('Compiling P4 files...\n')
@@ -279,6 +281,7 @@ class FatTree6(NetworkAPI):
         output('Schedulers started correctly!\n')
 
         info('Saving topology to disk...\n')
+        prepare_output_path('topology.json')
         self.save_topology()
         output('Topology saved to disk!\n')
 

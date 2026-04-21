@@ -1,0 +1,206 @@
+@media (max-width: 1180px) {
+  .top-bar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    justify-items: stretch;
+    align-items: center;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    justify-self: end;
+    align-self: center;
+  }
+
+  .nav-menu {
+    display: none;
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    width: 100%;
+    padding-top: 4px;
+  }
+
+  .nav-menu.is-open {
+    display: block;
+  }
+
+  .nav-menu ul {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .nav-menu > ul > li > a {
+    justify-content: space-between;
+    width: 100%;
+    padding: 14px 16px;
+  }
+
+  .sub-menu {
+    display: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    position: static;
+    top: auto;
+    left: auto;
+    min-width: 0;
+    margin-top: 10px;
+    box-shadow: none;
+  }
+
+  .has-submenu.is-open > .sub-menu {
+    display: block;
+  }
+
+  .top-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+
+  .page-hero,
+  .network-container {
+    grid-template-columns: 1fr;
+  }
+
+  .assistant-dock {
+    right: 18px;
+    bottom: 18px;
+  }
+
+  .network-container {
+    height: auto;
+  }
+
+  #network {
+    height: 620px;
+    min-height: 620px;
+  }
+
+  #nodeInfoContainer {
+    height: auto;
+    min-height: 240px;
+  }
+}
+
+@media (max-width: 860px) {
+  :root {
+    --content-width: min(100vw - 24px, 100vw - 24px);
+  }
+
+  .top-bar {
+    margin-top: 10px;
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .brand-mark {
+    width: 46px;
+    height: 46px;
+  }
+
+  .main-content {
+    margin: 20px auto 44px;
+    gap: 18px;
+  }
+
+  .page-hero,
+  .section,
+  .panel,
+  .control-card,
+  .feature-card,
+  .topology-card,
+  .settings-card,
+  #nodeInfoContainer,
+  .workspace-panel {
+    padding: 20px;
+  }
+
+  .page-hero h1,
+  .panel-title {
+    font-size: clamp(1.7rem, 7vw, 2.6rem);
+  }
+
+  .page-hero {
+    gap: 20px;
+  }
+
+  .ai-assistant-sidebar {
+    top: 8px;
+    right: 8px;
+    height: calc(100vh - 16px);
+    border-radius: 24px;
+  }
+
+  .network-container {
+    height: auto;
+    min-height: 0;
+  }
+
+  #network {
+    height: 500px;
+    min-height: 500px;
+  }
+
+  #nodeInfoContainer {
+    height: auto;
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 560px) {
+  .brand-copy small {
+    display: none;
+  }
+
+  .brand-copy strong {
+    font-size: 1rem;
+  }
+
+  .hero-actions,
+  .button-row,
+  .download-section,
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .path-catalog-item {
+    grid-template-columns: 1fr;
+  }
+
+  .top-actions,
+  .status-pills,
+  .legend-pills {
+    width: 100%;
+  }
+
+  .top-actions > *,
+  .hero-actions > *,
+  .card-actions > *,
+  .form-actions > * {
+    width: 100%;
+  }
+
+  .chat-window {
+    padding: 16px;
+  }
+
+  .assistant-dock {
+    right: 12px;
+    bottom: 12px;
+    min-height: 56px;
+    width: calc(100vw - 24px);
+    justify-content: center;
+  }
+
+  .chat-message {
+    max-width: 100%;
+  }
+
+  .shell-backdrop {
+    backdrop-filter: blur(6px);
+  }
+}

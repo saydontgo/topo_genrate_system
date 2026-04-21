@@ -6,6 +6,8 @@ import os
 import re
 
 from ..helper import hex_IP
+from ..runtime_files import copy_text_file, prepare_output_path, prepare_p4_build_outputs
+from ..semantic_runtime import initialize_semantic_runtime
 
 
 class demo(NetworkAPI):
@@ -17,9 +19,36 @@ class demo(NetworkAPI):
         self._topoType = 'demo'
         self.__isNetworkStart = False
         self.__isCompiled = False
+        self._preview_edges = [
+            {'from': 'h1', 'to': 's1'},
+            {'from': 'h2', 'to': 's4'},
+            {'from': 's1', 'to': 's2'},
+            {'from': 's1', 'to': 's3'},
+            {'from': 's2', 'to': 's4'},
+            {'from': 's3', 'to': 's4'},
+        ]
+        self._preview_nodes = [
+            {'id': 's1', 'isHost': False, 'isSwitch': True, 'device_id': 1, 'thrift_port': 9090},
+            {'id': 's2', 'isHost': False, 'isSwitch': True, 'device_id': 2, 'thrift_port': 9091},
+            {'id': 's3', 'isHost': False, 'isSwitch': True, 'device_id': 3, 'thrift_port': 9092},
+            {'id': 's4', 'isHost': False, 'isSwitch': True, 'device_id': 4, 'thrift_port': 9093},
+            {'id': 'h1', 'isHost': True, 'ip': '10.0.1.1/24', 'mac': '00:00:0a:00:01:01', 'access_switch': 's1'},
+            {'id': 'h2', 'isHost': True, 'ip': '10.0.4.2/24', 'mac': '00:00:0a:00:04:02', 'access_switch': 's4'},
+        ]
+        self.runtime_behavior_pool_path = 'topo/behavior_pool.json'
+        self.runtime_semantic_policy_path = 'topo/semantic_policy.json'
+        self.runtime_semantic_state_path = 'topo/semantic_state.json'
+        self.runtime_semantic_history_path = 'topo/semantic_history.json'
 
-        with open('topo/demo/rules/rules.json', 'r') as ori, open('topo/rules.json', 'w') as dst:
-            dst.write(ori.read())
+        copy_text_file('topo/demo/rules/rules.json', 'topo/rules.json')
+        copy_text_file('topo/demo/rules/behavior_pool.json', 'topo/behavior_pool.json')
+        with open(self.runtime_behavior_pool_path, 'r', encoding='utf-8') as file_obj:
+            initialize_semantic_runtime(
+                self.runtime_semantic_policy_path,
+                self.runtime_semantic_state_path,
+                self.runtime_semantic_history_path,
+                json.load(file_obj),
+            )
 
         # Network definition
         # Switch
@@ -44,6 +73,40 @@ class demo(NetworkAPI):
     @property
     def topoType(self):
         return self._topoType
+
+    def is_network_started(self):
+        return self.__isNetworkStart
+
+    def get_visual_edges(self):
+        return list(self._preview_edges)
+
+    def get_visual_nodes(self):
+        return list(self._preview_nodes)
+
+    def get_runtime_behavior_pool_path(self):
+        return self.runtime_behavior_pool_path
+
+    def get_runtime_semantic_policy_path(self):
+        return self.runtime_semantic_policy_path
+
+    def get_runtime_semantic_state_path(self):
+        return self.runtime_semantic_state_path
+
+    def get_runtime_semantic_history_path(self):
+        return self.runtime_semantic_history_path
+
+    def _runtime_env_prefix(self, include_behavior_pool=False):
+        runtime_env = {
+            'RUNTIME_TOPOLOGY_JSON_PATH': 'topology.json',
+            'RUNTIME_RULES_JSON_PATH': 'topo/rules.json',
+            'RUNTIME_SEMANTIC_POLICY_PATH': self.runtime_semantic_policy_path,
+            'RUNTIME_SEMANTIC_STATE_PATH': self.runtime_semantic_state_path,
+            'RUNTIME_SEMANTIC_HISTORY_PATH': self.runtime_semantic_history_path,
+        }
+        if include_behavior_pool:
+            runtime_env['RUNTIME_BEHAVIOR_POOL_PATH'] = self.runtime_behavior_pool_path
+
+        return ' '.join(f'{key}={value}' for key, value in runtime_env.items())
     
     def clean_and_compile(self):
         """清理旧网络信息并加载p4代码进入交换机"""
@@ -52,6 +115,7 @@ class demo(NetworkAPI):
 
         debug('Auto configuration of not configured interfaces...\n')
         self.auto_assignment()
+        prepare_p4_build_outputs('p4src/switch.p4')
 
         try:
             info('Compiling P4 files...\n')
@@ -74,7 +138,10 @@ class demo(NetworkAPI):
             for i in range(1,5):
                 cur_sw = self.net.get(f's{i}')
                 thriftPort = 9089+i
-                cur_sw.cmd(f"simple_switch_CLI --thrift-port {thriftPort} < topo/demo/rules/s{i}-commands.txt")
+                cur_sw.cmd(
+                    f"{{ echo 'table_clear MyIngress.ipv4_lpm'; cat topo/demo/rules/s{i}-commands.txt; }} "
+                    f"| simple_switch_CLI --thrift-port {thriftPort}"
+                )
             output('Switches programmed correctly!\n')
         except Exception as e:
             error(f"There is something wrong while programming switches. Detailed info is as followed:{e}\n")
@@ -99,6 +166,7 @@ class demo(NetworkAPI):
         output('Schedulers started correctly!\n')
 
         info('Saving topology to disk...\n')
+        prepare_output_path('topology.json')
         self.save_topology()
         output('Topology saved to disk!\n')
 
@@ -148,7 +216,7 @@ class demo(NetworkAPI):
         output = ""
         try:
             info('executing receive.py...\n')
-            output = dst_shell.cmd('python3 topo/receive.py &')
+            output = dst_shell.cmd(f'{self._runtime_env_prefix()} python3 topo/receive.py &')
         except Exception as e:
             error(f"fail to launch receive.py on {dst_host}. Detailed info is as follow:{e}\n")
             return False
@@ -200,7 +268,7 @@ class demo(NetworkAPI):
         output = ""
         try:
             info('executing receive_vbp.py...\n')
-            output = dst_shell.cmd('python3 topo/receive_vbp.py &')
+            output = dst_shell.cmd(f'{self._runtime_env_prefix(include_behavior_pool=True)} python3 topo/receive_vbp.py &')
         except Exception as e:
             error(f"fail to launch receive_vbp.py on {dst_host}. Detailed info is as follow:{e}\n")
             return False

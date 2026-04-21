@@ -1,0 +1,120 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'IBM Plex Sans SC', 'Manrope', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 16%, rgba(15, 138, 120, 0.10), transparent 20%),
+    radial-gradient(circle at 84% 10%, rgba(216, 141, 67, 0.12), transparent 22%),
+    radial-gradient(circle at 76% 72%, rgba(224, 191, 154, 0.20), transparent 18%),
+    linear-gradient(180deg, #fbf6ef 0%, #f5efe6 44%, #efe7dc 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+body.is-ai-open {
+  overflow: hidden;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: auto auto 0 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::before {
+  width: 42vw;
+  height: 42vw;
+  left: -12vw;
+  bottom: -18vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(15, 138, 120, 0.16) 0%, rgba(15, 138, 120, 0) 70%);
+  animation: ambient-float 18s ease-in-out infinite;
+}
+
+body::after {
+  width: 34vw;
+  height: 34vw;
+  right: -8vw;
+  top: 8vh;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(216, 141, 67, 0.16) 0%, rgba(216, 141, 67, 0) 72%);
+  animation: ambient-float-reverse 22s ease-in-out infinite;
+}
+
+body::selection {
+  background: rgba(15, 138, 120, 0.18);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+p,
+h1,
+h2,
+h3,
+h4 {
+  margin-top: 0;
+}
+
+code,
+pre {
+  font-family: 'Manrope', 'SFMono-Regular', 'Consolas', monospace;
+}
+
+@keyframes ambient-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(4vw, -3vh, 0) scale(1.04);
+  }
+}
+
+@keyframes ambient-float-reverse {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(-3vw, 3vh, 0) scale(1.06);
+  }
+}

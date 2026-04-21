@@ -2,6 +2,7 @@ import sys
 import time
 import logging
 import json
+import os
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
 
@@ -10,6 +11,7 @@ from scapy.all import Packet
 from scapy.all import IP, UDP, TCP
 from tools import get_if, SwitchTrace, IPOption_TAG, IPOption_MRI
 from topo import Topology
+from semantic_runtime import SemanticVerifier
 
     
 def load_rules(rule_path):
@@ -39,9 +41,14 @@ NUM = 0
 bytes = 0
 check_bytes = 0
 end_time = time.time()
-topo = Topology('topology.json')
-# rules = load_rules('./topo/FatTree/rules.json')
-rules = load_rules('topo/rules.json')
+runtime_topology_path = os.environ.get('RUNTIME_TOPOLOGY_JSON_PATH', 'topology.json')
+runtime_rules_path = os.environ.get('RUNTIME_RULES_JSON_PATH', 'topo/rules.json')
+runtime_semantic_policy_path = os.environ.get('RUNTIME_SEMANTIC_POLICY_PATH', 'topo/semantic_policy.json')
+runtime_semantic_state_path = os.environ.get('RUNTIME_SEMANTIC_STATE_PATH', 'topo/semantic_state.json')
+runtime_semantic_history_path = os.environ.get('RUNTIME_SEMANTIC_HISTORY_PATH', 'topo/semantic_history.json')
+topo = Topology(runtime_topology_path)
+rules = load_rules(runtime_rules_path)
+semantic_verifier = SemanticVerifier(runtime_semantic_policy_path, runtime_semantic_state_path, runtime_semantic_history_path)
 # bug_num = 0
 
 
@@ -54,6 +61,8 @@ def verification(pkt: Packet):
     key = src_ip + '-' + dst_ip
 
     with open("res.json", "w")as f: # 如果发送的是一个普通的包，res.json里面的下面三条信息将无效
+        observed_path = []
+        semantic_match_result = None
         res = {
             "src_ip":src_ip,
             "dst_ip":dst_ip,
@@ -120,9 +129,20 @@ def verification(pkt: Packet):
                 if flag :
                     print("recover success! prime_prod: %s, forward path: %s\n"% (prime_prod, path[::-1]))
                     res['recover_path'] = path[::-1]
+                    observed_path = path[::-1]
                 else:
                     print("Error: can't recover th actual forward path. prime product: %s\n" % (prime_prod))
                     sys.exit()
+            else:
+                observed_path = expected_path
+                semantic_match_result = {
+                    'matched': True,
+                    'index': 0,
+                    'level': 'primary',
+                    'tier': 0,
+                    'label': '命中预期主路径',
+                    'path': expected_path,
+                }
                 
         elif IPOption_MRI in pkt:
             count = pkt['MRI'].count - 1
@@ -152,6 +172,24 @@ def verification(pkt: Packet):
                 # bug_num = bug_num + 1
                 # if bug_num == 7:
                 #     sys.exit()
+                observed_path = path
+            else:
+                observed_path = path
+                semantic_match_result = {
+                    'matched': True,
+                    'index': 0,
+                    'level': 'primary',
+                    'tier': 0,
+                    'label': '命中预期主路径',
+                    'path': path,
+                }
+
+        res['semantic_verification'] = semantic_verifier.verify_observation(
+            src_ip,
+            dst_ip,
+            observed_path,
+            semantic_match_result,
+        )
     
         json.dump(res, f, indent=4)
         

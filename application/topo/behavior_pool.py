@@ -22,10 +22,13 @@ class BehaviorPool:
                 if prime_product is None and path:
                     prime_product = self.calculate_prime_product(path)
                 behaviors.append({
+                    'index': behavior.get('index', len(behaviors)),
                     'path': path,
                     'prime_product': prime_product,
                     'level': behavior.get('level', 'primary'),
-                    'label': behavior.get('label', '')
+                    'tier': behavior.get('tier', 0),
+                    'label': behavior.get('label', ''),
+                    'path_hops': len(path),
                 })
             self.pool[key] = behaviors
 
@@ -57,16 +60,22 @@ class BehaviorPool:
             if behavior['prime_product'] == observed_prime_product:
                 return {
                     'matched': True,
+                    'index': behavior.get('index'),
                     'level': behavior['level'],
+                    'tier': behavior.get('tier', 0),
                     'label': behavior['label'],
                     'path': behavior['path'],
+                    'path_hops': behavior.get('path_hops', len(behavior['path'])),
                     'prime_product': behavior['prime_product']
                 }
 
         return {
             'matched': False,
+            'index': None,
             'level': 'illegal',
+            'tier': None,
             'label': '未命中合法行为池',
             'path': None,
+            'path_hops': 0,
             'prime_product': observed_prime_product
         }

@@ -4,19 +4,15 @@ import json
 import uuid, hashlib
 from openai import OpenAI
 from error import InvalidModelException
+from llm_config import get_provider_settings, DEEPSEEK_MODEL, ECNU_MODEL
 # redis默认使用6379接口
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
 # 维护一个动态session列表
 active_sessions = []
 
-ecnu_ai = "ecnu-max"
-ecnu_api = "your_api"
-ecnu_api_key = "your_api_key"
-
-deepseek = "deepseek-chat"
-deepseek_api = "your_api"
-deepseek_api_key = "your_api_key"
+ecnu_ai = ECNU_MODEL
+deepseek = DEEPSEEK_MODEL
 
 # 【修改】新的系统提示词，指导模型输出特定格式
 original_prompt = [{
@@ -114,9 +110,29 @@ def normalize_response_payload(payload):
     payload["questions"] = payload.get("questions", []) if isinstance(payload.get("questions", []), list) else []
     return payload
 
+
+def build_degraded_response(analysis_message, questions=None):
+    payload = {
+        "analysis": analysis_message,
+        "intent": {
+            "summary": "",
+            "flows": []
+        },
+        "files": [],
+        "questions": questions or []
+    }
+    payload = normalize_response_payload(payload)
+    payload["success"] = True
+    payload["degraded"] = True
+    return payload
+
+
+def llm_provider_is_configured(base_url, api_key):
+    placeholder_values = {"", "your_api", "your_api_key"}
+    return base_url not in placeholder_values and api_key not in placeholder_values
+
 def get_response(client, model, history, session_id):
     try:
-        success = True
         completion = client.chat.completions.create(
             model=model,
             messages=history
@@ -124,20 +140,11 @@ def get_response(client, model, history, session_id):
         completion_json = completion.model_dump_json()
         response_content = json.loads(completion_json)['choices'][0]['message']['content'].strip('```').lstrip('json\n')
     except Exception as e:
-        success = False
-        # 如果API调用失败，返回一个错误结构
         info(f"OpenAI API call failed: {e}")
-        error_response = {
-            "analysis": f"抱歉，调用AI模型时出错：\n`{str(e)}`\n请检查API密钥、网络连接或模型名称是否正确。",
-            "intent": {
-                "summary": "",
-                "flows": []
-            },
-            "files": [],
-            "questions": ["什么是P4？", "什么是FatTree拓扑？", "如何开始学习网络编程？"]
-        }
-        error_response = normalize_response_payload(error_response)
-        error_response["success"] = success
+        error_response = build_degraded_response(
+            f"抱歉，调用AI模型时出错：\n`{str(e)}`\n已跳过在线分析，你仍然可以继续上传拓扑、生成网络并手动调整 intent。",
+            ["什么是P4？", "什么是FatTree拓扑？", "如何开始学习网络编程？"]
+        )
         append_message(session_id, 'assistant', json.dumps(error_response))
         return error_response
 
@@ -146,45 +153,45 @@ def get_response(client, model, history, session_id):
     try:
         response_content = json.loads(response_content)
         response_content = normalize_response_payload(response_content)
-        response_content["success"] = success
+        response_content["success"] = True
+        response_content["degraded"] = False
         return response_content
     except json.JSONDecodeError:
-        success = False
         info(f"LLM did not return valid JSON: {response_content}")
-        fallback_response = {
-            "analysis": f"抱歉，模型返回的格式有误，请您重试。\n\n**原始回复：**\n```\n\" + {response_content} + \"\n```",
-            "intent": {
-                "summary": "",
-                "flows": []
-            },
-            "files": [],
-            "questions": ["如何实现基本的L2转发？", "这个拓扑的瓶颈可能在哪里？", "如何为h1到h2生成一条静态路径？"]
-        }
-        fallback_response = normalize_response_payload(fallback_response)
-        fallback_response["success"] = success
+        fallback_response = build_degraded_response(
+            f"抱歉，模型返回的格式有误，已使用降级响应。\n\n**原始回复：**\n```\n{response_content}\n```",
+            ["如何实现基本的L2转发？", "这个拓扑的瓶颈可能在哪里？", "如何为h1到h2生成一条静态路径？"]
+        )
         append_message(session_id, 'assistant', json.dumps(fallback_response))
         return fallback_response
 
 # 修改后的 call_llm 函数
 def call_llm(model, session_id, user_message, topo_str=None):
-    if model == ecnu_ai:
-        base_url = ecnu_api
-        api_key = ecnu_api_key
-    elif model == deepseek:
-        base_url = deepseek_api
-        api_key = deepseek_api_key
-    else:
+    provider_settings = get_provider_settings(model)
+    if provider_settings is None:
         raise InvalidModelException
-    client = OpenAI(
-        api_key=api_key, 
-        base_url=base_url,
-    )
+    base_url = provider_settings['base_url']
+    api_key = provider_settings['api_key']
 
     content_to_send = user_message
     if topo_str:
         content_to_send += "\n\n" + topo_str
 
     append_message(session_id, 'user', content_to_send)
+
+    if not llm_provider_is_configured(base_url, api_key):
+        fallback_response = build_degraded_response(
+            "AI 模型尚未完成配置，已跳过在线分析。你仍然可以继续上传拓扑、构建网络，并在设置页补充 API 地址和密钥后恢复在线分析。",
+            ["如何手动编写 intent.json？", "当前拓扑有哪些主机和交换机？", "怎样继续测试 VBP 路径验证？"]
+        )
+        append_message(session_id, 'assistant', json.dumps(fallback_response))
+        return fallback_response
+
+    client = OpenAI(
+        api_key=api_key,
+        base_url=base_url,
+    )
+
     history = get_history(session_id)
 
     return get_response(client, model, history, session_id)
