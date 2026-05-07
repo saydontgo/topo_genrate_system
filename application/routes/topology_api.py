@@ -109,6 +109,100 @@ def _resolve_flow_scope_hosts(flow_scope, flow_id, host_lookup):
     return resolved_scope
 
 
+def _normalize_switch_link(link_value):
+    if isinstance(link_value, dict):
+        left = str(link_value.get('from', '')).strip()
+        right = str(link_value.get('to', '')).strip()
+    elif isinstance(link_value, (list, tuple)) and len(link_value) == 2:
+        left = str(link_value[0]).strip()
+        right = str(link_value[1]).strip()
+    else:
+        return None
+
+    if not left.startswith('s') or not right.startswith('s') or left == right:
+        return None
+
+    return tuple(sorted((left, right)))
+
+
+def _switch_path_from_candidate(candidate):
+    if isinstance(candidate, dict):
+        switch_path = candidate.get('switch_path') or _switch_path_names(candidate.get('path', []))
+    elif isinstance(candidate, list):
+        switch_path = candidate
+    else:
+        return []
+
+    return [str(node).strip() for node in switch_path if str(node).strip()]
+
+
+def _flow_candidate_paths(flow):
+    catalog = flow.get('path_catalog') or flow.get('behaviors') or []
+    paths = []
+    seen = set()
+    for candidate in catalog:
+        switch_path = _switch_path_from_candidate(candidate)
+        signature = tuple(switch_path)
+        if not switch_path or signature in seen:
+            continue
+        seen.add(signature)
+        paths.append(switch_path)
+    return paths
+
+
+def _path_uses_link(switch_path, link_pair):
+    normalized_link = tuple(sorted(link_pair))
+    for left, right in zip(switch_path, switch_path[1:]):
+        if tuple(sorted((left, right))) == normalized_link:
+            return True
+    return False
+
+
+def _fault_drill_artifact_path(active_topology):
+    artifact_paths = _resolve_runtime_artifact_paths(active_topology)
+    return os.path.join(os.path.dirname(artifact_paths['semantic_policy']), 'fault_drill.json')
+
+
+def _load_fault_drill_state(active_topology):
+    return _load_json_artifact(_fault_drill_artifact_path(active_topology), {})
+
+
+def _persist_fault_drill_state(active_topology, payload):
+    atomic_write_json(_fault_drill_artifact_path(active_topology), payload, ensure_ascii=False, indent=2)
+
+
+def _set_runtime_link_status(active_topology, node_a, node_b, status):
+    if status not in {'up', 'down'}:
+        raise ValueError('链路状态必须是 up 或 down')
+
+    if not hasattr(active_topology, 'net') or active_topology.net is None:
+        raise RuntimeError('当前拓扑尚未启动，无法修改链路状态。')
+
+    try:
+        active_topology.net.configLinkStatus(node_a, node_b, status)
+        return
+    except Exception:
+        pass
+
+    right_node = active_topology.net.get(node_b)
+    left_node = active_topology.net.get(node_a)
+    for current_node, peer_name in ((left_node, node_b), (right_node, node_a)):
+        for interface in current_node.intfList():
+            if getattr(interface, 'name', '') == 'lo' or not getattr(interface, 'link', None):
+                continue
+
+            peer_interface = interface.link.intf2 if interface.link.intf1 == interface else interface.link.intf1
+            peer_node = getattr(peer_interface, 'node', None)
+            if getattr(peer_node, 'name', '') != peer_name:
+                continue
+
+            interface.ifconfig(status)
+            peer_interface.ifconfig(status)
+            return
+
+    raise RuntimeError(f'未找到链路 {node_a} <-> {node_b}，无法切换为 {status}。')
+
+
 def _upsert_intent_flow(intent_payload, flow_scope, flow_policy, preferred_path):
     intent_payload = dict(intent_payload or {})
     flows = intent_payload.get('flows', [])
@@ -444,17 +538,77 @@ def get_verification_profile():
         })
 
     state_summary = []
+    risk_summary = []
+    flow_scope_map = {flow.get('flow_id'): flow.get('flow_scope', {}) for flow in enriched_flows if flow.get('flow_id')}
     for flow_id, flow_state in (semantic_state.get('flows', {}) or {}).items():
+        scope = flow_scope_map.get(flow_id, {})
+        flow_label = 'unknown-flow'
+        if scope.get('src_host') and scope.get('dst_host'):
+            flow_label = f"{scope.get('src_host')} -> {scope.get('dst_host')}"
+        elif scope.get('src_ip') and scope.get('dst_ip'):
+            flow_label = f"{scope.get('src_ip')} -> {scope.get('dst_ip')}"
+
         state_summary.append({
             'flow_id': flow_id,
+            'flow_label': flow_label,
             'packet_count': flow_state.get('packet_count', 0),
             'current_state': flow_state.get('current_state', 'INIT'),
             'last_verdict': flow_state.get('last_verdict', 'unknown'),
+            'last_verdict_label': flow_state.get('last_verdict_label', ''),
             'last_behavior_index': flow_state.get('last_behavior_index'),
             'degraded_packets': flow_state.get('degraded_packets', 0),
             'state_change_count': flow_state.get('state_change_count', 0),
             'consecutive_backup_packets': flow_state.get('consecutive_backup_packets', 0),
+            'risk_score': flow_state.get('last_risk_score', 0),
+            'risk_level': flow_state.get('last_risk_level', 'low'),
+            'risk_label': flow_state.get('last_risk_label', '低风险'),
+            'risk_summary': flow_state.get('last_risk_summary', '暂无风险记录。'),
+            'risk_reasons': flow_state.get('last_risk_reasons', []),
+            'violation_types': flow_state.get('last_violation_types', []),
         })
+
+        risk_summary.append({
+            'flow_id': flow_id,
+            'flow_label': flow_label,
+            'current_state': flow_state.get('current_state', 'INIT'),
+            'last_verdict': flow_state.get('last_verdict', 'unknown'),
+            'risk_score': flow_state.get('last_risk_score', 0),
+            'risk_level': flow_state.get('last_risk_level', 'low'),
+            'risk_label': flow_state.get('last_risk_label', '低风险'),
+            'risk_summary': flow_state.get('last_risk_summary', '暂无风险记录。'),
+            'risk_reasons': flow_state.get('last_risk_reasons', []),
+            'violation_types': flow_state.get('last_violation_types', []),
+        })
+
+    risk_summary.sort(key=lambda item: (item.get('risk_score', 0), item.get('flow_id', '')), reverse=True)
+
+    semantic_alerts = []
+    for item in reversed(semantic_history[-20:]):
+        risk_score = int(item.get('risk_score', 0) or 0)
+        violation_types = item.get('violation_types', []) or []
+        if risk_score < 25 and not violation_types:
+            continue
+
+        scope = flow_scope_map.get(item.get('flow_id'), {})
+        flow_label = item.get('flow_id', 'unknown-flow')
+        if scope.get('src_host') and scope.get('dst_host'):
+            flow_label = f"{scope.get('src_host')} -> {scope.get('dst_host')}"
+
+        semantic_alerts.append({
+            'flow_id': item.get('flow_id', ''),
+            'flow_label': flow_label,
+            'timestamp': item.get('timestamp'),
+            'previous_state': item.get('previous_state', 'INIT'),
+            'current_state': item.get('current_state', 'UNKNOWN'),
+            'risk_score': risk_score,
+            'risk_level': item.get('risk_level', 'low'),
+            'risk_label': item.get('risk_label', '低风险'),
+            'risk_summary': item.get('risk_summary', '暂无风险摘要。'),
+            'risk_reasons': item.get('risk_reasons', []),
+            'violation_types': violation_types,
+        })
+        if len(semantic_alerts) >= 8:
+            break
 
     return jsonify({
         'behavior_pool': behavior_pool,
@@ -462,8 +616,11 @@ def get_verification_profile():
         'semantic_policy': enriched_policy,
         'semantic_state': semantic_state,
         'semantic_state_summary': state_summary,
+        'semantic_risk_summary': risk_summary[:8],
+        'semantic_alerts': semantic_alerts,
         'semantic_history': semantic_history[-10:],
         'host_lookup': host_lookup,
+        'fault_drill_state': _load_fault_drill_state(active_topology),
     })
 
 
@@ -708,6 +865,113 @@ def modify_flow_table():
         return jsonify({'status': 'success', 'msg': '修改完成'})
     except Exception as exc:
         return jsonify({'status': 'error', 'msg': str(exc)})
+
+
+@topology_api.route('/run_fault_drill', methods=['POST'])
+def run_fault_drill():
+    root_error = _require_runtime_root()
+    if root_error is not None:
+        return root_error
+
+    active_topology = _get_active_topology()
+    if active_topology is None:
+        return jsonify({'error': '当前没有可用拓扑，请先上传并构建拓扑。'}), 400
+
+    if getattr(active_topology, 'topoType', '') != 'dynamic_demo':
+        return jsonify({'error': '当前仅上传拓扑支持链路级故障演示。'}), 400
+
+    if not hasattr(active_topology, 'is_network_started') or not active_topology.is_network_started():
+        return jsonify({'error': '请先装载 P4、生成拓扑并注入流表后再执行故障演示。'}), 400
+
+    data = request.get_json(silent=True) or {}
+    action = str(data.get('action', 'inject')).strip().lower()
+    flow_id = str(data.get('flow_id', '')).strip()
+    link_pair = _normalize_switch_link(data.get('link'))
+    if action not in {'inject', 'restore'}:
+        return jsonify({'error': 'action 必须是 inject 或 restore'}), 400
+    if not flow_id:
+        return jsonify({'error': '请提供 flow_id'}), 400
+    if link_pair is None:
+        return jsonify({'error': '请提供合法的交换机链路，例如 ["s1", "s2"]'}), 400
+
+    artifact_paths = _resolve_runtime_artifact_paths(active_topology)
+    policy = _load_json_artifact(artifact_paths['semantic_policy'], {'flows': []})
+    selected_flow = next((flow for flow in policy.get('flows', []) if flow.get('flow_id') == flow_id), None)
+    if not selected_flow:
+        return jsonify({'error': f'未找到 flow: {flow_id}'}), 404
+
+    host_lookup = _build_runtime_host_lookup(active_topology)
+    flow_scope = _resolve_flow_scope_hosts(selected_flow.get('flow_scope', {}), flow_id, host_lookup)
+    if not flow_scope.get('src_host') or not flow_scope.get('dst_host'):
+        return jsonify({'error': '当前 flow 缺少主机作用域，无法执行故障演示。'}), 400
+
+    candidate_paths = _flow_candidate_paths(selected_flow)
+    if not candidate_paths:
+        return jsonify({'error': '当前 flow 没有可用候选路径，无法执行故障演示。'}), 400
+
+    impacted_paths = [path for path in candidate_paths if _path_uses_link(path, link_pair)]
+    surviving_paths = [path for path in candidate_paths if not _path_uses_link(path, link_pair)]
+    link_label = f'{link_pair[0]} <-> {link_pair[1]}'
+    current_primary_path = _switch_path_from_candidate((selected_flow.get('behaviors') or [{}])[0])
+    generated_intent_path = get_generated_intent_path(current_app.root_path)
+    intent_payload = session.get('intent_data') or _load_json_artifact(generated_intent_path, {'summary': '', 'flows': []})
+    flow_policy = dict(selected_flow)
+
+    if action == 'inject':
+        if not impacted_paths:
+            return jsonify({'error': f'链路 {link_label} 不在当前 flow 的候选路径上，无法形成故障演示。'}), 400
+
+        if not surviving_paths:
+            return jsonify({'error': f'链路 {link_label} 影响了该 flow 的全部候选路径，当前无法自动自愈。'}), 400
+
+    try:
+        _set_runtime_link_status(active_topology, link_pair[0], link_pair[1], 'down' if action == 'inject' else 'up')
+    except Exception as exc:
+        return jsonify({'error': f'切换链路状态失败：{exc}'}), 500
+
+    if action == 'inject':
+        flow_policy['enabled_paths'] = surviving_paths
+        flow_policy['backup_level'] = max(len(surviving_paths) - 1, 0)
+        preferred_path = surviving_paths[0]
+        message = f'已将 {link_label} 置为 down，并自动移除受影响路径，新的主路径为 {" -> ".join(preferred_path)}。'
+        drill_status = 'degraded-healed'
+    else:
+        flow_policy['enabled_paths'] = []
+        flow_policy['backup_level'] = max(len(candidate_paths) - 1, 0)
+        preferred_path = []
+        message = f'已恢复 {link_label}，并清空临时故障编排，当前 flow 回到系统自动推荐路径集。'
+        drill_status = 'restored'
+
+    intent_payload = _upsert_intent_flow(intent_payload, flow_scope, flow_policy, preferred_path)
+    normalized_intent, intent_path = persist_intent(current_app.root_path, intent_payload)
+    session['intent_data'] = normalized_intent
+
+    success = active_topology.program_switches()
+    if not success:
+        return jsonify({'error': '链路状态已切换，但重新下发自愈流表失败。'}), 500
+
+    report = {
+        'action': action,
+        'status': drill_status,
+        'flow_id': flow_id,
+        'flow_scope': flow_scope,
+        'link': list(link_pair),
+        'link_label': link_label,
+        'before_primary_path': current_primary_path,
+        'after_primary_path': preferred_path or current_primary_path,
+        'impacted_path_count': len(impacted_paths),
+        'surviving_path_count': len(surviving_paths) if action == 'inject' else len(candidate_paths),
+        'impacted_paths': impacted_paths,
+        'surviving_paths': surviving_paths if action == 'inject' else candidate_paths,
+        'intent_path': intent_path,
+        'updated_at': int(time.time()),
+    }
+    _persist_fault_drill_state(active_topology, report)
+
+    return jsonify({
+        'message': message,
+        'report': report,
+    })
 
 
 @topology_api.route('/load_p4_code', methods=['POST'])

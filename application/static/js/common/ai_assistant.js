@@ -151,8 +151,8 @@
         userInput.disabled = isLoading;
         sendBtn.disabled = isLoading;
         sendBtn.innerHTML = isLoading
-            ? '<i class="fas fa-spinner fa-spin"></i>'
-            : '<i class="fas fa-paper-plane"></i>';
+            ? '处理中...'
+            : '发送请求';
     }
 
     function appendUserMessage(text) {
@@ -205,7 +205,7 @@
 
         const aiResponse = isInitialUpload ? data.initial_response : data;
         if (!aiResponse || typeof aiResponse !== 'object') {
-            const errorContent = `AI回复格式错误: ${JSON.stringify(aiResponse)}`;
+            const errorContent = `数据解析格式错误: ${JSON.stringify(aiResponse)}`;
             messageDiv.innerHTML = `<div class="message-content">${renderMarkdown(errorContent)}</div>`;
             elements.chatWindow.appendChild(messageDiv);
             return;
@@ -249,17 +249,17 @@
 
                 const blob = new Blob([file.content], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
-                htmlContent += `<a href="${url}" download="${escapeHtml(file.filename)}" class="download-button"><i class="fas fa-download"></i> 下载 ${escapeHtml(file.filename)}</a> `;
+                htmlContent += `<a href="${url}" download="${escapeHtml(file.filename)}" class="download-button">下载 ${escapeHtml(file.filename)}</a> `;
             });
             htmlContent += '</div>';
         }
 
         if (isInitialUpload && data.download_links) {
             htmlContent += '<div class="download-section">';
-            htmlContent += `<a href="${data.download_links.script}" download="network.py" class="download-button"><i class="fab fa-python"></i> 下载生成的 network.py</a> `;
-            htmlContent += `<a href="${data.download_links.config}" download="topology.json" class="download-button"><i class="fas fa-file-code"></i> 下载 topology.json</a> `;
+            htmlContent += `<a href="${data.download_links.script}" download="network.py" class="download-button">下载 network.py</a> `;
+            htmlContent += `<a href="${data.download_links.config}" download="topology.json" class="download-button">下载 topology.json</a> `;
             if (data.download_links.intent) {
-                htmlContent += `<a href="${data.download_links.intent}" download="intent.json" class="download-button"><i class="fas fa-diagram-project"></i> 下载 intent.json</a>`;
+                htmlContent += `<a href="${data.download_links.intent}" download="intent.json" class="download-button">下载 intent.json</a>`;
             }
             htmlContent += '</div>';
         }
@@ -270,7 +270,7 @@
                 <div class="build-topology-section">
                     <p>是否根据这份上传拓扑生成对应 network.py，并进入构建页面？</p>
                     <a href="javascript:void(0);" class="chat-button build-button" data-action="build-topology">
-                        <i class="fas fa-cogs"></i> 构建并进入我的拓扑
+                        构建并进入我的拓扑
                     </a>
                 </div>
             `;
@@ -370,7 +370,7 @@
         }
 
         if (elements.uploadBtn) {
-            elements.uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上传并验证中...';
+            elements.uploadBtn.innerHTML = '载入配置并初始化中...';
             elements.uploadBtn.disabled = true;
         }
 
@@ -414,7 +414,7 @@
             throw error;
         } finally {
             if (elements.uploadBtn) {
-                elements.uploadBtn.innerHTML = '<i class="fas fa-upload"></i> 点击上传文件';
+                elements.uploadBtn.innerHTML = '选择并上传 JSON 数据集';
                 elements.uploadBtn.disabled = false;
             }
             if (elements.fileInput) {

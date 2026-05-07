@@ -277,11 +277,11 @@
             const strength = emphasis || 1;
             const gradient = context.createLinearGradient(route.from.x, route.from.y, route.to.x, route.to.y);
             if (route.tone === 'amber') {
-                gradient.addColorStop(0, `rgba(216, 141, 67, ${0.035 * strength})`);
-                gradient.addColorStop(1, `rgba(216, 141, 67, ${0.16 * strength})`);
+                gradient.addColorStop(0, `rgba(59, 130, 246, ${0.035 * strength})`);
+                gradient.addColorStop(1, `rgba(59, 130, 246, ${0.16 * strength})`);
             } else {
-                gradient.addColorStop(0, `rgba(15, 138, 120, ${0.03 * strength})`);
-                gradient.addColorStop(1, `rgba(15, 138, 120, ${0.14 * strength})`);
+                gradient.addColorStop(0, `rgba(99, 102, 241, ${0.03 * strength})`);
+                gradient.addColorStop(1, `rgba(99, 102, 241, ${0.14 * strength})`);
             }
 
             context.beginPath();
@@ -296,13 +296,13 @@
             const phase = reducedMotion ? 0.4 : 0.4 + (Math.sin(timestamp / 1600 + point.x * 0.008) + 1) * 0.12;
             context.beginPath();
             context.arc(point.x, point.y, 18 + phase * 10, 0, Math.PI * 2);
-            context.strokeStyle = 'rgba(15, 138, 120, 0.08)';
+            context.strokeStyle = 'rgba(99, 102, 241, 0.08)';
             context.lineWidth = 1;
             context.stroke();
 
             context.beginPath();
             context.arc(point.x, point.y, 28 + phase * 12, 0, Math.PI * 2);
-            context.strokeStyle = 'rgba(216, 141, 67, 0.05)';
+            context.strokeStyle = 'rgba(59, 130, 246, 0.05)';
             context.lineWidth = 1;
             context.stroke();
         }
@@ -310,9 +310,9 @@
         function drawNode(point) {
             context.beginPath();
             context.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
-            context.fillStyle = point.tone === 'amber' ? 'rgba(216, 141, 67, 0.34)' : 'rgba(15, 138, 120, 0.30)';
+            context.fillStyle = point.tone === 'amber' ? 'rgba(59, 130, 246, 0.34)' : 'rgba(99, 102, 241, 0.30)';
             context.shadowBlur = 12;
-            context.shadowColor = point.tone === 'amber' ? 'rgba(216, 141, 67, 0.16)' : 'rgba(15, 138, 120, 0.14)';
+            context.shadowColor = point.tone === 'amber' ? 'rgba(59, 130, 246, 0.16)' : 'rgba(99, 102, 241, 0.14)';
             context.fill();
             context.shadowBlur = 0;
         }

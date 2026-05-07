@@ -24,6 +24,7 @@
         let latestVerificationProfile = null;
         let selectedSemanticFlowId = '';
         let selectedPathFlowId = '';
+        let selectedFaultFlowId = '';
 
         function escapeHtml(value) {
             return String(value ?? '')
@@ -59,6 +60,22 @@
 
         function pathSignature(path) {
             return switchPathNames(path).join('>');
+        }
+
+        function formatTimestamp(unixValue) {
+            const timestamp = Number(unixValue || 0);
+            if (!Number.isFinite(timestamp) || timestamp <= 0) {
+                return '未知时间';
+            }
+
+            return new Date(timestamp * 1000).toLocaleString('zh-CN', {
+                hour12: false,
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            });
         }
 
         function resolveHostLabel(scope, keyPrefix) {
@@ -185,6 +202,23 @@
             return flows[0];
         }
 
+        function findSelectedFaultFlow(profile) {
+            const flows = Array.isArray(profile?.semantic_policy?.flows) ? profile.semantic_policy.flows : [];
+            if (flows.length === 0) {
+                return null;
+            }
+
+            if (selectedFaultFlowId) {
+                const matchedFlow = flows.find((flow) => flow.flow_id === selectedFaultFlowId);
+                if (matchedFlow) {
+                    return matchedFlow;
+                }
+            }
+
+            selectedFaultFlowId = flows[0].flow_id;
+            return flows[0];
+        }
+
         function setSemanticEditorStatus(message, color = '#607d8b') {
             const statusNode = document.getElementById('semanticSaveStatus');
             if (!statusNode) {
@@ -211,6 +245,20 @@
                 'pathCandidateSelector',
                 'applyExpectedPathButton',
                 'resetExpectedPathButton',
+            ].forEach((elementId) => {
+                const node = document.getElementById(elementId);
+                if (node) {
+                    node.disabled = disabled;
+                }
+            });
+        }
+
+        function setFaultDrillDisabled(disabled) {
+            [
+                'faultFlowSelector',
+                'faultLinkSelector',
+                'injectFaultDrillButton',
+                'restoreFaultDrillButton',
             ].forEach((elementId) => {
                 const node = document.getElementById(elementId);
                 if (node) {
@@ -260,6 +308,54 @@
 
             statusNode.textContent = message;
             statusNode.style.color = color;
+        }
+
+        function setFaultDrillStatus(message, color = '#607d8b') {
+            const statusNode = document.getElementById('faultDrillStatus');
+            if (!statusNode) {
+                return;
+            }
+
+            statusNode.textContent = message;
+            statusNode.style.color = color;
+        }
+
+        function getFaultLinkCatalog(selectedFlow) {
+            const catalog = getFlowCatalog(selectedFlow);
+            const primaryPath = switchPathNames(selectedFlow?.behaviors?.[0]?.switch_path || selectedFlow?.behaviors?.[0]?.path || []);
+            const primaryEdges = new Set(primaryPath.slice(1).map((nodeId, index) => [primaryPath[index], nodeId].sort().join('>')));
+            const linkMap = new Map();
+
+            catalog.forEach((item) => {
+                item.switchPath.slice(1).forEach((nodeId, index) => {
+                    const link = [item.switchPath[index], nodeId].sort();
+                    const signature = link.join('>');
+                    const existing = linkMap.get(signature) || {
+                        signature,
+                        link,
+                        label: `${link[0]} <-> ${link[1]}`,
+                        impactCount: 0,
+                        affectsPrimary: primaryEdges.has(signature),
+                        pathLabels: [],
+                    };
+
+                    existing.impactCount += 1;
+                    if (!existing.pathLabels.includes(item.label)) {
+                        existing.pathLabels.push(item.label);
+                    }
+                    linkMap.set(signature, existing);
+                });
+            });
+
+            return Array.from(linkMap.values()).sort((left, right) => {
+                if (left.affectsPrimary !== right.affectsPrimary) {
+                    return left.affectsPrimary ? -1 : 1;
+                }
+                if (left.impactCount !== right.impactCount) {
+                    return right.impactCount - left.impactCount;
+                }
+                return left.label.localeCompare(right.label, 'zh-CN');
+            });
         }
 
         async function requestJson(url, options, fallbackErrorMessage) {
@@ -353,14 +449,58 @@
                     runtimeNode.textContent = '还没有 flow 级语义验证历史。发送一次单路径或 VBP 流量后，这里会显示状态演化与违规分类。';
                 } else {
                     const stateBlocks = stateSummary.slice(0, 6).map((item) => (
-                        `<p><strong>${escapeHtml(item.flow_id)}</strong> | state=${escapeHtml(item.current_state)} | packets=${item.packet_count} | degraded=${item.degraded_packets || 0} | state_changes=${item.state_change_count || 0} | verdict=${escapeHtml(item.last_verdict || 'unknown')}</p>`
+                        `<p><strong>${escapeHtml(item.flow_label || item.flow_id)}</strong> | state=${escapeHtml(item.current_state)} | packets=${item.packet_count} | degraded=${item.degraded_packets || 0} | state_changes=${item.state_change_count || 0} | verdict=${escapeHtml(item.last_verdict_label || item.last_verdict || 'unknown')} | risk=${item.risk_score || 0}/100 (${escapeHtml(item.risk_label || '低风险')})</p>`
                     ));
                     const historyBlocks = recentHistory.slice(-6).reverse().map((item) => (
-                        `<p>${escapeHtml(item.flow_id)}：${escapeHtml(item.previous_state)} -> ${escapeHtml(item.current_state)}，违规=${escapeHtml((item.violation_types || []).join(', ') || '无')}，degraded=${item.degraded_packets || 0}，state_changes=${item.state_change_count || 0}</p>`
+                        `<p>${escapeHtml(item.flow_id)}：${escapeHtml(item.previous_state)} -> ${escapeHtml(item.current_state)}，违规=${escapeHtml((item.violation_types || []).join(', ') || '无')}，risk=${item.risk_score || 0}/100 (${escapeHtml(item.risk_label || '低风险')})，degraded=${item.degraded_packets || 0}，state_changes=${item.state_change_count || 0}</p>`
                     ));
                     runtimeNode.innerHTML = [...stateBlocks, ...historyBlocks].join('');
                 }
             }
+        }
+
+        function renderRiskAlertSummary(profile) {
+            const riskNode = document.getElementById('semanticRiskSummary');
+            if (!riskNode) {
+                return;
+            }
+
+            const riskSummary = Array.isArray(profile?.semantic_risk_summary) ? profile.semantic_risk_summary : [];
+            const alerts = Array.isArray(profile?.semantic_alerts) ? profile.semantic_alerts : [];
+            if (riskSummary.length === 0 && alerts.length === 0) {
+                riskNode.textContent = '发送一次单路径或 VBP 验证流量后，这里会生成 flow 风险分、风险等级和可解释告警。';
+                return;
+            }
+
+            const summaryBlocks = riskSummary.slice(0, 5).map((item) => [
+                '<article class="risk-summary-card">',
+                '<div class="risk-summary-head">',
+                `<strong>${escapeHtml(item.flow_label || item.flow_id)}</strong>`,
+                `<span class="risk-badge" data-risk="${escapeHtml(item.risk_level || 'low')}">${escapeHtml(`${item.risk_score || 0}/100 · ${item.risk_label || '低风险'}`)}</span>`,
+                '</div>',
+                `<p>${escapeHtml(item.risk_summary || '暂无风险摘要。')}</p>`,
+                (item.risk_reasons || []).length > 0
+                    ? `<ul class="risk-reasons">${item.risk_reasons.slice(0, 3).map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul>`
+                    : '',
+                `<p class="risk-meta">状态=${escapeHtml(item.current_state || 'INIT')} | verdict=${escapeHtml(item.last_verdict || 'unknown')} | 违规=${escapeHtml((item.violation_types || []).join(', ') || '无')}</p>`,
+                '</article>',
+            ].join(''));
+
+            const alertBlocks = alerts.slice(0, 4).map((item) => [
+                '<article class="risk-alert-item">',
+                '<div class="risk-summary-head">',
+                `<strong>${escapeHtml(item.flow_label || item.flow_id)}</strong>`,
+                `<span class="risk-badge" data-risk="${escapeHtml(item.risk_level || 'low')}">${escapeHtml(item.risk_label || '低风险')}</span>`,
+                '</div>',
+                `<p>${escapeHtml(item.risk_summary || '暂无风险摘要。')}</p>`,
+                `<p class="risk-meta">${escapeHtml(formatTimestamp(item.timestamp))} | ${escapeHtml(item.previous_state || 'INIT')} -> ${escapeHtml(item.current_state || 'UNKNOWN')} | 违规=${escapeHtml((item.violation_types || []).join(', ') || '无')}</p>`,
+                '</article>',
+            ].join(''));
+
+            riskNode.innerHTML = [
+                `<div class="risk-summary-list">${summaryBlocks.join('')}</div>`,
+                alertBlocks.length > 0 ? `<div class="risk-alert-stream">${alertBlocks.join('')}</div>` : '',
+            ].join('');
         }
 
         function renderPathPlanner(profile) {
@@ -534,13 +674,83 @@
             );
         }
 
+        function renderFaultDrill(profile) {
+            const flowSelector = document.getElementById('faultFlowSelector');
+            const linkSelector = document.getElementById('faultLinkSelector');
+            const metaNode = document.getElementById('faultDrillMeta');
+            if (!flowSelector || !linkSelector || !metaNode) {
+                return;
+            }
+
+            const flows = Array.isArray(profile?.semantic_policy?.flows) ? profile.semantic_policy.flows : [];
+            if (flows.length === 0) {
+                selectedFaultFlowId = '';
+                flowSelector.innerHTML = '<option value="">暂无可演示 flow</option>';
+                linkSelector.innerHTML = '<option value="">暂无可选链路</option>';
+                metaNode.textContent = '生成拓扑并注入流表后，这里会按 flow 提供可直接注入故障的链路。';
+                setFaultDrillDisabled(true);
+                setFaultDrillStatus('当前没有可执行的故障演示。', '#607d8b');
+                return;
+            }
+
+            setFaultDrillDisabled(false);
+            const selectedFlow = findSelectedFaultFlow(profile);
+            flowSelector.innerHTML = flows.map((flow) => (
+                `<option value="${escapeHtml(flow.flow_id)}">${escapeHtml(flowDisplayLabel(flow))}</option>`
+            )).join('');
+            flowSelector.value = selectedFlow?.flow_id || '';
+
+            if (!selectedFlow) {
+                return;
+            }
+
+            const linkCatalog = getFaultLinkCatalog(selectedFlow);
+            linkSelector.innerHTML = linkCatalog.length > 0
+                ? linkCatalog.map((item) => (
+                    `<option value="${escapeHtml(item.signature)}">${escapeHtml(`${item.label} | 影响 ${item.impactCount} 条候选路径${item.affectsPrimary ? ' | 含当前主路径' : ''}`)}</option>`
+                )).join('')
+                : '<option value="">暂无可选链路</option>';
+
+            const selectedLink = linkCatalog[0] || null;
+            if (selectedLink) {
+                linkSelector.value = selectedLink.signature;
+            }
+
+            const lastReport = profile?.fault_drill_state || {};
+            const isSameFlow = lastReport?.flow_id && lastReport.flow_id === selectedFlow.flow_id;
+            metaNode.textContent = [
+                `作用域: ${flowDisplayLabel(selectedFlow)}`,
+                `当前主路径: ${formatSwitchPath(selectedFlow?.behaviors?.[0]?.path || [])}`,
+                selectedLink
+                    ? `推荐故障链路: ${selectedLink.label}（影响 ${selectedLink.impactCount} 条候选路径${selectedLink.affectsPrimary ? '，且覆盖当前主路径' : ''}）`
+                    : '当前没有可执行的链路级故障点。',
+                isSameFlow
+                    ? `最近一次演示: ${lastReport.link_label || '未知链路'} | 状态=${lastReport.status || 'unknown'} | 注入后主路径=${formatSwitchPath(lastReport.after_primary_path || [])}`
+                    : '点击“注入故障并自动自愈”后，系统会下线指定链路、剔除受影响路径并重新下发表。',
+            ].join('\n');
+
+            if (isSameFlow) {
+                const restored = lastReport.status === 'restored';
+                setFaultDrillStatus(
+                    restored
+                        ? `最近一次已恢复 ${lastReport.link_label || '链路'}，当前回到自动编排。`
+                        : `最近一次故障演示已完成：${lastReport.link_label || '链路'} 下线后自动切换到 ${formatSwitchPath(lastReport.after_primary_path || [])}。`,
+                    restored ? '#2e7d32' : '#b66918',
+                );
+            } else {
+                setFaultDrillStatus('选择一条链路后点击“注入故障并自动自愈”，即可演示主备切换与自动重编排。', '#607d8b');
+            }
+        }
+
         function renderVerificationProfile(profile) {
             latestVerificationProfile = profile;
             renderPathPlanner(profile);
             renderVbpPathManager(profile);
             renderSemanticPolicySummary(profile);
             renderSemanticRuntimeSummary(profile);
+            renderRiskAlertSummary(profile);
             renderSemanticEditor(profile);
+            renderFaultDrill(profile);
         }
 
         async function refreshVerificationProfile() {
@@ -562,6 +772,7 @@
                 }
                 setPathPlannerStatus(`读取路径编排信息失败：${error.message}`, '#c62828');
                 setSemanticEditorStatus(`读取 semantic policy 失败：${error.message}`, '#c62828');
+                setFaultDrillStatus(`读取故障演示信息失败：${error.message}`, '#c62828');
             }
         }
 
@@ -571,6 +782,55 @@
             if (latestVerificationProfile) {
                 renderPathPlanner(latestVerificationProfile);
                 renderVbpPathManager(latestVerificationProfile);
+            }
+        }
+
+        function handleFaultFlowSelection() {
+            const selectorNode = document.getElementById('faultFlowSelector');
+            selectedFaultFlowId = selectorNode?.value || '';
+            if (latestVerificationProfile) {
+                renderFaultDrill(latestVerificationProfile);
+            }
+        }
+
+        async function runFaultDrill(restore = false) {
+            const selectedFlow = findSelectedFaultFlow(latestVerificationProfile);
+            if (!selectedFlow) {
+                setFaultDrillStatus('当前没有可执行故障演示的 flow。', '#c62828');
+                return;
+            }
+
+            const linkCatalog = getFaultLinkCatalog(selectedFlow);
+            const selectedSignature = document.getElementById('faultLinkSelector')?.value || '';
+            const selectedLink = linkCatalog.find((item) => item.signature === selectedSignature) || linkCatalog[0];
+            if (!selectedLink) {
+                setFaultDrillStatus('请先选择一条可演示的链路。', '#c62828');
+                return;
+            }
+
+            setFaultDrillStatus(
+                restore ? '正在恢复链路并回归自动编排...' : '正在注入链路故障并执行自动自愈...',
+                '#607d8b',
+            );
+
+            try {
+                const data = await requestJson('/run_fault_drill', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: restore ? 'restore' : 'inject',
+                        flow_id: selectedFlow.flow_id,
+                        link: selectedLink.link,
+                    }),
+                }, '执行故障演示失败');
+
+                await refreshVerificationProfile();
+                setFaultDrillStatus(
+                    data.message || '故障演示已完成。',
+                    restore ? '#2e7d32' : '#b66918',
+                );
+            } catch (error) {
+                setFaultDrillStatus(`执行失败：${error.message}`, '#c62828');
             }
         }
 
@@ -849,6 +1109,10 @@
                 pathText += `\n包计数：${semantic.packet_count}/${semantic.max_packets}`;
                 pathText += `\n备份包预算：${semantic.degraded_packets}/${semantic.max_degraded_packets}`;
                 pathText += `\n状态变更预算：${semantic.state_change_count}/${semantic.max_state_changes}`;
+                pathText += `\n风险评分：${semantic.risk_score || 0}/100 (${semantic.risk_label || '低风险'})`;
+                if (Array.isArray(semantic.risk_reasons) && semantic.risk_reasons.length > 0) {
+                    pathText += `\n风险说明：${semantic.risk_reasons.slice(0, 2).join('；')}`;
+                }
                 if (semantic.require_primary_recovery) {
                     pathText += `\n恢复约束：备份状态需在 ${semantic.max_degraded_packets} 包内回到 PRIMARY`;
                 }
@@ -1006,6 +1270,9 @@
             document.getElementById('resetExpectedPathButton')?.addEventListener('click', () => applyExpectedPath(true));
             document.getElementById('saveVbpPathsButton')?.addEventListener('click', () => saveVbpPathSet(false));
             document.getElementById('resetVbpPathsButton')?.addEventListener('click', () => saveVbpPathSet(true));
+            document.getElementById('faultFlowSelector')?.addEventListener('change', handleFaultFlowSelection);
+            document.getElementById('injectFaultDrillButton')?.addEventListener('click', () => runFaultDrill(false));
+            document.getElementById('restoreFaultDrillButton')?.addEventListener('click', () => runFaultDrill(true));
             document.getElementById('semanticFlowSelector')?.addEventListener('change', handleSemanticFlowSelection);
             document.getElementById('semanticReloadButton')?.addEventListener('click', restoreSemanticEditor);
             document.getElementById('semanticSaveButton')?.addEventListener('click', saveSemanticPolicy);

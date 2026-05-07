@@ -30,6 +30,29 @@ DEFAULT_MAX_DEGRADED_PACKETS = 3
 DEFAULT_MAX_STATE_CHANGES = 6
 MAX_HISTORY_ITEMS = 40
 
+RISK_WEIGHTS = {
+    'BOUND_VIOLATION': 18,
+    'INVALID_TRANSITION': 32,
+    'UNINITIALIZED_USE': 22,
+    'INCONSISTENT_STATE': 26,
+    'RESOURCE_OVERFLOW': 24,
+}
+
+RISK_LABELS = {
+    'low': '低风险',
+    'medium': '中风险',
+    'high': '高风险',
+    'critical': '严重风险',
+}
+
+RISK_EXPLANATIONS = {
+    'BOUND_VIOLATION': '观测值触碰或突破了包计数、状态变更等边界约束。',
+    'INVALID_TRANSITION': '当前状态跳转不在允许状态转移集合内。',
+    'UNINITIALIZED_USE': '流量在未确认主路径稳定前进入了备份状态。',
+    'INCONSISTENT_STATE': '当前路径或状态与行为池 / 语义预期不一致。',
+    'RESOURCE_OVERFLOW': '当前流量的跳数、备份停留时长或资源预算已超限。',
+}
+
 
 def make_flow_key(src_ip, dst_ip):
     return f'{src_ip}-{dst_ip}'
@@ -45,6 +68,116 @@ def _read_json(path, default_value):
 
 def _confidence(value):
     return round(value, 2)
+
+
+def _ratio(value, bound):
+    if bound in (None, 0):
+        return 0.0
+    return max(0.0, float(value) / float(bound))
+
+
+def _risk_level(score):
+    if score >= 75:
+        return 'critical'
+    if score >= 50:
+        return 'high'
+    if score >= 25:
+        return 'medium'
+    return 'low'
+
+
+def build_risk_assessment(
+    *,
+    violation_types,
+    invariant_results,
+    verdict,
+    current_state,
+    packet_count,
+    max_packets,
+    degraded_packets,
+    max_degraded_packets,
+    state_change_count,
+    max_state_changes,
+    consecutive_backup_packets,
+    observed_hops,
+    max_hops,
+):
+    score = 0
+    reasons = []
+
+    for violation_type in sorted(set(violation_types or [])):
+        score += RISK_WEIGHTS.get(violation_type, 15)
+        reasons.append(RISK_EXPLANATIONS.get(violation_type, violation_type))
+
+    packet_ratio = _ratio(packet_count, max_packets)
+    if packet_ratio >= 1.0:
+        score += 10
+        reasons.append(f'包计数已到达上限：{packet_count}/{max_packets}。')
+    elif packet_ratio >= 0.8:
+        score += 6
+        reasons.append(f'包计数接近上限：{packet_count}/{max_packets}。')
+
+    degraded_ratio = _ratio(degraded_packets, max_degraded_packets)
+    if degraded_ratio >= 1.0:
+        score += 12
+        reasons.append(f'备份路径停留已达到预算上限：{degraded_packets}/{max_degraded_packets}。')
+    elif degraded_ratio >= 0.67:
+        score += 7
+        reasons.append(f'备份路径停留较长：{degraded_packets}/{max_degraded_packets}。')
+
+    transition_ratio = _ratio(state_change_count, max_state_changes)
+    if transition_ratio >= 1.0:
+        score += 10
+        reasons.append(f'状态变更次数已达到预算上限：{state_change_count}/{max_state_changes}。')
+    elif transition_ratio >= 0.67:
+        score += 5
+        reasons.append(f'状态切换频繁：{state_change_count}/{max_state_changes}。')
+
+    if max_hops > 0:
+        hop_ratio = _ratio(observed_hops, max_hops)
+        if hop_ratio >= 1.0:
+            score += 9
+            reasons.append(f'路径跳数已达到约束上限：{observed_hops}/{max_hops}。')
+        elif hop_ratio >= 0.8:
+            score += 4
+            reasons.append(f'路径跳数接近上限：{observed_hops}/{max_hops}。')
+
+    if current_state.startswith('BACKUP_'):
+        score += min(14, 6 + consecutive_backup_packets * 2)
+        reasons.append(f'当前流仍停留在备份状态 {current_state}，连续 {consecutive_backup_packets} 个包未回到 PRIMARY。')
+    elif current_state == 'ILLEGAL':
+        score += 18
+        reasons.append('当前流未命中任何合法行为，已进入 ILLEGAL 状态。')
+
+    failed_invariants = [
+        result.get('name')
+        for result in invariant_results or []
+        if isinstance(result, dict) and result.get('passed') is False
+    ]
+    if failed_invariants and verdict != 'violation':
+        score += 8
+
+    if not reasons:
+        reasons.append('当前流量命中主路径且所有核心语义约束均保持在安全范围内。')
+
+    score = min(100, int(round(score)))
+    level = _risk_level(score)
+    summary = {
+        'critical': '检测到高危语义风险，建议立即恢复主路径或重新编排。',
+        'high': '检测到明显运行风险，建议尽快切换路径并核查状态机。',
+        'medium': '当前流量存在可观测风险信号，建议持续关注。',
+        'low': '当前流量语义状态稳定，未观察到明显风险。',
+    }[level]
+
+    return {
+        'score': score,
+        'level': level,
+        'label': RISK_LABELS[level],
+        'summary': summary,
+        'reasons': reasons[:5],
+        'triggered_invariants': failed_invariants,
+        'violation_count': len(set(violation_types or [])),
+    }
 
 
 def _coerce_bool(value):
@@ -748,6 +881,21 @@ class SemanticVerifier:
             'degraded': '命中合法备份状态',
             'violation': '检测到语义违规',
         }[verdict]
+        risk_assessment = build_risk_assessment(
+            violation_types=violation_types,
+            invariant_results=invariant_results,
+            verdict=verdict,
+            current_state=current_state,
+            packet_count=packet_count,
+            max_packets=max_packets,
+            degraded_packets=degraded_packets,
+            max_degraded_packets=max_degraded_packets,
+            state_change_count=state_change_count,
+            max_state_changes=max_state_changes,
+            consecutive_backup_packets=consecutive_backup_packets,
+            observed_hops=observed_hops,
+            max_hops=max_hops,
+        )
 
         flow_state.update({
             'packet_count': packet_count,
@@ -755,10 +903,17 @@ class SemanticVerifier:
             'last_path': observed_path or [],
             'last_behavior_index': behavior_index,
             'last_verdict': verdict,
+            'last_verdict_label': verdict_label,
             'degraded_packets': degraded_packets,
             'state_change_count': state_change_count,
             'consecutive_backup_packets': consecutive_backup_packets,
             'seen_primary': seen_primary_after,
+            'last_risk_score': risk_assessment['score'],
+            'last_risk_level': risk_assessment['level'],
+            'last_risk_label': risk_assessment['label'],
+            'last_risk_summary': risk_assessment['summary'],
+            'last_risk_reasons': risk_assessment['reasons'],
+            'last_violation_types': violation_types,
             'updated_at': int(time.time()),
         })
         self.state['updated_at'] = int(time.time())
@@ -776,6 +931,11 @@ class SemanticVerifier:
             'degraded_packets': degraded_packets,
             'state_change_count': state_change_count,
             'consecutive_backup_packets': consecutive_backup_packets,
+            'risk_score': risk_assessment['score'],
+            'risk_level': risk_assessment['level'],
+            'risk_label': risk_assessment['label'],
+            'risk_summary': risk_assessment['summary'],
+            'risk_reasons': risk_assessment['reasons'],
         }
         self.history.append(history_record)
         self.history = self.history[-MAX_HISTORY_ITEMS:]
@@ -807,4 +967,10 @@ class SemanticVerifier:
             'violation_types': violation_types,
             'invariant_results': invariant_results,
             'allowed_transitions': flow_policy.get('allowed_transitions', []),
+            'risk_assessment': risk_assessment,
+            'risk_score': risk_assessment['score'],
+            'risk_level': risk_assessment['level'],
+            'risk_label': risk_assessment['label'],
+            'risk_summary': risk_assessment['summary'],
+            'risk_reasons': risk_assessment['reasons'],
         }

@@ -1,0 +1,101 @@
+ * Serving Flask app 'app'
+ * Debug mode: off
+[0m开始加载p4代码...[0m[0m*** Removing excess controllers/ofprotocols/ofdatapaths/pings/noxes[0m
+[0mkillall controller ofprotocol ofdatapath ping nox_core lt-nox_core ovs-openflowd ovs-controller ovs-testcontroller udpbwtest mnexec ivs ryu-manager  2> /dev/null[0m
+[0mkillall -9 controller ofprotocol ofdatapath ping nox_core lt-nox_core ovs-openflowd ovs-controller ovs-testcontroller udpbwtest mnexec ivs ryu-manager  2> /dev/null[0m
+[0mpkill -9 -f "sudo mnexec"[0m
+[0m*** Removing junk from /tmp[0m
+[0mrm -f /tmp/vconn* /tmp/vlogs* /tmp/*.out /tmp/*.log[0m
+[0m*** Removing old X11 tunnels[0m
+[0m*** Removing excess kernel datapaths[0m
+[0mps ax | egrep -o 'dp[0-9]+' | sed 's/dp/nl:/'[0m
+[0m***  Removing OVS datapaths[0m
+[0movs-vsctl --timeout=1 list-br[0m
+[0movs-vsctl --timeout=1 list-br[0m
+[0m*** Removing all links of the pattern foo-ethX[0m
+[0mip link show | egrep -o '([-_.[:alnum:]]+-eth[[:digit:]]+)'[0m
+[0m( ip link del s2-eth2;ip link del s1-eth2;ip link del s1-eth2;ip link del s2-eth2;ip link del s3-eth1;ip link del s1-eth3;ip link del s1-eth3;ip link del s3-eth1;ip link del s3-eth2;ip link del s2-eth3;ip link del s2-eth3;ip link del s3-eth2;ip link del s4-eth1;ip link del s2-eth4;ip link del s2-eth4;ip link del s4-eth1;ip link del s5-eth2;ip link del s2-eth5;ip link del s2-eth5;ip link del s5-eth2;ip link del s4-eth2;ip link del s3-eth3;ip link del s3-eth3;ip link del s4-eth2;ip link del s5-eth3;ip link del s3-eth4;ip link del s3-eth4;ip link del s5-eth3;ip link del s5-eth4;ip link del s4-eth3;ip link del s4-eth3;ip link del s5-eth4;ip link del s6-eth2;ip link del s4-eth4;ip link del s4-eth4;ip link del s6-eth2;ip link del s6-eth3;ip link del s5-eth5;ip link del s5-eth5;ip link del s6-eth3 ) 2> /dev/null[0m
+[0mip link show[0m
+[0m*** Killing stale mininet node processes[0m
+[0mpkill -9 -f mininet:[0m
+[0m*** Shutting down stale tunnels[0m
+[0mpkill -9 -f Tunnel=Ethernet[0m
+[0mpkill -9 -f .ssh/mn[0m
+[0mrm -f ~/.ssh/mn/*[0m
+[0m*** Cleanup complete.[0m
+[0mbrctl show | awk 'FNR > 1 {print $1}'[0m
+[0mCompiling P4 files...[0m
+[0m/home/p4/Desktop/topo_genrate_system/application/p4src/switch.p4 compiled successfully.[0m
+[0m[0m[01mP4 Files compiled![0m
+[01mPort mapping:[0m
+[01mh1:  [0m[01m0:s1	 [0m[01m[0m
+[01mh2:  [0m[01m0:s6	 [0m[01m[0m
+[01mh3:  [0m[01m0:s2	 [0m[01m[0m
+[01mh4:  [0m[01m0:s5	 [0m[01m[0m
+[01ms1:  [0m[01m1:h1	 [0m[01m2:s2	 [0m[01m3:s3	 [0m[01m[0m
+[01ms2:  [0m[01m1:h3	 [0m[01m2:s1	 [0m[01m3:s3	 [0m[01m4:s4	 [0m[01m5:s5	 [0m[01m[0m
+[01ms3:  [0m[01m1:s1	 [0m[01m2:s2	 [0m[01m3:s4	 [0m[01m4:s5	 [0m[01m[0m
+[01ms4:  [0m[01m1:s2	 [0m[01m2:s3	 [0m[01m3:s5	 [0m[01m4:s6	 [0m[01m[0m
+[01ms5:  [0m[01m1:h4	 [0m[01m2:s2	 [0m[01m3:s3	 [0m[01m4:s4	 [0m[01m5:s6	 [0m[01m[0m
+[01ms6:  [0m[01m1:h2	 [0m[01m2:s4	 [0m[01m3:s5	 [0m[01m[0m
+[0mp4代码加载完成[0m[0m收到拓扑选择请求: your_topology[0m[0m收到拓扑选择请求: current[0m[0m开始构建拓扑: dynamic_demo[0m[0mCreating network...[0m
+[0m*** Creating network[0m
+[0m*** Adding hosts:[0m
+[0mh1 [0m[0mh2 [0m[0mh3 [0m[0mh4 [0m[0m
+*** Adding switches:[0m
+[0ms1 [0m[0ms2 [0m[0ms3 [0m[0ms4 [0m[0ms5 [0m[0ms6 [0m[0m
+*** Adding routers:[0m
+[0m
+*** Adding links:[0m
+[0m(h1, s1) [0m[0m(h2, s6) [0m[0m(h3, s2) [0m[0m(h4, s5) [0m[0m(s1, s2) [0m[0m(s1, s3) [0m[0m(s2, s3) [0m[0m(s2, s4) [0m[0m(s2, s5) [0m[0m(s3, s4) [0m[0m(s3, s5) [0m[0m(s4, s5) [0m[0m(s4, s6) [0m[0m(s5, s6) [0m[0m[0m
+[0m*** Configuring hosts[0m
+[0mh1 [0m[0mh2 [0m[0mh3 [0m[0mh4 [0m[0m[0m
+[0m*** Configuring Tofinos switches[0m
+[0m[0m
+[0m[0m
+[01mNetwork created![0m
+[0mStarting network...[0m
+[0m*** Starting controller[0m
+[0m[0m
+[0m*** Starting 6 switches[0m
+[0ms1 [0m[0mStarting P4 switch s1.[0m
+[0msimple_switch -i 1@s1-eth1 -i 2@s1-eth2 -i 3@s1-eth3 --thrift-port 9090 --nanolog ipc:///tmp/bm-1-log.ipc --device-id 1 /home/p4/Desktop/topo_genrate_system/application/p4src/switch.json[0m
+[0mP4 switch s1 has been started.[0m
+[0ms2 [0m[0mStarting P4 switch s2.[0m
+[0msimple_switch -i 1@s2-eth1 -i 2@s2-eth2 -i 3@s2-eth3 -i 4@s2-eth4 -i 5@s2-eth5 --thrift-port 9091 --nanolog ipc:///tmp/bm-2-log.ipc --device-id 2 /home/p4/Desktop/topo_genrate_system/application/p4src/switch.json[0m
+[0mP4 switch s2 has been started.[0m
+[0ms3 [0m[0mStarting P4 switch s3.[0m
+[0msimple_switch -i 1@s3-eth1 -i 2@s3-eth2 -i 3@s3-eth3 -i 4@s3-eth4 --thrift-port 9092 --nanolog ipc:///tmp/bm-3-log.ipc --device-id 3 /home/p4/Desktop/topo_genrate_system/application/p4src/switch.json[0m
+[0mP4 switch s3 has been started.[0m
+[0ms4 [0m[0mStarting P4 switch s4.[0m
+[0msimple_switch -i 1@s4-eth1 -i 2@s4-eth2 -i 3@s4-eth3 -i 4@s4-eth4 --thrift-port 9093 --nanolog ipc:///tmp/bm-4-log.ipc --device-id 4 /home/p4/Desktop/topo_genrate_system/application/p4src/switch.json[0m
+[0mP4 switch s4 has been started.[0m
+[0ms5 [0m[0mStarting P4 switch s5.[0m
+[0msimple_switch -i 1@s5-eth1 -i 2@s5-eth2 -i 3@s5-eth3 -i 4@s5-eth4 -i 5@s5-eth5 --thrift-port 9094 --nanolog ipc:///tmp/bm-5-log.ipc --device-id 5 /home/p4/Desktop/topo_genrate_system/application/p4src/switch.json[0m
+[0mP4 switch s5 has been started.[0m
+[0ms6 [0m[0mStarting P4 switch s6.[0m
+[0msimple_switch -i 1@s6-eth1 -i 2@s6-eth2 -i 3@s6-eth3 --thrift-port 9095 --nanolog ipc:///tmp/bm-6-log.ipc --device-id 6 /home/p4/Desktop/topo_genrate_system/application/p4src/switch.json[0m
+[0mP4 switch s6 has been started.[0m
+[0m[0m
+[0m*** Starting 0 routers[0m
+[0m[0m
+[01mNetwork started![0m
+[0mStarting schedulers...[0m
+[01mSchedulers started correctly![0m
+[0mSaving topology to disk...[0m
+[0mSaving mininet topology to database: ./topology.json[0m
+[01mTopology saved to disk![0m
+[0mProgramming hosts...[0m
+[01mHosts programmed correctly![0m
+[0mRefreshing topology metadata...[0m
+[0mSaving mininet topology to database: ./topology.json[0m
+[01mTopology metadata refreshed![0m
+[0mGenerating routing artifacts...[0m
+[01mRouting artifacts generated![0m
+[0mExecuting scripts...[0m
+[01mAll scripts executed correctly![0m
+[0mDistributing tasks...[0m
+[01mAll tasks distributed correctly![0m
+[0mdynamic_demo 拓扑构建完成[0m[0m开始注入流表...[0m[0mProgramming switches...[0m
+[01mSwitches programmed correctly![0m
+[0m流表注入完成[0m

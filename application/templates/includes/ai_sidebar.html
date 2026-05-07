@@ -1,31 +1,30 @@
 <div class="ai-assistant-sidebar" id="ai-assistant-sidebar">
     <div class="sidebar-header">
-    <h3>{{ ai_sidebar_heading | default('AI 拓扑助手') }}</h3>
+    <h3>{{ ai_sidebar_heading | default('拓扑加载与视图管理') }}</h3>
         <button class="close-btn" id="close-ai-sidebar" type="button">×</button>
     </div>
 
     <div class="chat-window" id="chat-window">
         <div id="upload-initial-screen">
-      <span class="eyebrow"><i class="fas fa-file-arrow-up"></i> {{ ai_sidebar_eyebrow | default('Start With Your Topology') }}</span>
-      <h4 class="section-title">{{ ai_sidebar_upload_title | default('上传拓扑，让 AI 先帮你读懂网络') }}</h4>
-      <p class="panel-lead">{{ ai_sidebar_upload_description | default('上传 JSON 后，系统会先检查结构、提炼用户意图，再给出一份适合展示和验证的分析结果。') }}</p>
-            <div class="model-selector-container">
-                <label for="llm-model-select">选择大模型</label>
-                <select id="llm-model-select">
+      <span class="eyebrow">{{ ai_sidebar_eyebrow | default('导入自定义拓扑') }}</span>
+      <h4 class="section-title">{{ ai_sidebar_upload_title | default('提交基础网络配置文件') }}</h4>
+      <p class="panel-lead">{{ ai_sidebar_upload_description | default('上传包含节点和意图设计的 JSON 配置文件，系统将自动进行合规性验证并下发部署策略。') }}</p>
+            <div class="model-selector-container" style="margin-bottom: 1rem;">
+                <label for="llm-model-select" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem; display: block;">选择大模型</label>
+                <select id="llm-model-select" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px; font-size: 0.9rem; background: var(--bg);">
                     <option value="deepseek-chat" selected>DeepSeek</option>
                     <option value="ecnu-max">My AI</option>
                 </select>
             </div>
             <button id="upload-btn" class="chat-button" type="button">
-                <i class="fas fa-upload"></i>
-              <span>{{ ai_sidebar_upload_button_label | default('上传拓扑 JSON') }}</span>
+              <span>{{ ai_sidebar_upload_button_label | default('选择并上传 JSON 数据集') }}</span>
             </button>
             <input type="file" id="topology-file-input" accept=".json" style="display: none;">
             <div id="upload-error" class="error-message"></div>
             <div class="format-hint">
-              <p><strong>上传要求：</strong>文件需要包含 intent_description、switch、host、link 四个字段。 <a href="#" id="show-format-details">查看示例</a></p>
+              <p><strong>合法格式限制：</strong>文件需包含 intent_description、switch、host、link 及拓扑声明。<a href="#" id="show-format-details">展开字段详情</a></p>
                 <pre id="format-details" style="display:none;"><code>{
-  "intent_description": "h1 到 h2 的流量优先走低时延路径，必须经过 s2，避免经过 s3。",
+  "intent_description": "定义路由策略（例如：优先走低时延，经过特定网元等）",
   "switch": ["s1", "s2", "s3", "s4"],
   "host": ["h1", "h2"],
   "link": [
@@ -53,9 +52,11 @@
 
     <div class="chat-input-area" id="chat-input-area" style="display: none;">
         <div class="suggested-questions" id="suggested-questions"></div>
-        <div class="chat-input">
-        <input type="text" id="user-input" placeholder="{{ ai_sidebar_input_placeholder | default('继续问我这个拓扑该怎么验证、怎么演示...') }}" disabled>
-            <button id="send-btn" type="button" disabled><i class="fas fa-paper-plane"></i></button>
+        <div class="chat-input" style="display: flex; gap: 8px;">
+        <input type="text" id="user-input" placeholder="{{ ai_sidebar_input_placeholder | default('继续针对当前拓扑发起指令...') }}" disabled style="flex-grow: 1; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border);">
+            <button id="send-btn" class="chat-button" type="button" disabled style="width: auto; padding: 0 1rem; border-radius: 4px; margin:0;">
+                发送请求
+            </button>
         </div>
     </div>
 </div>
