@@ -425,16 +425,41 @@
                 if (flows.length === 0) {
                     policyNode.textContent = '当前拓扑还没有生成 semantic policy。先装载 P4、生成拓扑并注入流表后再查看。';
                 } else {
-                    policyNode.innerHTML = flows.slice(0, 6).map((flow) => {
+                    const expanded = policyNode.dataset.semanticPolicyExpanded === '1';
+                    const shouldCollapse = flows.length > 3 && !expanded;
+                    const visibleFlows = shouldCollapse ? flows.slice(0, 3) : flows;
+                    const hiddenCount = Math.max(flows.length - visibleFlows.length, 0);
+                    const summaryLine = `当前已生成 ${flows.length} 条 flow 的 semantic policy，默认展示 ${visibleFlows.length} 条${hiddenCount > 0 ? `，另有 ${hiddenCount} 条已折叠` : ''}。`;
+                    const flowCards = visibleFlows.map((flow) => {
                         const scopeLabel = flowDisplayLabel(flow);
                         const customizationLabel = flow.customized ? '人工微调' : '自动生成';
                         return [
-                            `<p><strong>${escapeHtml(scopeLabel)}</strong></p>`,
-                            `<p>合法路径数：${flow.allowed_behavior_count}，优先级：${escapeHtml(flow.priority || 'shortest')}，状态：${escapeHtml(customizationLabel)}</p>`,
-                            `<p>must_pass：${escapeHtml((flow.must_pass || []).join(', ') || '无')}，avoid：${escapeHtml((flow.avoid || []).join(', ') || '无')}</p>`,
-                            `<p>自动不变量：包计数 <= ${flow.max_packets}，路径跳数 <= ${flow.max_hops}，备份预算 <= ${flow.max_degraded_packets}，状态变更 <= ${flow.max_state_changes}</p>`,
+                            '<article style="padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-bright); box-shadow: 0 1px 2px rgba(0,0,0,0.04);">',
+                            `<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:8px;"><strong style="font-size:0.95rem; color:var(--text-main);">${escapeHtml(scopeLabel)}</strong><span style="font-size:0.78rem; padding:2px 8px; border-radius:999px; background: var(--surface-muted); color: var(--text-soft); white-space:nowrap;">${escapeHtml(customizationLabel)}</span></div>`,
+                            `<p style="margin:0 0 6px 0; color: var(--text-soft);">合法路径数：${flow.allowed_behavior_count} | 优先级：${escapeHtml(flow.priority || 'shortest')}</p>`,
+                            `<p style="margin:0 0 6px 0; color: var(--text-soft);">must_pass：${escapeHtml((flow.must_pass || []).join(', ') || '无')} | avoid：${escapeHtml((flow.avoid || []).join(', ') || '无')}</p>`,
+                            `<p style="margin:0; color: var(--text-soft);">自动不变量：包计数 ≤ ${flow.max_packets}，跳数 ≤ ${flow.max_hops}，备份预算 ≤ ${flow.max_degraded_packets}，状态变更 ≤ ${flow.max_state_changes}</p>`,
+                            '</article>',
                         ].join('');
-                    }).join('<hr>');
+                    }).join('');
+
+                    const toggleLabel = shouldCollapse ? `展开全部 ${flows.length} 条策略` : '收起多余策略';
+                    policyNode.innerHTML = [
+                        `<div style="margin-bottom:12px; padding:10px 12px; border-radius:10px; background: var(--surface-muted); border: 1px solid var(--line); color: var(--text-main); font-size:0.9rem; line-height:1.5;">${escapeHtml(summaryLine)}</div>`,
+                        `<div style="display:grid; gap:10px; margin-bottom:12px;">${flowCards}</div>`,
+                        hiddenCount > 0 || expanded
+                            ? `<button type="button" data-semantic-policy-toggle="1" style="width:100%; border:1px solid var(--line); background: var(--surface-muted); color: var(--brand-strong); padding:10px 12px; border-radius:10px; font-weight:600; cursor:pointer;">${escapeHtml(toggleLabel)}</button>`
+                            : '',
+                    ].join('');
+
+                    const toggleButton = policyNode.querySelector('[data-semantic-policy-toggle="1"]');
+                    if (toggleButton && !toggleButton.dataset.bound) {
+                        toggleButton.dataset.bound = '1';
+                        toggleButton.addEventListener('click', () => {
+                            policyNode.dataset.semanticPolicyExpanded = shouldCollapse ? '1' : '0';
+                            renderSemanticPolicySummary(profile);
+                        });
+                    }
                 }
             }
         }
@@ -448,13 +473,22 @@
                 if (recentHistory.length === 0 && stateSummary.length === 0) {
                     runtimeNode.textContent = '还没有 flow 级语义验证历史。发送一次单路径或 VBP 流量后，这里会显示状态演化与违规分类。';
                 } else {
+                    const summarizedFlowIds = new Set(stateSummary.map((item) => String(item.flow_id || '')));
                     const stateBlocks = stateSummary.slice(0, 6).map((item) => (
                         `<p><strong>${escapeHtml(item.flow_label || item.flow_id)}</strong> | state=${escapeHtml(item.current_state)} | packets=${item.packet_count} | degraded=${item.degraded_packets || 0} | state_changes=${item.state_change_count || 0} | verdict=${escapeHtml(item.last_verdict_label || item.last_verdict || 'unknown')} | risk=${item.risk_score || 0}/100 (${escapeHtml(item.risk_label || '低风险')})</p>`
                     ));
-                    const historyBlocks = recentHistory.slice(-6).reverse().map((item) => (
-                        `<p>${escapeHtml(item.flow_id)}：${escapeHtml(item.previous_state)} -> ${escapeHtml(item.current_state)}，违规=${escapeHtml((item.violation_types || []).join(', ') || '无')}，risk=${item.risk_score || 0}/100 (${escapeHtml(item.risk_label || '低风险')})，degraded=${item.degraded_packets || 0}，state_changes=${item.state_change_count || 0}</p>`
-                    ));
-                    runtimeNode.innerHTML = [...stateBlocks, ...historyBlocks].join('');
+                    const historyBlocks = recentHistory
+                        .slice(-10)
+                        .reverse()
+                        .filter((item) => !summarizedFlowIds.has(String(item.flow_id || '')))
+                        .slice(0, 3)
+                        .map((item) => (
+                            `<p>${escapeHtml(item.flow_id)}：${escapeHtml(item.previous_state)} -> ${escapeHtml(item.current_state)}，违规=${escapeHtml((item.violation_types || []).join(', ') || '无')}，risk=${item.risk_score || 0}/100 (${escapeHtml(item.risk_label || '低风险')})，degraded=${item.degraded_packets || 0}，state_changes=${item.state_change_count || 0}</p>`
+                        ));
+
+                    runtimeNode.innerHTML = historyBlocks.length > 0
+                        ? [...stateBlocks, '<hr style="border:0; border-top:1px dashed var(--line); margin:10px 0;">', ...historyBlocks].join('')
+                        : stateBlocks.join('');
                 }
             }
         }
@@ -655,6 +689,8 @@
                     return `${behavior.label || `行为 ${behavior.index}`}: ${hops}`;
                 })
                 : [];
+            const hiddenBehaviorCount = Math.max(behaviorLines.length - 2, 0);
+            const behaviorPreview = behaviorLines.slice(0, 2);
 
             metaNode.textContent = [
                 `作用域: ${flowDisplayLabel(selectedFlow)}`,
@@ -662,7 +698,9 @@
                 `priority=${selectedFlow.priority || 'shortest'} | backup_level=${selectedFlow.backup_level ?? 1} | allowed_behavior_count=${selectedFlow.allowed_behavior_count ?? 1}`,
                 `must_pass=${(selectedFlow.must_pass || []).join(', ') || '无'} | avoid=${(selectedFlow.avoid || []).join(', ') || '无'}`,
                 `degraded_budget=${selectedFlow.max_degraded_packets ?? 0} | state_change_budget=${selectedFlow.max_state_changes ?? 0} | require_recovery=${selectedFlow.require_primary_recovery === false ? '否' : '是'}`,
-                behaviorLines.length > 0 ? `候选路径:\n${behaviorLines.join('\n')}` : '候选路径: 暂无',
+                behaviorPreview.length > 0
+                    ? `候选路径: ${behaviorPreview.join(' | ')}${hiddenBehaviorCount > 0 ? ` | 另有 ${hiddenBehaviorCount} 条已折叠` : ''}`
+                    : '候选路径: 暂无',
                 '保存时会自动同步 packet_count / path_hops / behavior_index / degraded_packets / state_change_count 这几类核心不变量。',
             ].join('\n');
 

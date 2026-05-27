@@ -1,0 +1,73 @@
+{
+  "action": "restore",
+  "status": "restored",
+  "flow_id": "10.0.1.1-10.0.2.3",
+  "flow_scope": {
+    "src_ip": "10.0.1.1",
+    "dst_ip": "10.0.2.3",
+    "src_host": "h1",
+    "dst_host": "h3"
+  },
+  "link": [
+    "s1",
+    "s2"
+  ],
+  "link_label": "s1 <-> s2",
+  "before_primary_path": [
+    "s1",
+    "s3",
+    "s2"
+  ],
+  "after_primary_path": [
+    "s1",
+    "s3",
+    "s2"
+  ],
+  "impacted_path_count": 1,
+  "surviving_path_count": 6,
+  "impacted_paths": [
+    [
+      "s1",
+      "s2"
+    ]
+  ],
+  "surviving_paths": [
+    [
+      "s1",
+      "s3",
+      "s2"
+    ],
+    [
+      "s1",
+      "s2"
+    ],
+    [
+      "s1",
+      "s3",
+      "s4",
+      "s2"
+    ],
+    [
+      "s1",
+      "s3",
+      "s5",
+      "s2"
+    ],
+    [
+      "s1",
+      "s3",
+      "s4",
+      "s5",
+      "s2"
+    ],
+    [
+      "s1",
+      "s3",
+      "s5",
+      "s4",
+      "s2"
+    ]
+  ],
+  "intent_path": "/home/p4/Desktop/topo_genrate_system/application/generated/intent.json",
+  "updated_at": 1779693950
+}

@@ -682,11 +682,49 @@ class DynamicDemo(NetworkAPI):
             return False
         return True
 
+    def _clear_runtime_result_file(self):
+        try:
+            os.remove('res.json')
+        except FileNotFoundError:
+            return
+        except OSError as exc:
+            error(f'fail to clear res.json. Detailed info is as follow:{exc}\n')
+
+    def _wait_for_runtime_result(self, timeout=6.0, poll_interval=0.2):
+        deadline = time.time() + timeout
+        last_error = None
+
+        while time.time() < deadline:
+            if not os.path.isfile('res.json'):
+                time.sleep(poll_interval)
+                continue
+
+            try:
+                with open('res.json', 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except (OSError, json.JSONDecodeError) as exc:
+                last_error = exc
+                time.sleep(poll_interval)
+
+        if last_error is not None:
+            raise RuntimeError(f'运行结果文件尚未稳定写入: {last_error}')
+        raise RuntimeError('运行结果文件未生成。')
+
+    def _stop_runtime_receiver(self, dst_shell, process_pattern, process_label):
+        try:
+            dst_shell.cmd(f'pkill -f {shlex.quote(process_pattern)}')
+            info(f'{process_label} killed.\n')
+        except Exception as exc:
+            error(f'fail to kill {process_label}. Detailed info is as follow:{exc}\n')
+
     def send(self, src_host, dst_host):
         assert self.__isNetworkStart and self.__isCompiled
         dst_shell = self.net.get(dst_host)
         src_shell = self.net.get(src_host)
         command_output = ''
+
+        self._clear_runtime_result_file()
+        self._stop_runtime_receiver(dst_shell, 'python3 topo/receive.py', 'stale receive.py')
 
         try:
             info('executing receive.py...\n')
@@ -711,29 +749,21 @@ class DynamicDemo(NetworkAPI):
             info(command_output)
         time.sleep(1)
 
-        if not os.path.isfile('res.json'):
-            return False
-
-        with open('res.json', 'r', encoding='utf-8') as f:
-            res = json.load(f)
-
-        res['stop_receiving'] = False
-
         try:
-            dst_shell.cmd("pkill -f 'python3 ./topo/receive.py'")
-            info('receive.py killed.\n')
-            res['stop_receiving'] = True
-        except Exception as exc:
-            error(f'fail to kill receive.py. Detailed info is as follow:{exc}\n')
+            self._wait_for_runtime_result()
+        finally:
+            self._stop_runtime_receiver(dst_shell, 'python3 topo/receive.py', 'receive.py')
 
-        with open('res.json', 'w', encoding='utf-8') as f:
-            json.dump(res, f, indent=4)
+        return True
 
     def send_vbp(self, src_host, dst_host):
         assert self.__isNetworkStart and self.__isCompiled
         dst_shell = self.net.get(dst_host)
         src_shell = self.net.get(src_host)
         command_output = ''
+
+        self._clear_runtime_result_file()
+        self._stop_runtime_receiver(dst_shell, 'python3 topo/receive_vbp.py', 'stale receive_vbp.py')
 
         try:
             info('executing receive_vbp.py...\n')
@@ -758,23 +788,12 @@ class DynamicDemo(NetworkAPI):
             info(command_output)
         time.sleep(1)
 
-        if not os.path.isfile('res.json'):
-            return False
-
-        with open('res.json', 'r', encoding='utf-8') as f:
-            res = json.load(f)
-
-        res['stop_receiving'] = False
-
         try:
-            dst_shell.cmd("pkill -f 'python3 topo/receive_vbp.py'")
-            info('receive_vbp.py killed.\n')
-            res['stop_receiving'] = True
-        except Exception as exc:
-            error(f'fail to kill receive_vbp.py. Detailed info is as follow:{exc}\n')
+            self._wait_for_runtime_result()
+        finally:
+            self._stop_runtime_receiver(dst_shell, 'python3 topo/receive_vbp.py', 'receive_vbp.py')
 
-        with open('res.json', 'w', encoding='utf-8') as f:
-            json.dump(res, f, indent=4)
+        return True
 
     def _runtime_env_prefix(self, include_behavior_pool=False):
         runtime_env = {

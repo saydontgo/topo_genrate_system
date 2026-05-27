@@ -18,6 +18,3060 @@
     "path_hops": "RESOURCE",
     "path_legal": "FLAG"
   },
-  "flows": [],
-  "generated_at": 1777656782
+  "flows": [
+    {
+      "flow_id": "10.0.1.1-10.0.6.2",
+      "flow_scope": {
+        "src_ip": "10.0.1.1",
+        "dst_ip": "10.0.6.2",
+        "src_host": "h1",
+        "dst_host": "h2"
+      },
+      "priority": "load_balance",
+      "must_pass": [
+        "s2",
+        "s4"
+      ],
+      "avoid": [],
+      "backup_level": 0,
+      "preferred_path": [
+        "s1",
+        "s2",
+        "s4",
+        "s6"
+      ],
+      "enabled_paths": [
+        [
+          "s1",
+          "s2",
+          "s4",
+          "s6"
+        ]
+      ],
+      "allowed_behavior_count": 1,
+      "max_packets": 64,
+      "max_hops": 4,
+      "max_degraded_packets": 3,
+      "max_state_changes": 6,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            1,
+            2,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s1",
+            "s2",
+            "s4",
+            "s6"
+          ],
+          "path_hops": 4,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            1,
+            2,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s1",
+            "s2",
+            "s4",
+            "s6"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            1,
+            2,
+            4,
+            5,
+            6
+          ],
+          "switch_path": [
+            "s1",
+            "s2",
+            "s4",
+            "s5",
+            "s6"
+          ],
+          "active": false
+        },
+        {
+          "index": 2,
+          "label": "候选路径 2",
+          "path": [
+            1,
+            2,
+            3,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s1",
+            "s2",
+            "s3",
+            "s4",
+            "s6"
+          ],
+          "active": false
+        },
+        {
+          "index": 3,
+          "label": "候选路径 3",
+          "path": [
+            1,
+            2,
+            5,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s1",
+            "s2",
+            "s5",
+            "s4",
+            "s6"
+          ],
+          "active": false
+        },
+        {
+          "index": 4,
+          "label": "候选路径 4",
+          "path": [
+            1,
+            3,
+            2,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s2",
+            "s4",
+            "s6"
+          ],
+          "active": false
+        },
+        {
+          "index": 5,
+          "label": "候选路径 5",
+          "path": [
+            1,
+            2,
+            4,
+            3,
+            5,
+            6
+          ],
+          "switch_path": [
+            "s1",
+            "s2",
+            "s4",
+            "s3",
+            "s5",
+            "s6"
+          ],
+          "active": false
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 0,
+          "rule": "0 <= behavior_index < 1",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 4,
+          "rule": "path_hops <= 4",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 3,
+          "rule": "0 <= degraded_packets <= 3",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 6,
+          "rule": "0 <= state_change_count <= 6",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 3 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 0\n    rule: \"0 <= behavior_index < 1\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 4\n    rule: \"path_hops <= 4\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 3\n    rule: \"0 <= degraded_packets <= 3\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 6\n    rule: \"0 <= state_change_count <= 6\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 3 packets\"\n    confidence: 0.76"
+    },
+    {
+      "flow_id": "10.0.1.1-10.0.2.3",
+      "flow_scope": {
+        "src_ip": "10.0.1.1",
+        "dst_ip": "10.0.2.3",
+        "src_host": "h1",
+        "dst_host": "h3"
+      },
+      "priority": "shortest",
+      "must_pass": [],
+      "avoid": [],
+      "backup_level": 5,
+      "preferred_path": [],
+      "enabled_paths": [],
+      "allowed_behavior_count": 5,
+      "max_packets": 64,
+      "max_hops": 5,
+      "max_degraded_packets": 5,
+      "max_state_changes": 15,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            1,
+            2
+          ],
+          "switch_path": [
+            "s1",
+            "s2"
+          ],
+          "path_hops": 2,
+          "prime_product": null
+        },
+        {
+          "index": 1,
+          "level": "backup",
+          "tier": 1,
+          "label": "命中第1级备份路径",
+          "path": [
+            1,
+            3,
+            2
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s2"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        },
+        {
+          "index": 2,
+          "level": "backup",
+          "tier": 2,
+          "label": "命中第2级备份路径",
+          "path": [
+            1,
+            3,
+            4,
+            2
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s4",
+            "s2"
+          ],
+          "path_hops": 4,
+          "prime_product": null
+        },
+        {
+          "index": 3,
+          "level": "backup",
+          "tier": 3,
+          "label": "命中第3级备份路径",
+          "path": [
+            1,
+            3,
+            5,
+            2
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s5",
+            "s2"
+          ],
+          "path_hops": 4,
+          "prime_product": null
+        },
+        {
+          "index": 4,
+          "level": "backup",
+          "tier": 4,
+          "label": "命中第4级备份路径",
+          "path": [
+            1,
+            3,
+            4,
+            5,
+            2
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s4",
+            "s5",
+            "s2"
+          ],
+          "path_hops": 5,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            1,
+            2
+          ],
+          "switch_path": [
+            "s1",
+            "s2"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            1,
+            3,
+            2
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s2"
+          ],
+          "active": true
+        },
+        {
+          "index": 2,
+          "label": "候选路径 2",
+          "path": [
+            1,
+            3,
+            4,
+            2
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s4",
+            "s2"
+          ],
+          "active": true
+        },
+        {
+          "index": 3,
+          "label": "候选路径 3",
+          "path": [
+            1,
+            3,
+            5,
+            2
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s5",
+            "s2"
+          ],
+          "active": true
+        },
+        {
+          "index": 4,
+          "label": "候选路径 4",
+          "path": [
+            1,
+            3,
+            4,
+            5,
+            2
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s4",
+            "s5",
+            "s2"
+          ],
+          "active": true
+        },
+        {
+          "index": 5,
+          "label": "候选路径 5",
+          "path": [
+            1,
+            3,
+            5,
+            4,
+            2
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s5",
+            "s4",
+            "s2"
+          ],
+          "active": false
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_2"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_3"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_4"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_2"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_3"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_4"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_2"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_3"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_4"
+        },
+        {
+          "from": "BACKUP_2",
+          "to": "BACKUP_2"
+        },
+        {
+          "from": "BACKUP_2",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "BACKUP_2",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_2",
+          "to": "BACKUP_3"
+        },
+        {
+          "from": "BACKUP_2",
+          "to": "BACKUP_4"
+        },
+        {
+          "from": "BACKUP_3",
+          "to": "BACKUP_3"
+        },
+        {
+          "from": "BACKUP_3",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "BACKUP_3",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_3",
+          "to": "BACKUP_2"
+        },
+        {
+          "from": "BACKUP_3",
+          "to": "BACKUP_4"
+        },
+        {
+          "from": "BACKUP_4",
+          "to": "BACKUP_4"
+        },
+        {
+          "from": "BACKUP_4",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "BACKUP_4",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_4",
+          "to": "BACKUP_2"
+        },
+        {
+          "from": "BACKUP_4",
+          "to": "BACKUP_3"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 4,
+          "rule": "0 <= behavior_index < 5",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 5,
+          "rule": "path_hops <= 5",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 5,
+          "rule": "0 <= degraded_packets <= 5",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 15,
+          "rule": "0 <= state_change_count <= 15",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 5 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 4\n    rule: \"0 <= behavior_index < 5\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 5\n    rule: \"path_hops <= 5\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 5\n    rule: \"0 <= degraded_packets <= 5\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 15\n    rule: \"0 <= state_change_count <= 15\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 5 packets\"\n    confidence: 0.76"
+    },
+    {
+      "flow_id": "10.0.1.1-10.0.5.4",
+      "flow_scope": {
+        "src_ip": "10.0.1.1",
+        "dst_ip": "10.0.5.4",
+        "src_host": "h1",
+        "dst_host": "h4"
+      },
+      "priority": "low_latency",
+      "must_pass": [
+        "s3"
+      ],
+      "avoid": [
+        "s2"
+      ],
+      "backup_level": 1,
+      "preferred_path": [],
+      "enabled_paths": [],
+      "allowed_behavior_count": 2,
+      "max_packets": 64,
+      "max_hops": 4,
+      "max_degraded_packets": 3,
+      "max_state_changes": 6,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            1,
+            3,
+            5
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s5"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        },
+        {
+          "index": 1,
+          "level": "backup",
+          "tier": 1,
+          "label": "命中第1级备份路径",
+          "path": [
+            1,
+            3,
+            4,
+            5
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s4",
+            "s5"
+          ],
+          "path_hops": 4,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            1,
+            3,
+            5
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s5"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            1,
+            3,
+            4,
+            5
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s4",
+            "s5"
+          ],
+          "active": true
+        },
+        {
+          "index": 2,
+          "label": "候选路径 2",
+          "path": [
+            1,
+            3,
+            4,
+            6,
+            5
+          ],
+          "switch_path": [
+            "s1",
+            "s3",
+            "s4",
+            "s6",
+            "s5"
+          ],
+          "active": false
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "PRIMARY"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 1,
+          "rule": "0 <= behavior_index < 2",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 4,
+          "rule": "path_hops <= 4",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 3,
+          "rule": "0 <= degraded_packets <= 3",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 6,
+          "rule": "0 <= state_change_count <= 6",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 3 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 1\n    rule: \"0 <= behavior_index < 2\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 4\n    rule: \"path_hops <= 4\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 3\n    rule: \"0 <= degraded_packets <= 3\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 6\n    rule: \"0 <= state_change_count <= 6\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 3 packets\"\n    confidence: 0.76"
+    },
+    {
+      "flow_id": "10.0.6.2-10.0.1.1",
+      "flow_scope": {
+        "src_ip": "10.0.6.2",
+        "dst_ip": "10.0.1.1",
+        "src_host": "h2",
+        "dst_host": "h1"
+      },
+      "priority": "shortest",
+      "must_pass": [],
+      "avoid": [],
+      "backup_level": 1,
+      "preferred_path": [],
+      "enabled_paths": [
+        [
+          "s6",
+          "s4",
+          "s2",
+          "s1"
+        ],
+        [
+          "s6",
+          "s5",
+          "s2",
+          "s1"
+        ]
+      ],
+      "allowed_behavior_count": 2,
+      "max_packets": 64,
+      "max_hops": 4,
+      "max_degraded_packets": 3,
+      "max_state_changes": 6,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            6,
+            4,
+            2,
+            1
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s2",
+            "s1"
+          ],
+          "path_hops": 4,
+          "prime_product": null
+        },
+        {
+          "index": 1,
+          "level": "backup",
+          "tier": 1,
+          "label": "命中第1级备份路径",
+          "path": [
+            6,
+            5,
+            2,
+            1
+          ],
+          "switch_path": [
+            "s6",
+            "s5",
+            "s2",
+            "s1"
+          ],
+          "path_hops": 4,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            6,
+            4,
+            2,
+            1
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s2",
+            "s1"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            6,
+            5,
+            2,
+            1
+          ],
+          "switch_path": [
+            "s6",
+            "s5",
+            "s2",
+            "s1"
+          ],
+          "active": true
+        },
+        {
+          "index": 2,
+          "label": "候选路径 2",
+          "path": [
+            6,
+            4,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s3",
+            "s1"
+          ],
+          "active": false
+        },
+        {
+          "index": 3,
+          "label": "候选路径 3",
+          "path": [
+            6,
+            5,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s6",
+            "s5",
+            "s3",
+            "s1"
+          ],
+          "active": false
+        },
+        {
+          "index": 4,
+          "label": "候选路径 4",
+          "path": [
+            6,
+            4,
+            2,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s2",
+            "s3",
+            "s1"
+          ],
+          "active": false
+        },
+        {
+          "index": 5,
+          "label": "候选路径 5",
+          "path": [
+            6,
+            5,
+            2,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s6",
+            "s5",
+            "s2",
+            "s3",
+            "s1"
+          ],
+          "active": false
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "PRIMARY"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 1,
+          "rule": "0 <= behavior_index < 2",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 4,
+          "rule": "path_hops <= 4",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 3,
+          "rule": "0 <= degraded_packets <= 3",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 6,
+          "rule": "0 <= state_change_count <= 6",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 3 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 1\n    rule: \"0 <= behavior_index < 2\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 4\n    rule: \"path_hops <= 4\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 3\n    rule: \"0 <= degraded_packets <= 3\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 6\n    rule: \"0 <= state_change_count <= 6\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 3 packets\"\n    confidence: 0.76"
+    },
+    {
+      "flow_id": "10.0.6.2-10.0.2.3",
+      "flow_scope": {
+        "src_ip": "10.0.6.2",
+        "dst_ip": "10.0.2.3",
+        "src_host": "h2",
+        "dst_host": "h3"
+      },
+      "priority": "shortest",
+      "must_pass": [],
+      "avoid": [],
+      "backup_level": 1,
+      "preferred_path": [],
+      "enabled_paths": [
+        [
+          "s6",
+          "s4",
+          "s2"
+        ],
+        [
+          "s6",
+          "s5",
+          "s2"
+        ]
+      ],
+      "allowed_behavior_count": 2,
+      "max_packets": 64,
+      "max_hops": 3,
+      "max_degraded_packets": 3,
+      "max_state_changes": 6,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            6,
+            4,
+            2
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s2"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        },
+        {
+          "index": 1,
+          "level": "backup",
+          "tier": 1,
+          "label": "命中第1级备份路径",
+          "path": [
+            6,
+            5,
+            2
+          ],
+          "switch_path": [
+            "s6",
+            "s5",
+            "s2"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            6,
+            4,
+            2
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s2"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            6,
+            5,
+            2
+          ],
+          "switch_path": [
+            "s6",
+            "s5",
+            "s2"
+          ],
+          "active": true
+        },
+        {
+          "index": 2,
+          "label": "候选路径 2",
+          "path": [
+            6,
+            4,
+            3,
+            2
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s3",
+            "s2"
+          ],
+          "active": false
+        },
+        {
+          "index": 3,
+          "label": "候选路径 3",
+          "path": [
+            6,
+            5,
+            3,
+            2
+          ],
+          "switch_path": [
+            "s6",
+            "s5",
+            "s3",
+            "s2"
+          ],
+          "active": false
+        },
+        {
+          "index": 4,
+          "label": "候选路径 4",
+          "path": [
+            6,
+            4,
+            5,
+            2
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s5",
+            "s2"
+          ],
+          "active": false
+        },
+        {
+          "index": 5,
+          "label": "候选路径 5",
+          "path": [
+            6,
+            5,
+            4,
+            2
+          ],
+          "switch_path": [
+            "s6",
+            "s5",
+            "s4",
+            "s2"
+          ],
+          "active": false
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "PRIMARY"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 1,
+          "rule": "0 <= behavior_index < 2",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 3,
+          "rule": "path_hops <= 3",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 3,
+          "rule": "0 <= degraded_packets <= 3",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 6,
+          "rule": "0 <= state_change_count <= 6",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 3 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 1\n    rule: \"0 <= behavior_index < 2\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 3\n    rule: \"path_hops <= 3\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 3\n    rule: \"0 <= degraded_packets <= 3\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 6\n    rule: \"0 <= state_change_count <= 6\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 3 packets\"\n    confidence: 0.76"
+    },
+    {
+      "flow_id": "10.0.6.2-10.0.5.4",
+      "flow_scope": {
+        "src_ip": "10.0.6.2",
+        "dst_ip": "10.0.5.4",
+        "src_host": "h2",
+        "dst_host": "h4"
+      },
+      "priority": "shortest",
+      "must_pass": [],
+      "avoid": [],
+      "backup_level": 1,
+      "preferred_path": [],
+      "enabled_paths": [
+        [
+          "s6",
+          "s5"
+        ],
+        [
+          "s6",
+          "s4",
+          "s5"
+        ]
+      ],
+      "allowed_behavior_count": 2,
+      "max_packets": 64,
+      "max_hops": 3,
+      "max_degraded_packets": 3,
+      "max_state_changes": 6,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            6,
+            5
+          ],
+          "switch_path": [
+            "s6",
+            "s5"
+          ],
+          "path_hops": 2,
+          "prime_product": null
+        },
+        {
+          "index": 1,
+          "level": "backup",
+          "tier": 1,
+          "label": "命中第1级备份路径",
+          "path": [
+            6,
+            4,
+            5
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s5"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            6,
+            5
+          ],
+          "switch_path": [
+            "s6",
+            "s5"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            6,
+            4,
+            5
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s5"
+          ],
+          "active": true
+        },
+        {
+          "index": 2,
+          "label": "候选路径 2",
+          "path": [
+            6,
+            4,
+            2,
+            5
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s2",
+            "s5"
+          ],
+          "active": false
+        },
+        {
+          "index": 3,
+          "label": "候选路径 3",
+          "path": [
+            6,
+            4,
+            3,
+            5
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s3",
+            "s5"
+          ],
+          "active": false
+        },
+        {
+          "index": 4,
+          "label": "候选路径 4",
+          "path": [
+            6,
+            4,
+            2,
+            3,
+            5
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s2",
+            "s3",
+            "s5"
+          ],
+          "active": false
+        },
+        {
+          "index": 5,
+          "label": "候选路径 5",
+          "path": [
+            6,
+            4,
+            3,
+            2,
+            5
+          ],
+          "switch_path": [
+            "s6",
+            "s4",
+            "s3",
+            "s2",
+            "s5"
+          ],
+          "active": false
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "PRIMARY"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 1,
+          "rule": "0 <= behavior_index < 2",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 3,
+          "rule": "path_hops <= 3",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 3,
+          "rule": "0 <= degraded_packets <= 3",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 6,
+          "rule": "0 <= state_change_count <= 6",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 3 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 1\n    rule: \"0 <= behavior_index < 2\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 3\n    rule: \"path_hops <= 3\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 3\n    rule: \"0 <= degraded_packets <= 3\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 6\n    rule: \"0 <= state_change_count <= 6\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 3 packets\"\n    confidence: 0.76"
+    },
+    {
+      "flow_id": "10.0.2.3-10.0.1.1",
+      "flow_scope": {
+        "src_ip": "10.0.2.3",
+        "dst_ip": "10.0.1.1",
+        "src_host": "h3",
+        "dst_host": "h1"
+      },
+      "priority": "shortest",
+      "must_pass": [],
+      "avoid": [],
+      "backup_level": 1,
+      "preferred_path": [],
+      "enabled_paths": [
+        [
+          "s2",
+          "s1"
+        ],
+        [
+          "s2",
+          "s3",
+          "s1"
+        ]
+      ],
+      "allowed_behavior_count": 2,
+      "max_packets": 64,
+      "max_hops": 3,
+      "max_degraded_packets": 3,
+      "max_state_changes": 6,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            2,
+            1
+          ],
+          "switch_path": [
+            "s2",
+            "s1"
+          ],
+          "path_hops": 2,
+          "prime_product": null
+        },
+        {
+          "index": 1,
+          "level": "backup",
+          "tier": 1,
+          "label": "命中第1级备份路径",
+          "path": [
+            2,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s2",
+            "s3",
+            "s1"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            2,
+            1
+          ],
+          "switch_path": [
+            "s2",
+            "s1"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            2,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s2",
+            "s3",
+            "s1"
+          ],
+          "active": true
+        },
+        {
+          "index": 2,
+          "label": "候选路径 2",
+          "path": [
+            2,
+            4,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s2",
+            "s4",
+            "s3",
+            "s1"
+          ],
+          "active": false
+        },
+        {
+          "index": 3,
+          "label": "候选路径 3",
+          "path": [
+            2,
+            5,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s2",
+            "s5",
+            "s3",
+            "s1"
+          ],
+          "active": false
+        },
+        {
+          "index": 4,
+          "label": "候选路径 4",
+          "path": [
+            2,
+            4,
+            5,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s2",
+            "s4",
+            "s5",
+            "s3",
+            "s1"
+          ],
+          "active": false
+        },
+        {
+          "index": 5,
+          "label": "候选路径 5",
+          "path": [
+            2,
+            5,
+            4,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s2",
+            "s5",
+            "s4",
+            "s3",
+            "s1"
+          ],
+          "active": false
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "PRIMARY"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 1,
+          "rule": "0 <= behavior_index < 2",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 3,
+          "rule": "path_hops <= 3",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 3,
+          "rule": "0 <= degraded_packets <= 3",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 6,
+          "rule": "0 <= state_change_count <= 6",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 3 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 1\n    rule: \"0 <= behavior_index < 2\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 3\n    rule: \"path_hops <= 3\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 3\n    rule: \"0 <= degraded_packets <= 3\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 6\n    rule: \"0 <= state_change_count <= 6\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 3 packets\"\n    confidence: 0.76"
+    },
+    {
+      "flow_id": "10.0.2.3-10.0.6.2",
+      "flow_scope": {
+        "src_ip": "10.0.2.3",
+        "dst_ip": "10.0.6.2",
+        "src_host": "h3",
+        "dst_host": "h2"
+      },
+      "priority": "shortest",
+      "must_pass": [],
+      "avoid": [],
+      "backup_level": 1,
+      "preferred_path": [],
+      "enabled_paths": [
+        [
+          "s2",
+          "s4",
+          "s6"
+        ],
+        [
+          "s2",
+          "s5",
+          "s6"
+        ]
+      ],
+      "allowed_behavior_count": 2,
+      "max_packets": 64,
+      "max_hops": 3,
+      "max_degraded_packets": 3,
+      "max_state_changes": 6,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            2,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s2",
+            "s4",
+            "s6"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        },
+        {
+          "index": 1,
+          "level": "backup",
+          "tier": 1,
+          "label": "命中第1级备份路径",
+          "path": [
+            2,
+            5,
+            6
+          ],
+          "switch_path": [
+            "s2",
+            "s5",
+            "s6"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            2,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s2",
+            "s4",
+            "s6"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            2,
+            5,
+            6
+          ],
+          "switch_path": [
+            "s2",
+            "s5",
+            "s6"
+          ],
+          "active": true
+        },
+        {
+          "index": 2,
+          "label": "候选路径 2",
+          "path": [
+            2,
+            4,
+            5,
+            6
+          ],
+          "switch_path": [
+            "s2",
+            "s4",
+            "s5",
+            "s6"
+          ],
+          "active": false
+        },
+        {
+          "index": 3,
+          "label": "候选路径 3",
+          "path": [
+            2,
+            3,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s2",
+            "s3",
+            "s4",
+            "s6"
+          ],
+          "active": false
+        },
+        {
+          "index": 4,
+          "label": "候选路径 4",
+          "path": [
+            2,
+            5,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s2",
+            "s5",
+            "s4",
+            "s6"
+          ],
+          "active": false
+        },
+        {
+          "index": 5,
+          "label": "候选路径 5",
+          "path": [
+            2,
+            3,
+            5,
+            6
+          ],
+          "switch_path": [
+            "s2",
+            "s3",
+            "s5",
+            "s6"
+          ],
+          "active": false
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "PRIMARY"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 1,
+          "rule": "0 <= behavior_index < 2",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 3,
+          "rule": "path_hops <= 3",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 3,
+          "rule": "0 <= degraded_packets <= 3",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 6,
+          "rule": "0 <= state_change_count <= 6",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 3 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 1\n    rule: \"0 <= behavior_index < 2\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 3\n    rule: \"path_hops <= 3\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 3\n    rule: \"0 <= degraded_packets <= 3\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 6\n    rule: \"0 <= state_change_count <= 6\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 3 packets\"\n    confidence: 0.76"
+    },
+    {
+      "flow_id": "10.0.2.3-10.0.5.4",
+      "flow_scope": {
+        "src_ip": "10.0.2.3",
+        "dst_ip": "10.0.5.4",
+        "src_host": "h3",
+        "dst_host": "h4"
+      },
+      "priority": "load_balance",
+      "must_pass": [
+        "s4"
+      ],
+      "avoid": [
+        "s3"
+      ],
+      "backup_level": 1,
+      "preferred_path": [],
+      "enabled_paths": [],
+      "allowed_behavior_count": 2,
+      "max_packets": 64,
+      "max_hops": 4,
+      "max_degraded_packets": 3,
+      "max_state_changes": 6,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            2,
+            4,
+            5
+          ],
+          "switch_path": [
+            "s2",
+            "s4",
+            "s5"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        },
+        {
+          "index": 1,
+          "level": "backup",
+          "tier": 1,
+          "label": "命中第1级备份路径",
+          "path": [
+            2,
+            4,
+            6,
+            5
+          ],
+          "switch_path": [
+            "s2",
+            "s4",
+            "s6",
+            "s5"
+          ],
+          "path_hops": 4,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            2,
+            4,
+            5
+          ],
+          "switch_path": [
+            "s2",
+            "s4",
+            "s5"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            2,
+            4,
+            6,
+            5
+          ],
+          "switch_path": [
+            "s2",
+            "s4",
+            "s6",
+            "s5"
+          ],
+          "active": true
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "PRIMARY"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 1,
+          "rule": "0 <= behavior_index < 2",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 4,
+          "rule": "path_hops <= 4",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 3,
+          "rule": "0 <= degraded_packets <= 3",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 6,
+          "rule": "0 <= state_change_count <= 6",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 3 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 1\n    rule: \"0 <= behavior_index < 2\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 4\n    rule: \"path_hops <= 4\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 3\n    rule: \"0 <= degraded_packets <= 3\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 6\n    rule: \"0 <= state_change_count <= 6\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 3 packets\"\n    confidence: 0.76"
+    },
+    {
+      "flow_id": "10.0.5.4-10.0.1.1",
+      "flow_scope": {
+        "src_ip": "10.0.5.4",
+        "dst_ip": "10.0.1.1",
+        "src_host": "h4",
+        "dst_host": "h1"
+      },
+      "priority": "shortest",
+      "must_pass": [],
+      "avoid": [],
+      "backup_level": 1,
+      "preferred_path": [],
+      "enabled_paths": [
+        [
+          "s5",
+          "s2",
+          "s1"
+        ],
+        [
+          "s5",
+          "s3",
+          "s1"
+        ]
+      ],
+      "allowed_behavior_count": 2,
+      "max_packets": 64,
+      "max_hops": 3,
+      "max_degraded_packets": 3,
+      "max_state_changes": 6,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            5,
+            2,
+            1
+          ],
+          "switch_path": [
+            "s5",
+            "s2",
+            "s1"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        },
+        {
+          "index": 1,
+          "level": "backup",
+          "tier": 1,
+          "label": "命中第1级备份路径",
+          "path": [
+            5,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s5",
+            "s3",
+            "s1"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            5,
+            2,
+            1
+          ],
+          "switch_path": [
+            "s5",
+            "s2",
+            "s1"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            5,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s5",
+            "s3",
+            "s1"
+          ],
+          "active": true
+        },
+        {
+          "index": 2,
+          "label": "候选路径 2",
+          "path": [
+            5,
+            2,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s5",
+            "s2",
+            "s3",
+            "s1"
+          ],
+          "active": false
+        },
+        {
+          "index": 3,
+          "label": "候选路径 3",
+          "path": [
+            5,
+            4,
+            2,
+            1
+          ],
+          "switch_path": [
+            "s5",
+            "s4",
+            "s2",
+            "s1"
+          ],
+          "active": false
+        },
+        {
+          "index": 4,
+          "label": "候选路径 4",
+          "path": [
+            5,
+            3,
+            2,
+            1
+          ],
+          "switch_path": [
+            "s5",
+            "s3",
+            "s2",
+            "s1"
+          ],
+          "active": false
+        },
+        {
+          "index": 5,
+          "label": "候选路径 5",
+          "path": [
+            5,
+            4,
+            3,
+            1
+          ],
+          "switch_path": [
+            "s5",
+            "s4",
+            "s3",
+            "s1"
+          ],
+          "active": false
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "PRIMARY"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 1,
+          "rule": "0 <= behavior_index < 2",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 3,
+          "rule": "path_hops <= 3",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 3,
+          "rule": "0 <= degraded_packets <= 3",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 6,
+          "rule": "0 <= state_change_count <= 6",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 3 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 1\n    rule: \"0 <= behavior_index < 2\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 3\n    rule: \"path_hops <= 3\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 3\n    rule: \"0 <= degraded_packets <= 3\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 6\n    rule: \"0 <= state_change_count <= 6\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 3 packets\"\n    confidence: 0.76"
+    },
+    {
+      "flow_id": "10.0.5.4-10.0.6.2",
+      "flow_scope": {
+        "src_ip": "10.0.5.4",
+        "dst_ip": "10.0.6.2",
+        "src_host": "h4",
+        "dst_host": "h2"
+      },
+      "priority": "shortest",
+      "must_pass": [],
+      "avoid": [],
+      "backup_level": 1,
+      "preferred_path": [],
+      "enabled_paths": [
+        [
+          "s5",
+          "s6"
+        ],
+        [
+          "s5",
+          "s4",
+          "s6"
+        ]
+      ],
+      "allowed_behavior_count": 2,
+      "max_packets": 64,
+      "max_hops": 3,
+      "max_degraded_packets": 3,
+      "max_state_changes": 6,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            5,
+            6
+          ],
+          "switch_path": [
+            "s5",
+            "s6"
+          ],
+          "path_hops": 2,
+          "prime_product": null
+        },
+        {
+          "index": 1,
+          "level": "backup",
+          "tier": 1,
+          "label": "命中第1级备份路径",
+          "path": [
+            5,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s5",
+            "s4",
+            "s6"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            5,
+            6
+          ],
+          "switch_path": [
+            "s5",
+            "s6"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            5,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s5",
+            "s4",
+            "s6"
+          ],
+          "active": true
+        },
+        {
+          "index": 2,
+          "label": "候选路径 2",
+          "path": [
+            5,
+            2,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s5",
+            "s2",
+            "s4",
+            "s6"
+          ],
+          "active": false
+        },
+        {
+          "index": 3,
+          "label": "候选路径 3",
+          "path": [
+            5,
+            3,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s5",
+            "s3",
+            "s4",
+            "s6"
+          ],
+          "active": false
+        },
+        {
+          "index": 4,
+          "label": "候选路径 4",
+          "path": [
+            5,
+            2,
+            3,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s5",
+            "s2",
+            "s3",
+            "s4",
+            "s6"
+          ],
+          "active": false
+        },
+        {
+          "index": 5,
+          "label": "候选路径 5",
+          "path": [
+            5,
+            3,
+            2,
+            4,
+            6
+          ],
+          "switch_path": [
+            "s5",
+            "s3",
+            "s2",
+            "s4",
+            "s6"
+          ],
+          "active": false
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "PRIMARY"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 1,
+          "rule": "0 <= behavior_index < 2",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 3,
+          "rule": "path_hops <= 3",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 3,
+          "rule": "0 <= degraded_packets <= 3",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 6,
+          "rule": "0 <= state_change_count <= 6",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 3 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 1\n    rule: \"0 <= behavior_index < 2\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 3\n    rule: \"path_hops <= 3\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 3\n    rule: \"0 <= degraded_packets <= 3\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 6\n    rule: \"0 <= state_change_count <= 6\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 3 packets\"\n    confidence: 0.76"
+    },
+    {
+      "flow_id": "10.0.5.4-10.0.2.3",
+      "flow_scope": {
+        "src_ip": "10.0.5.4",
+        "dst_ip": "10.0.2.3",
+        "src_host": "h4",
+        "dst_host": "h3"
+      },
+      "priority": "shortest",
+      "must_pass": [],
+      "avoid": [],
+      "backup_level": 1,
+      "preferred_path": [],
+      "enabled_paths": [
+        [
+          "s5",
+          "s2"
+        ],
+        [
+          "s5",
+          "s3",
+          "s2"
+        ]
+      ],
+      "allowed_behavior_count": 2,
+      "max_packets": 64,
+      "max_hops": 3,
+      "max_degraded_packets": 3,
+      "max_state_changes": 6,
+      "require_primary_recovery": true,
+      "semantic_tags": {
+        "flow_state": "STATE_VAR",
+        "packet_count": "COUNTER",
+        "behavior_index": "INDEX",
+        "path_hops": "RESOURCE",
+        "path_legal": "FLAG"
+      },
+      "behaviors": [
+        {
+          "index": 0,
+          "level": "primary",
+          "tier": 0,
+          "label": "命中主路径",
+          "path": [
+            5,
+            2
+          ],
+          "switch_path": [
+            "s5",
+            "s2"
+          ],
+          "path_hops": 2,
+          "prime_product": null
+        },
+        {
+          "index": 1,
+          "level": "backup",
+          "tier": 1,
+          "label": "命中第1级备份路径",
+          "path": [
+            5,
+            3,
+            2
+          ],
+          "switch_path": [
+            "s5",
+            "s3",
+            "s2"
+          ],
+          "path_hops": 3,
+          "prime_product": null
+        }
+      ],
+      "path_catalog": [
+        {
+          "index": 0,
+          "label": "系统推荐主路径",
+          "path": [
+            5,
+            2
+          ],
+          "switch_path": [
+            "s5",
+            "s2"
+          ],
+          "active": true
+        },
+        {
+          "index": 1,
+          "label": "候选路径 1",
+          "path": [
+            5,
+            3,
+            2
+          ],
+          "switch_path": [
+            "s5",
+            "s3",
+            "s2"
+          ],
+          "active": true
+        },
+        {
+          "index": 2,
+          "label": "候选路径 2",
+          "path": [
+            5,
+            4,
+            2
+          ],
+          "switch_path": [
+            "s5",
+            "s4",
+            "s2"
+          ],
+          "active": false
+        },
+        {
+          "index": 3,
+          "label": "候选路径 3",
+          "path": [
+            5,
+            3,
+            1,
+            2
+          ],
+          "switch_path": [
+            "s5",
+            "s3",
+            "s1",
+            "s2"
+          ],
+          "active": false
+        },
+        {
+          "index": 4,
+          "label": "候选路径 4",
+          "path": [
+            5,
+            6,
+            4,
+            2
+          ],
+          "switch_path": [
+            "s5",
+            "s6",
+            "s4",
+            "s2"
+          ],
+          "active": false
+        },
+        {
+          "index": 5,
+          "label": "候选路径 5",
+          "path": [
+            5,
+            4,
+            3,
+            2
+          ],
+          "switch_path": [
+            "s5",
+            "s4",
+            "s3",
+            "s2"
+          ],
+          "active": false
+        }
+      ],
+      "allowed_transitions": [
+        {
+          "from": "INIT",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "INIT",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "PRIMARY"
+        },
+        {
+          "from": "PRIMARY",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "BACKUP_1"
+        },
+        {
+          "from": "BACKUP_1",
+          "to": "PRIMARY"
+        }
+      ],
+      "invariants": [
+        {
+          "var": "packet_count",
+          "type": "COUNTER",
+          "suggested_bound": 64,
+          "rule": "0 <= packet_count <= 64",
+          "confidence": 0.88
+        },
+        {
+          "var": "behavior_index",
+          "type": "INDEX",
+          "suggested_bound": 1,
+          "rule": "0 <= behavior_index < 2",
+          "confidence": 0.91
+        },
+        {
+          "var": "flow_state",
+          "type": "STATE_VAR",
+          "rule": "(prev_state, current_state) in AllowedTransitions",
+          "confidence": 0.93
+        },
+        {
+          "var": "path_hops",
+          "type": "RESOURCE",
+          "suggested_bound": 3,
+          "rule": "path_hops <= 3",
+          "confidence": 0.79
+        },
+        {
+          "var": "degraded_packets",
+          "type": "COUNTER",
+          "suggested_bound": 3,
+          "rule": "0 <= degraded_packets <= 3",
+          "confidence": 0.82
+        },
+        {
+          "var": "state_change_count",
+          "type": "COUNTER",
+          "suggested_bound": 6,
+          "rule": "0 <= state_change_count <= 6",
+          "confidence": 0.8
+        },
+        {
+          "var": "recovery_to_primary",
+          "type": "STATE_VAR",
+          "rule": "backup state must recover to PRIMARY within 3 packets",
+          "confidence": 0.76
+        }
+      ],
+      "yaml_preview": "invariants:\n  - var: packet_count\n    type: COUNTER\n    suggested_bound: 64\n    rule: \"0 <= packet_count <= 64\"\n    confidence: 0.88\n  - var: behavior_index\n    type: INDEX\n    suggested_bound: 1\n    rule: \"0 <= behavior_index < 2\"\n    confidence: 0.91\n  - var: flow_state\n    type: STATE_VAR\n    rule: \"(prev_state, current_state) in AllowedTransitions\"\n    confidence: 0.93\n  - var: path_hops\n    type: RESOURCE\n    suggested_bound: 3\n    rule: \"path_hops <= 3\"\n    confidence: 0.79\n  - var: degraded_packets\n    type: COUNTER\n    suggested_bound: 3\n    rule: \"0 <= degraded_packets <= 3\"\n    confidence: 0.82\n  - var: state_change_count\n    type: COUNTER\n    suggested_bound: 6\n    rule: \"0 <= state_change_count <= 6\"\n    confidence: 0.8\n  - var: recovery_to_primary\n    type: STATE_VAR\n    rule: \"backup state must recover to PRIMARY within 3 packets\"\n    confidence: 0.76"
+    }
+  ],
+  "generated_at": 1779693950,
+  "updated_at": 1779693950
 }

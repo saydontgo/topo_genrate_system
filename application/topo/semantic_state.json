@@ -1,0 +1,38 @@
+{
+  "flows": {
+    "10.0.4.10-10.0.7.21": {
+      "packet_count": 3,
+      "current_state": "ILLEGAL",
+      "last_path": [
+        4,
+        22,
+        39,
+        25,
+        7
+      ],
+      "degraded_packets": 0,
+      "state_change_count": 2,
+      "consecutive_backup_packets": 0,
+      "seen_primary": true,
+      "last_behavior_index": 0,
+      "last_verdict": "violation",
+      "last_verdict_label": "检测到语义违规",
+      "last_risk_score": 85,
+      "last_risk_level": "critical",
+      "last_risk_label": "严重风险",
+      "last_risk_summary": "检测到高危语义风险，建议立即恢复主路径或重新编排。",
+      "last_risk_reasons": [
+        "当前路径或状态与行为池 / 语义预期不一致。",
+        "当前状态跳转不在允许状态转移集合内。",
+        "路径跳数已达到约束上限：5/5。",
+        "当前流未命中任何合法行为，已进入 ILLEGAL 状态。"
+      ],
+      "last_violation_types": [
+        "INCONSISTENT_STATE",
+        "INVALID_TRANSITION"
+      ],
+      "updated_at": 1778425515
+    }
+  },
+  "updated_at": 1778425515
+}

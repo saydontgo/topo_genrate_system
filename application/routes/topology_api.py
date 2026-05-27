@@ -287,6 +287,19 @@ def _run_mininet_topology(topology_name, active_topology):
     info(f"{topology_name} 拓扑构建完成")
 
 
+def _wait_for_topology_ready(active_topology, timeout_seconds=45.0, interval_seconds=0.5):
+    if active_topology is None:
+        return False
+
+    deadline = time.time() + timeout_seconds
+    while time.time() < deadline:
+        if hasattr(active_topology, 'is_network_started') and active_topology.is_network_started():
+            return True
+        time.sleep(interval_seconds)
+
+    return hasattr(active_topology, 'is_network_started') and active_topology.is_network_started()
+
+
 def _build_page_topology(topology_name):
     if topology_name == 'fattree6':
         return ft6.FatTree6()
@@ -994,8 +1007,15 @@ def inject_flow_table():
     if active_topology is None:
         return jsonify({'message': '当前没有可用拓扑，请先上传或初始化拓扑。'}), 400
 
+    if hasattr(active_topology, 'is_network_started') and not active_topology.is_network_started():
+        if not _wait_for_topology_ready(active_topology):
+            return jsonify({'message': '拓扑仍在构建中，请稍后再次注入流表。'}), 409
+
     info('开始注入流表...')
-    success = active_topology.program_switches()
+    try:
+        success = active_topology.program_switches()
+    except AssertionError:
+        return jsonify({'message': '拓扑尚未完成初始化，请稍后再次注入流表。'}), 409
     info('流表注入完成')
     if success:
         return jsonify({'message': '流表注入成功！'})

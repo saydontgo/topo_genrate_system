@@ -1,4 +1,29 @@
 {
-  "flows": {},
-  "updated_at": 1777656782
+  "flows": {
+    "10.0.1.1-10.0.2.3": {
+      "packet_count": 1,
+      "current_state": "PRIMARY",
+      "last_path": [
+        1,
+        2
+      ],
+      "degraded_packets": 0,
+      "state_change_count": 1,
+      "consecutive_backup_packets": 0,
+      "seen_primary": true,
+      "last_behavior_index": 0,
+      "last_verdict": "pass",
+      "last_verdict_label": "语义状态合法",
+      "last_risk_score": 0,
+      "last_risk_level": "low",
+      "last_risk_label": "低风险",
+      "last_risk_summary": "当前流量语义状态稳定，未观察到明显风险。",
+      "last_risk_reasons": [
+        "当前流量命中主路径且所有核心语义约束均保持在安全范围内。"
+      ],
+      "last_violation_types": [],
+      "updated_at": 1779693954
+    }
+  },
+  "updated_at": 1779693954
 }
